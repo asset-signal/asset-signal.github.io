@@ -1,0 +1,151 @@
+/* ─────────────────────────────────────────────────────────────
+   hero.css — hero section
+   ───────────────────────────────────────────────────────────── */
+
+.hero {
+  /* Takes every pixel the masthead leaves behind, so the copy can be
+     centred against the viewport rather than against its own box — the
+     wave field is a fixed viewport layer and ignores page flow. */
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  min-height: clamp(420px, 52svh, 640px);
+  padding: clamp(24px, 3vh, 48px) 0;
+}
+
+.hero__copy {
+  /* The shader veils roughly the left third of the viewport for copy —
+     this column is sized to stay inside that cleared area. */
+  width: min(100%, 560px);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+
+  /* Wave-axis alignment. The field publishes its reference line as a
+     fraction of the VIEWPORT, while centring inside .hero lands the copy
+     midway between the masthead and the bottom of the page. The gap between
+     those two references changes with viewport height, so js/main.js
+     measures it and writes --hero-axis-shift. Untouched (0) without JS,
+     which leaves the copy centred in its own box: close, never broken. */
+  transform: translateY(var(--hero-axis-shift, 0px));
+}
+
+/* ── Headline ─────────────────────────────────────────────── */
+.hero__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(58px, 6.4vw, 104px);
+  line-height: 0.98;
+  color: var(--ink);
+  font-optical-sizing: auto;
+
+  /* Tracking is size-specific, never one value for all sizes: letters read
+     too far apart as display type grows, so it tightens as the headline
+     scales. An em value would be proportionally constant — the exact thing
+     that is wrong. This tracks the font-size clamp above, -0.012em at the
+     small end to -0.025em at the large one. */
+  letter-spacing: clamp(-2.6px, 1.69px - 0.264vw, -0.7px);
+}
+
+.hero__line { display: block; }
+
+/* The roman line carries more counter space than the italics at the same
+   size, so it takes a touch more tightening. */
+.hero__line--display {
+  letter-spacing: clamp(-3.1px, 1.9px - 0.31vw, -0.85px);
+}
+
+/* The italic lines run marginally smaller than the roman first line, the
+   way the reference sets them — the drop keeps the three lines optically
+   equal in weight even though the italic carries more visual texture. */
+.hero__line--italic {
+  font-style: italic;
+  font-size: 0.86em;
+  letter-spacing: -0.005em;
+}
+
+/* The emphasised word takes the primary logo green, tying the headline to
+   the mark in the masthead. It clears AA on the ivory at this size; the
+   accent sage does not, which is why that one stays in the field. */
+.hero__title em {
+  font-style: italic;
+  color: var(--signal);
+}
+
+/* ── Lede ─────────────────────────────────────────────────── */
+.hero__lede {
+  max-width: 24.5em;
+  margin: clamp(22px, 3vh, 38px) 0 0;
+  font-size: clamp(15px, 1.05vw, 17px);
+  line-height: 1.62;
+  color: var(--ink-soft);
+}
+
+/* ── Actions ──────────────────────────────────────────────── */
+.hero__actions {
+  display: flex;
+  align-items: center;
+  gap: clamp(24px, 3vw, 46px);
+  margin-top: clamp(30px, 4.4vh, 56px);
+}
+
+.cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.cta__disc {
+  display: grid;
+  place-items: center;
+  width: clamp(52px, 4vw, 62px);
+  height: clamp(52px, 4vw, 62px);
+  border-radius: 50%;
+  background: var(--signal-deep);
+  color: var(--paper);
+  transition: transform 260ms var(--ease), background-color var(--dur-fast) var(--ease);
+}
+
+.cta__disc svg { width: 42%; height: 42%; }
+
+.cta:hover .cta__disc {
+  transform: translate(2px, -2px) scale(1.04);
+  background: var(--eucalyptus);
+}
+
+.cta__label {
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.link-quiet {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12.5px;
+  font-weight: 500;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--ink);
+  transition: opacity var(--dur-fast) var(--ease);
+}
+
+.link-quiet:hover { opacity: 0.62; }
+
+/* ── Responsive ───────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .hero { min-height: clamp(460px, 62svh, 640px); }
+  .hero__copy { width: min(100%, 620px); }
+  .hero__title { font-size: clamp(46px, 9.5vw, 76px); }
+}
+
+@media (max-width: 560px) {
+  .hero__actions {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 22px;
+  }
+}

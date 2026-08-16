@@ -1,0 +1,218 @@
+/* ─────────────────────────────────────────────────────────────
+   base.css — tokens, reset, shared primitives, background layer
+   ───────────────────────────────────────────────────────────── */
+
+:root {
+  /* Core colour system.
+     Mirrored in the signal field shader in js/signal-background.js, which
+     cannot read CSS variables — the two must be changed together. */
+  --ivory:        #F7F3EC;   /* Warm Ivory — background */
+  --sage-pale:    #E8EFEB;   /* Pale Sage — secondary background */
+  --eucalyptus:   #3F7568;   /* Institutional Eucalyptus — primary logo green */
+  --forest:       #24483F;   /* Deep Forest — dark green */
+  --sage:         #7FA99B;   /* Soft Sage — accent / charts */
+  --ink:          #172522;   /* Near-black green — main text */
+  --slate:        #68736F;   /* Slate — muted text */
+
+  /* Roles */
+  --paper:        var(--ivory);
+  --surface:      var(--sage-pale);
+  --signal:       var(--eucalyptus);
+  --signal-soft:  var(--sage);
+  --signal-deep:  var(--forest);
+  --ink-muted:    var(--slate);
+
+  /* Derived: body copy sits between the main and muted text colours. Slate
+     alone lands at 4.2:1 on the ivory — just under AA for text this size —
+     so secondary copy takes a darker step of the same hue. */
+  --ink-soft:     #3E4B47;
+  --rule:         rgba(23, 37, 34, 0.14);
+
+  /* Type */
+  --font-sans:    "Inter", ui-sans-serif, system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+  --font-display: "Newsreader", ui-serif, Georgia, "Times New Roman", serif;
+
+  /* Rhythm */
+  --gutter:       clamp(20px, 4.2vw, 60px);
+  --page-max:     1560px;
+
+  /* Motion — Apple-style ease; one curve for the whole page */
+  --ease:         cubic-bezier(0.22, 0.61, 0.36, 1);
+  --dur-fast:     180ms;
+  --dur-slow:     900ms;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-height: 100svh;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+img, svg { display: block; max-width: 100%; }
+svg { width: 100%; height: 100%; }
+
+a { color: inherit; text-decoration: none; }
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+:focus-visible {
+  outline: 2px solid var(--signal-deep);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+
+/* ── Background layer ─────────────────────────────────────────
+   Fixed behind everything. `contain: strict` isolates it from
+   page layout/paint so the canvas never triggers a page reflow.
+   The gradient is the no-WebGL fallback and reads as the same
+   composition: warm paper, soft green field to the right.       */
+#signal-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  contain: strict;
+  background:
+    radial-gradient(60% 55% at 82% 62%, rgba(127, 169, 155, 0.20), transparent 70%),
+    var(--paper);
+}
+
+#signal-bg canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+
+  /* The field materialises rather than simply being there: it resolves in
+     alongside the copy, scale and opacity together, so it reads as a surface
+     arriving rather than a layer switched on. */
+  opacity: 0;
+  transform: scale(1.014);
+  transition: opacity 1400ms var(--ease), transform 1800ms var(--ease);
+}
+
+.is-ready #signal-bg canvas {
+  opacity: 1;
+  transform: none;
+}
+
+/* ── Page shell ───────────────────────────────────────────── */
+.page {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 100svh;
+  max-width: var(--page-max);
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+}
+
+/* Press feedback is instant and lives on pointer-down, not on release —
+   the moment it waits for a click, directness falls off a cliff. */
+.btn--pill:active,
+.cta:active .cta__disc {
+  transform: scale(0.97);
+  transition-duration: 100ms;
+}
+
+.nav__links a:active,
+.nav__signin:active,
+.link-quiet:active {
+  opacity: 0.55;
+  transition-duration: 100ms;
+}
+
+/* ── Shared primitives ────────────────────────────────────── */
+.link-quiet__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--signal);
+  flex: none;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition: transform var(--dur-fast) var(--ease),
+              background-color var(--dur-fast) var(--ease);
+}
+
+.btn--pill {
+  padding: 15px 22px 15px 28px;
+  border-radius: 999px;
+  background: var(--signal-deep);
+  color: var(--paper);
+}
+
+/* Hover moves toward the primary logo green rather than simply darkening —
+   the brand colour is the reward for reaching the control. */
+.btn--pill:hover { background: var(--eucalyptus); transform: translateY(-1px); }
+.btn--pill:active { transform: translateY(0); }
+
+.btn__icon {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  color: var(--signal);
+  transition: transform var(--dur-fast) var(--ease);
+}
+
+.btn--pill:hover .btn__icon { transform: translateX(3px); }
+
+/* ── Reveal-on-load ───────────────────────────────────────── */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(14px);
+}
+
+.is-ready [data-reveal] {
+  opacity: 1;
+  transform: none;
+  transition: opacity var(--dur-slow) var(--ease),
+              transform var(--dur-slow) var(--ease);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+
+  /* A gentler equivalent, not a dead page: the field still resolves in, it
+     just cross-fades instead of travelling. */
+  #signal-bg canvas {
+    transform: none;
+    transition: opacity 320ms ease;
+  }
+  [data-reveal] { opacity: 1; transform: none; }
+  .is-ready [data-reveal] { transition: none; }
+  * { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; }
+}

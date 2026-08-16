@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Asset Signal — Clarity at the moment of decision</title>
+  <meta name="description" content="Asset Signal transforms noisy market, property, and portfolio data into actionable insight — decision intelligence for real estate teams." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..600&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/nav.css" />
+  <link rel="stylesheet" href="css/hero.css" />
+</head>
+<body>
+  <!-- Animated signal field. Owned entirely by js/signal-background.js. -->
+  <div id="signal-bg" aria-hidden="true"></div>
+
+  <div class="page">
+    <header class="nav" data-nav>
+      <a class="nav__logo" href="/" aria-label="Asset Signal — home">
+        <img src="img/asset_signal_h_logo.png" alt="Asset Signal" width="1080" height="170" />
+      </a>
+
+      <nav class="nav__links" aria-label="Primary">
+        <a href="#product">Product</a>
+        <a href="#approach">Approach</a>
+        <a href="#insights">Insights</a>
+        <a href="#company">Company</a>
+      </nav>
+
+      <div class="nav__actions">
+        <a class="nav__signin" href="#signin">Sign in</a>
+        <a class="btn btn--pill" href="#demo">
+          Request a demo
+          <span class="btn__icon" aria-hidden="true">
+            <svg viewBox="0 0 16 16" fill="none"><path d="M2 8h11M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+        </a>
+      </div>
+
+      <button class="nav__toggle" type="button" aria-label="Toggle menu" aria-expanded="false" data-nav-toggle>
+        <span></span><span></span>
+      </button>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="hero__copy">
+          <h1 class="hero__title" data-reveal>
+            <span class="hero__line hero__line--display">Clarity</span>
+            <span class="hero__line hero__line--italic">at the moment</span>
+            <span class="hero__line hero__line--italic">of <em>decision.</em></span>
+          </h1>
+
+          <p class="hero__lede" data-reveal>
+            We transform noisy market, property, and portfolio
+            data into actionable insight—so you can act
+            with confidence when it matters most.
+          </p>
+
+          <div class="hero__actions" data-reveal>
+            <a class="cta" href="#signal">
+              <span class="cta__disc" aria-hidden="true">
+                <svg viewBox="0 0 16 16" fill="none"><path d="M4.5 11.5l7-7M6 4.5h5.5V10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
+              <span class="cta__label">See the signal</span>
+            </a>
+
+            <a class="link-quiet" href="#how-it-works">
+              How it works
+              <span class="link-quiet__dot" aria-hidden="true"></span>
+            </a>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="js/signal-background.js" defer></script>
+  <script src="js/main.js" defer></script>
+</body>
+</html>
