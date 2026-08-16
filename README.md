@@ -32,8 +32,6 @@ js/
   main.js                  entrance reveal, wave-axis alignment, mobile nav
 img/
   asset_signal_h_logo.png  horizontal lockup
-color_palette.png          colour system reference
-screenshot.png             original design reference
 ```
 
 ## Colour system
