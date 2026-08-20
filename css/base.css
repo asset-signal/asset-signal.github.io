@@ -69,6 +69,21 @@
      --signal-noise: that one names the problem, this one names the answer. */
   --signal-lit:      #B7D6C9;
 
+  /* The lightest green that still clears 3:1 on Pale Sage — for strokes that
+     CARRY information rather than divide it. --rule composites to 1.11:1 there
+     and Soft Sage to 2.23:1; both are fine for a hairline between blocks and
+     neither is fine for a diagram whose line IS the content. Derived by
+     walking Soft Sage toward Eucalyptus until the ratio passed, so it is the
+     quietest value that does not fail. */
+  --signal-line:     #639285;
+
+  /* A darker accent than Eucalyptus, for green text at body sizes. Eucalyptus
+     measures 4.54:1 on Pale Sage — it passes, but by 0.04, which is no margin
+     at all for an accent that may end up over a wash or a tint. This reads
+     6.10:1 on the plain band and still clears 4.5 over the cycle's glow at
+     full strength. */
+  --signal-ink:      #336055;
+
   /* On the noise ground (--ink #172522). Soft Sage measures 6.08:1 there, so
      the brand accent carries text without being lightened — which it cannot
      do on Deep Forest. */

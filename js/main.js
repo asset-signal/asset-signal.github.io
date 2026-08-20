@@ -351,12 +351,10 @@
       // much shallower than the space actually allowed.
       const base = (cueEl.offsetParent || noise).getBoundingClientRect().bottom;
       const room = window.innerHeight - base - GAP;
-      // Room-bound, not ramp-bound. Capping at a FRACTION of the ramp was
-      // self-defeating: shortening the ramp brings the green up the page, but
-      // it pulled the cue up by the same proportion, so the ground under the
-      // cue never changed. Swept across five ramp lengths, white never cleared
-      // 2.4:1. The cue simply goes as deep as the fold allows; 0.62 is a guard
-      // against a freakishly tall viewport, not a tuning knob.
+      // As deep as the fold allows. The cue belongs inside the gradient, not
+      // perched at its lip, so it takes whatever room is left below the fold
+      // rather than a fixed offset. 0.62 is a guard against a freakishly tall
+      // viewport, not a tuning knob.
       const drop = Math.max(72, Math.min(ramp * 0.62, room));
       cueEl.style.setProperty("--cue-drop", `${Math.round(drop)}px`);
 

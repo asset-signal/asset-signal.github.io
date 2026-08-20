@@ -118,19 +118,29 @@
   box-shadow: inset 0 0 0 1.5px var(--signal-soft);
 }
 
+/* Newsreader, not Inter. These are the names of the six stages — the same
+   register as the section title above them and the sentence in the middle of
+   the ring — and setting them in the functional face made the diagram change
+   voice from its own heading.
+
+   Sentence case with normal tracking, not uppercase with 0.13em. The tracked
+   all-caps label is an Inter idiom; carried onto a serif at this size it reads
+   as a small-caps costume rather than as a name. */
 .loop__name {
   margin: 0 0 10px;
-  font-size: var(--t-meta);
-  font-weight: 600;
-  letter-spacing: 0.13em;
-  text-transform: uppercase;
+  font-family: var(--font-display);
+  font-size: clamp(17px, 2.1vw, 20px);
+  font-weight: 400;
+  letter-spacing: -0.005em;
   color: var(--ink);
 }
 
+/* --signal-ink rather than --signal: Eucalyptus reads 4.54:1 on this band
+   against a 4.5 requirement, and these numerals are small. */
 .loop__name::before {
   counter-increment: stage;
   content: counter(stage, decimal-leading-zero) " ";
-  color: var(--signal);
+  color: var(--signal-ink);
   font-variant-numeric: tabular-nums;
 }
 
@@ -148,18 +158,6 @@
   background: var(--signal);
   box-shadow: 0 0 0 4px rgba(63, 117, 104, 0.18);
 }
-
-.loop__return {
-  max-width: 62ch;
-  margin: var(--space-5) 0 0;
-  padding-top: var(--space-4);
-  border-top: 1px solid var(--rule);
-  font-size: var(--t-sm);
-  line-height: 1.6;
-  color: var(--ink-soft);
-}
-
-.loop__return b { font-weight: 600; color: var(--ink); }
 
 /* ── Pillars ──────────────────────────────────────────────── */
 /* The rules used to span the full 1320px measure while the text stopped at
@@ -480,4 +478,252 @@
 
 @media (max-width: 620px) {
   .founders { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* ── The cycle ────────────────────────────────────────────────
+   Six stages on a ring rather than in a 3x2 grid. The grid could
+   list the stages in order but it could not show that the sixth
+   returns to the first, which is the claim the section makes.
+   The return is carried by the six chevrons: with no closing arc
+   and no moving highlight, they are the only thing stating which
+   way the cycle turns, which is why they sit at every arc
+   midpoint rather than once or twice for decoration.
+
+   Progressive enhancement, and the fallback is the default: the
+   ring only assembles at 940px and up, where there is room for
+   six labels around the circle without them colliding. Below
+   that the existing grid is untouched and the SVG never renders. */
+.cycle__ring { display: none; }
+
+/* The stacked fallback still needs the sentence, and it belongs where
+   the original footnote had it. */
+.cycle__hub {
+  max-width: 62ch;
+  margin: var(--space-5) 0 0;
+  font-family: var(--font-display);
+  font-size: clamp(19px, 1.5vw, 23px);
+  line-height: 1.35;
+  color: var(--ink);
+}
+.cycle__hub em { font-style: italic; color: var(--signal-ink); }
+
+@media (min-width: 940px) {
+  .cycle {
+    /* Full measure, matching the section head above it. The ring used to be
+       capped at 860px inside a 1320px band, which read as a diagram that had
+       been dropped into the column rather than one built for it.
+
+       --ring is the circle's RADIUS, and every other number here derives from
+       it, so the whole diagram scales as one object. */
+    --ring: clamp(210px, 21vw, 300px);
+    --lw: clamp(180px, 16vw, 256px);
+
+    position: relative;
+    width: 100%;
+    /* +380, not +300. The six labels are absolutely positioned, so the box
+       has to be told how tall they make the diagram. The bottom label is the
+       tallest — at 1024 its copy wraps to five lines in a 180px column — and
+       at +300 it hung past the container's edge into the section below. */
+    height: calc(var(--ring) * 2 + 380px);
+    margin: var(--gap-block) auto 0;
+
+  }
+
+  /* A medium green radiating out of the ring. Sized off --ring so the falloff
+     always lands in the same place relative to the circle, and kept under the
+     labels — a wash that dims the copy it sits behind is a decoration that
+     costs content. */
+  .cycle::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    z-index: 0;
+    width: calc(var(--ring) * 4);
+    height: calc(var(--ring) * 4);
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    /* Strictly outside the ring. The box is 4x the radius, so the ring's own
+       edge falls at exactly 1/2 = 50% of it — the wash is held at zero until
+       that stop and only then begins, which leaves the disc itself clean and
+       makes the green read as light coming OFF the circle rather than filling
+       it.
+
+       It reaches full strength AT that stop rather than ramping up to it. An
+       earlier version eased in over 5.4% of the box, which was ~29px of pale
+       band sitting between the stroke and the green and read as a gap the line
+       had been cut out of. The step is now 0.4% wide and lands under the 1.5px
+       stroke, so the green starts exactly at the line and only falls off
+       outward.
+
+       Seven stops across a 4x box rather than five across a 3.6x one: the wash
+       fades over ~294px instead of ~223px, at a gentler rate. 4x is the
+       ceiling — at the 940px breakpoint the diagram's column is only ~860px
+       wide, and a wider box would push the page into horizontal scroll.
+
+       A lighter, fresher green than Soft Sage, which composited to a chroma of
+       18 over this band — a grey with a hint of green in it rather than a
+       green. This is chroma 35 at the same lightness, so it reads as colour
+       without getting darker. Verified against all three things that sit on
+       it: body copy, the stage names, and the ring. */
+    background: radial-gradient(closest-side,
+      rgba(127, 199, 166, 0)    0%,
+      rgba(127, 199, 166, 0)    49.8%,
+      rgba(127, 199, 166, 0.40) 50.2%,
+      rgba(127, 199, 166, 0.33) 59%,
+      rgba(127, 199, 166, 0.24) 68%,
+      rgba(127, 199, 166, 0.15) 78%,
+      rgba(127, 199, 166, 0.07) 88%,
+      rgba(127, 199, 166, 0)    99%);
+    pointer-events: none;
+  }
+
+  .cycle__ring {
+    display: block;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    z-index: 1;
+    /* The circle is r=210 in a 600 viewBox, so the box is 600/210 of the
+       radius. Sizing the box from --ring keeps the drawn circle exactly
+       --ring across however the box is scaled. */
+    width: calc(var(--ring) * 600 / 210);
+    height: calc(var(--ring) * 600 / 210);
+    transform: translate(-50%, -50%);
+    overflow: visible;
+  }
+
+  /* Eucalyptus, at full opacity. The ring is not a divider; it is the shape of
+     the argument, so it owes the 3:1 that 1.4.11 asks of meaningful graphics —
+     and it owes it against the GLOW, not just the bare band. --signal-line was
+     chosen when there was no glow: it read 3.01:1 on Pale Sage but only 2.41:1
+     once the wash sat behind it, and the 0.75 opacity took it lower still.
+     Eucalyptus holds 4.54:1 on the band and 3.74:1 on the glow at full
+     strength. */
+  .cycle__track {
+    stroke: var(--signal);
+    stroke-width: 1.5;
+  }
+
+  /* Direction, stated six times around the ring rather than once. */
+  .cycle__flow path {
+    stroke: var(--signal);
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  /* Filled, and all six the same. Hollow rings read as slots waiting to be
+     filled, which implied a state the static diagram does not have; solid
+     dots read as six stages that simply exist. Eucalyptus holds 3.74:1
+     against the glow at full strength, which is what 1.4.11 asks of a
+     meaningful graphic. */
+  .cycle__node {
+    fill: var(--signal);
+    stroke: var(--signal);
+    stroke-width: 1.8;
+  }
+
+  /* The diagram is static. Nothing is lost by that: the six chevrons carry
+     the direction on their own, and a still figure is legible from the first
+     frame rather than only after watching it for a turn. */
+
+  .cycle__hub {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    z-index: 2;
+    width: min(23ch, calc(var(--ring) * 1.42));
+    max-width: none;
+    margin: 0;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    font-size: clamp(18px, 1.55vw, 24px);
+    line-height: 1.38;
+    letter-spacing: -0.005em;
+    text-wrap: balance;
+  }
+
+  .cycle .loop {
+    display: block;
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    margin: 0;
+  }
+
+  .cycle .loop__stage {
+    position: absolute;
+    width: var(--lw);
+    transform: translate(-50%, -50%);
+    border: 0;
+    padding: 0;
+  }
+  .cycle .loop__stage::before { content: none; }
+
+  /* Seats derived from --ring rather than from percentages of the box.
+     The side labels clear the circle at its WIDEST point — inner edge at
+     --ring + 40px — so the clearance holds at every height the label spans,
+     which a single-radius circular arrangement does not. Their vertical
+     centres sit at 0.5r, which is exactly sin(30deg): the 2, 4, 8 and 10
+     o'clock nodes. */
+  .cycle .loop__stage:nth-child(1),
+  .cycle .loop__stage:nth-child(4) { left: 50%; text-align: center; }
+  .cycle .loop__stage:nth-child(1) { top: calc(50% - var(--ring) - 88px); }
+  .cycle .loop__stage:nth-child(4) { top: calc(50% + var(--ring) + 88px); }
+
+  .cycle .loop__stage:nth-child(2),
+  .cycle .loop__stage:nth-child(3) {
+    left: calc(50% + var(--ring) + 40px + var(--lw) / 2);
+    text-align: left;
+  }
+  .cycle .loop__stage:nth-child(5),
+  .cycle .loop__stage:nth-child(6) {
+    left: calc(50% - var(--ring) - 40px - var(--lw) / 2);
+    text-align: right;
+  }
+  .cycle .loop__stage:nth-child(2),
+  .cycle .loop__stage:nth-child(6) { top: calc(50% - var(--ring) * 0.5); }
+  .cycle .loop__stage:nth-child(3),
+  .cycle .loop__stage:nth-child(5) { top: calc(50% + var(--ring) * 0.5); }
+
+  .cycle .loop__name {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin: 0 0 8px;
+  }
+  .cycle .loop__stage:nth-child(1) .loop__name,
+  .cycle .loop__stage:nth-child(4) .loop__name { justify-content: center; }
+  .cycle .loop__stage:nth-child(5) .loop__name,
+  .cycle .loop__stage:nth-child(6) .loop__name { justify-content: flex-end; }
+
+  /* Larger than the shared --t-sm these inherited. That token is sized for
+     dense supporting copy in a column you read top to bottom; here the same
+     14px sits alone in space beside a 600px circle, at the far edge of a
+     1320px band, and reads as a caption on a diagram rather than as the
+     diagram's content. The stage names go up with it so the pair keeps its
+     step. */
+  /* The name has to outweigh its own body copy. At 14px against a 17.3px body
+     the hierarchy was inverted — the stage's NAME was the smallest thing in
+     its block, which is why it read as tiny no matter how much space it had.
+
+     Tracking comes down as the size goes up, which is the normal relationship
+     and also what keeps "03 RECOMMENDATION" — seventeen characters, the
+     longest label here — inside a 230px column at 1440. The upper bound is
+     set by that fit, not by taste. */
+  /* On the ring the name has to outweigh its own body copy. At the label size
+     it inherited it was the smallest thing in its own block, which is why it
+     read as tiny however much space it had. The ceiling is set by "03
+     Recommendation" — the longest label — holding one line in a 230px column
+     at 1440, not by taste. */
+  .cycle .loop__name {
+    font-size: clamp(18px, 1.7vw, 24px);
+  }
+
+  .cycle .loop__body {
+    font-size: clamp(15.5px, 1.2vw, 18px);
+    line-height: 1.55;
+    text-wrap: pretty;
+  }
 }

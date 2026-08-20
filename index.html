@@ -191,69 +191,70 @@
               </p>
             </div>
 
-            <ol class="loop">
-              <li class="loop__stage">
-                <h3 class="loop__name">Signal</h3>
-                <p class="loop__body">Financial, operating, leasing and market data is read as it is produced.</p>
-              </li>
-              <li class="loop__stage">
-                <h3 class="loop__name">Diagnosis</h3>
-                <p class="loop__body">What changed, why it changed, and whether the change is material.</p>
-              </li>
-              <li class="loop__stage">
-                <h3 class="loop__name">Recommendation</h3>
-                <p class="loop__body">The intervention worth considering, with its evidence and estimated impact.</p>
-              </li>
-              <li class="loop__stage">
-                <h3 class="loop__name">Decision</h3>
-                <p class="loop__body">A person decides. Ownership, approval and reasoning are recorded.</p>
-              </li>
-              <li class="loop__stage">
-                <h3 class="loop__name">Action</h3>
-                <p class="loop__body">The decision becomes work, with an owner and a date attached to it.</p>
-              </li>
-              <li class="loop__stage loop__stage--closes">
-                <h3 class="loop__name">Outcome</h3>
-                <p class="loop__body">What actually happened is captured, and feeds the next signal.</p>
-              </li>
-            </ol>
+            <div class="cycle">
+              <!-- The ring is the diagram, not an ornament on it. A 3x2 grid can
+                   list six stages but it cannot show that the sixth returns to
+                   the first, which is the section's actual claim. The closing
+                   arc is drawn in the accent with an arrowhead so the return is
+                   visible rather than asserted in a footnote below.
+                   Decorative: the ordered list beside it carries the meaning. -->
+              <svg class="cycle__ring" viewBox="0 0 600 600" fill="none" aria-hidden="true">
+                <circle class="cycle__track" cx="300" cy="300" r="210"/>
 
-            <p class="loop__return">
-              <b>Outcome returns to signal.</b> Each cycle makes the next one more
-              specific to your firm, your portfolio, and the way your team decides.
-            </p>
+                <g class="cycle__flow" transform="rotate(30 300 300)"><path d="M295 83.5 L301.5 90 L295 96.5"/></g>
+                <g class="cycle__flow" transform="rotate(90 300 300)"><path d="M295 83.5 L301.5 90 L295 96.5"/></g>
+                <g class="cycle__flow" transform="rotate(150 300 300)"><path d="M295 83.5 L301.5 90 L295 96.5"/></g>
+                <g class="cycle__flow" transform="rotate(210 300 300)"><path d="M295 83.5 L301.5 90 L295 96.5"/></g>
+                <g class="cycle__flow" transform="rotate(270 300 300)"><path d="M295 83.5 L301.5 90 L295 96.5"/></g>
+                <g class="cycle__flow" transform="rotate(330 300 300)"><path d="M295 83.5 L301.5 90 L295 96.5"/></g>
 
-            <div class="subhead">
-              <h3 class="subhead__title">Not the system of record. Not another dashboard.</h3>
-              <p class="subhead__body">
-                Asset Signal is not where the data lives, not the chart that displays it,
-                and not a chat window waiting for the right prompt. It owns the recurring
-                decision that sits between them.
-              </p>
+                <circle class="cycle__node cycle__node--0" cx="300.0" cy="90.0" r="7"/>
+                <circle class="cycle__node cycle__node--1" cx="481.9" cy="195.0" r="7"/>
+                <circle class="cycle__node cycle__node--2" cx="481.9" cy="405.0" r="7"/>
+                <circle class="cycle__node cycle__node--3" cx="300.0" cy="510.0" r="7"/>
+                <circle class="cycle__node cycle__node--4" cx="118.1" cy="405.0" r="7"/>
+                <circle class="cycle__node cycle__node--5" cx="118.1" cy="195.0" r="7"/>
+
+              </svg>
+
+              <ol class="loop">
+                <li class="loop__stage">
+                  <h3 class="loop__name">Signal</h3>
+                  <p class="loop__body">Financial, operating, leasing and market data is read as it is produced.</p>
+                </li>
+                <li class="loop__stage">
+                  <h3 class="loop__name">Diagnosis</h3>
+                  <p class="loop__body">What changed, why it changed, and whether the change is material.</p>
+                </li>
+                <li class="loop__stage">
+                  <h3 class="loop__name">Recommendation</h3>
+                  <p class="loop__body">The intervention worth considering, with its evidence and estimated impact.</p>
+                </li>
+                <li class="loop__stage">
+                  <h3 class="loop__name">Decision</h3>
+                  <p class="loop__body">A person decides. Ownership, approval and reasoning are recorded.</p>
+                </li>
+                <li class="loop__stage">
+                  <h3 class="loop__name">Action</h3>
+                  <p class="loop__body">The decision becomes work, with an owner and a date attached to it.</p>
+                </li>
+                <li class="loop__stage">
+                  <h3 class="loop__name">Outcome</h3>
+                  <p class="loop__body">What actually happened is captured, and feeds the next signal.</p>
+                </li>
+              </ol>
+
+              <!-- After the list in the DOM, not before it: this is the
+                   conclusion the cycle arrives at. On the ring it is absolutely
+                   centred and DOM order does not matter; in the stacked
+                   fallback it lands exactly where it used to sit, as the
+                   lead-in to the paragraph that follows. One copy of the
+                   sentence, two placements — duplicating it into a
+                   hidden-per-breakpoint pair would read it twice to a screen
+                   reader. -->
+              <p class="cycle__hub">Each cycle makes the next one more specific to your firm, your portfolio, and <em>the way your team decides.</em></p>
             </div>
 
-            <dl class="pillars">
-              <div class="pillars__row">
-                <dt>It starts with the exceptions</dt>
-                <dd>Begin with the few assets and issues that deserve attention, rather than an exhaustive view in which everything is weighted equally.</dd>
-              </div>
-              <div class="pillars__row">
-                <dt>It arrives ready to decide</dt>
-                <dd>Every recommendation carries its evidence, estimated impact, confidence, owner and approval state — the things a decision actually needs.</dd>
-              </div>
-              <div class="pillars__row">
-                <dt>It raises things before you ask</dt>
-                <dd>Issues surface and decisions are prepared before anyone has to think of the right question to ask.</dd>
-              </div>
-              <div class="pillars__row">
-                <dt>It remembers what happened</dt>
-                <dd>What was decided, what was done, and what happened next stays attached to the asset — and to the next decision about it.</dd>
-              </div>
-              <div class="pillars__row">
-                <dt>It fits the stack you have</dt>
-                <dd>Works alongside the systems of record, accounting and property-management platforms you already run. There is nothing to rip out.</dd>
-              </div>
-            </dl>
           </div>
         </section>
 
