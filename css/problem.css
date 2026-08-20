@@ -1,0 +1,468 @@
+/* ─────────────────────────────────────────────────────────────
+   problem.css — the noise, as a scroll-pinned sequence
+
+   The page's darkest ground, and the only place the reader does
+   work: they scroll, and the field resolves from many competing
+   strands into one signal. The scroll relationship carries the
+   argument, which is the only thing that earns a pin.
+
+   Ground is --ink rather than --forest on purpose. Soft Sage
+   measures 6.08:1 on #172522 and only 3.88:1 on #24483F, so the
+   brand's own accent can finally carry text — and the section
+   stays distinct from the Deep Forest trust band later on.
+   ───────────────────────────────────────────────────────────── */
+
+/* The second half of the dissolve. Starts on the exact Pale Sage the hero
+   ends on, so the seam is invisible, then walks the palette down to the
+   near-black ground: Soft Sage, Eucalyptus, Deep Forest, ink.
+
+   Twelve stops on an eased curve, interpolated in oklab. Two stops in sRGB
+   band visibly over this distance and pass through a grey midpoint that none
+   of these colours contain; oklab keeps the path inside the greens. The sRGB
+   line above it is the fallback for engines without the syntax.
+
+   --ramp is the whole length, so the stops and the padding that clears them
+   stay in step when it is retuned. */
+/* Above .dissolve, which straddles the boundary at z-index 1. */
+.band--noise > * { position: relative; z-index: 2; }
+
+.band--noise {
+
+  background: linear-gradient(to bottom,
+    var(--ivory) 0, var(--sage-pale) 12%, var(--sage) 46%, var(--forest) 82%, var(--ink) var(--ramp));
+
+  /* An INVERSE radial, not a vertical ramp. The source is a point below the
+     ramp box entirely (50% 145%) — down inside the problem section's own
+     near-black ground — and the palette walks outward from there to Warm Ivory
+     at the rim. So the green swells UP out of the problem section and the light
+     retreats around it, instead of a front sliding down the page.
+
+     Two geometric facts make the seams survive it. The whole top edge sits at
+     0.906-1.005 radii and ivory begins at 0.90, so every column hands over pure
+     paper to the hero. The whole bottom edge sits at 0.281-0.518 radii and the
+     near-black runs through 0.53, so every column settles into the band's own
+     ground. The walk happens strictly between those two, touching neither.
+
+     The bulge is the point, and it is tuned between two failures. The
+     The arc is 33% of the walk: the top corners sit 0.139 radii further from
+     the source than the top centre, so the green climbs a third of the way
+     through the palette higher in the middle of the page than at its edges.
+     Rounding past this starts costing the colour progression rather than the
+     geometry — a narrower horizontal radius pushes the bottom corners further
+     out, which forces the ink plateau up and squeezes the walk. Earlier versions got their curve from eccentricity (a 128%-by-160%
+     ellipse centred well below the box) and topped out around 22%; this one
+     gets it from proximity — a slightly squashed circle sitting just past the
+     bottom edge — which produces far more curvature for the same walk.
+
+     Searched rather than guessed: across rx, ry and cy this is the roundest
+     arc available while holding the walk at 0.44 of the radius and keeping
+     both edges clear of it. Rounder is reachable, but only by trading away
+     the width of the colour progression, which is the other half of this.
+
+     Three layers, not one. The radial underneath sets the palette walk;
+     two very wide, very soft ellipses over it pull the dark up on one side and
+     hold it back on the other, so the front is a slow curve rather than a flat
+     line sweeping down the page. They are 150-165% wide and under 45% tall, and
+     each is confined to the ramp by background-size — at that eccentricity they
+     read as atmosphere rather than as circles.
+
+     Both peak mid-ramp and reach zero alpha before EITHER end. They are
+     clipped to the ramp by background-size, so any alpha still left at the
+     last pixel is cut to nothing in one row — which is exactly what put a
+     hard line across the page where the ramp ended. At 44%/56% centres with
+     40-42% reach, each end sits beyond the radius where alpha hits zero, so
+     both the hand-over from the hero and the settle into the ground are
+     continuous. */
+  background:
+    /* Four pools of green light rather than two flat bands. The old pair were
+       150-165% wide and ~40% tall, which is a horizontal band with rounded
+       ends — the front still read as a line. These are 90-115% wide and 24-34%
+       tall, centred at four different points, so their overlap modulates the
+       ramp unevenly across both axes and the green arrives as diffusion.
+
+       Every pool satisfies cy > 0.85r and (100-cy) > 0.85r, so each reaches
+       zero alpha before the ramp's first and last pixel. They are clipped to
+       the ramp by background-size, and any alpha surviving to that clip is a
+       hard line across the page — which is exactly what happened before. */
+    radial-gradient(105% 34% at 22% 42% in oklab,
+      rgba(63, 117, 104, 0.52) 0%, rgba(63, 117, 104, 0.44) 20%,
+      rgba(63, 117, 104, 0.30) 42%, rgba(63, 117, 104, 0.15) 62%,
+      rgba(63, 117, 104, 0.05) 78%, rgba(63, 117, 104, 0) 90%)
+      top / 100% var(--ramp) no-repeat,
+    radial-gradient(90% 30% at 68% 34% in oklab,
+      rgba(127, 169, 155, 0.46) 0%, rgba(127, 169, 155, 0.38) 22%,
+      rgba(127, 169, 155, 0.25) 44%, rgba(127, 169, 155, 0.12) 64%,
+      rgba(127, 169, 155, 0.04) 79%, rgba(127, 169, 155, 0) 90%)
+      top / 100% var(--ramp) no-repeat,
+    radial-gradient(115% 32% at 40% 62% in oklab,
+      rgba(36, 72, 63, 0.5) 0%, rgba(36, 72, 63, 0.42) 21%,
+      rgba(36, 72, 63, 0.28) 43%, rgba(36, 72, 63, 0.14) 63%,
+      rgba(36, 72, 63, 0.05) 78%, rgba(36, 72, 63, 0) 90%)
+      top / 100% var(--ramp) no-repeat,
+    radial-gradient(95% 24% at 80% 72% in oklab,
+      rgba(23, 37, 34, 0.44) 0%, rgba(23, 37, 34, 0.36) 22%,
+      rgba(23, 37, 34, 0.24) 44%, rgba(23, 37, 34, 0.11) 64%,
+      rgba(23, 37, 34, 0.04) 79%, rgba(23, 37, 34, 0) 90%)
+      top / 100% var(--ramp) no-repeat,
+    radial-gradient(90% 100% at 50% 104% in oklab,
+      /* box: the ramp, not the band */
+      #172522  0%,
+      #172522  58%,
+      #172522  58.66%,
+      #172522  59.31%,
+      #172522  59.97%,
+      #172522  60.62%,
+      #172623  61.28%,
+      #182623  61.94%,
+      #182724  62.59%,
+      #182825  63.25%,
+      #192926  63.91%,
+      #192B27  64.56%,
+      #1A2D28  65.22%,
+      #1B2F2A  65.88%,
+      #1C312C  66.53%,
+      #1D342E  67.19%,
+      #1E3731  67.84%,
+      #1F3A33  68.50%,
+      #203D36  69.16%,
+      #22413A  69.81%,
+      #23463D  70.47%,
+      #254A41  71.12%,
+      #284F45  71.78%,
+      #2B544A  72.44%,
+      #2E594E  73.09%,
+      #315E53  73.75%,
+      #356459  74.41%,
+      #386A5E  75.06%,
+      #3C7064  75.72%,
+      #417669  76.38%,
+      #487C6F  77.03%,
+      #508275  77.69%,
+      #57887B  78.34%,
+      #5F8E81  79.00%,
+      #669587  79.66%,
+      #6E9B8D  80.31%,
+      #75A193  80.97%,
+      #7DA799  81.62%,
+      #85AD9F  82.28%,
+      #8DB2A6  82.94%,
+      #95B8AC  83.59%,
+      #9DBDB2  84.25%,
+      #A5C2B7  84.91%,
+      #ACC7BD  85.56%,
+      #B3CCC3  86.22%,
+      #BAD0C8  86.87%,
+      #C1D5CD  87.53%,
+      #C7D9D1  88.19%,
+      #CDDDD6  88.84%,
+      #D2E0DA  89.50%,
+      #D7E3DE  90.16%,
+      #DBE6E1  90.81%,
+      #DFE9E4  91.47%,
+      #E3EBE7  92.12%,
+      #E6EEE9  92.78%,
+      #E9EFEB  93.44%,
+      #EDF0EB  94.09%,
+      #EFF1EC  94.75%,
+      #F2F2EC  95.41%,
+      #F4F2EC  96.06%,
+      #F5F2EC  96.72%,
+      #F6F3EC  97.38%,
+      #F7F3EC  98.03%,
+      #F7F3EC  98.69%,
+      #F7F3EC  99.34%,
+      #F7F3EC  100%)
+      top / 100% var(--ramp) no-repeat;
+  /* The shorthand above resets background-color to transparent, and every
+     layer in it is clipped to the ramp — so past the ramp the band would have
+     no ground at all. This is what the ramp settles into. */
+  background-color: var(--ink);
+  color: var(--on-noise);
+  padding-block: var(--section-y) 0;
+}
+
+/* The statement lands inside the ramp rather than after it — the gap before it
+   was reading as dead space. It starts at 0.78 of the ramp, where the ground
+   is past Eucalyptus and paper measures 7:1 on it, so the section opens while
+   the colour is still settling and the two halves feel like one movement. */
+.sheet > .band--noise:first-child {
+  /* 0.68, not 0.78. The ramp now starts at Warm Ivory rather than Pale Sage —
+     the hero hands over bare paper — so it spends longer in the light and the
+     opening statement can sit higher without losing contrast. The factor drops
+     with the longer ramp so the absolute gap stays where it was — by 0.52 of
+     this ramp the walk is essentially finished, so the copy is on solid ground.
+     Raised to 0.60 with the wider walk: ink now begins at 0.53 of the ramp
+     rather than 0.36, and the copy has to clear it. */
+  /* Whichever is greater: the ramp-derived depth that puts the copy on solid
+     ground, or a guaranteed clearance below the scroll cue. The two are
+     positioned by different things — the cue by the room the fold leaves, this
+     by --ramp — so without the second term the space between them is whatever
+     happens to fall out, and on a 390x844 phone that was 39px. */
+  padding-top: max(
+    calc(var(--ramp) * 0.60),
+    calc(var(--cue-below-join, 0px) + clamp(110px, 14vh, 180px))
+  );
+}
+
+/* ── The opening statement, centred ───────────────────────── */
+.problem__intro {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.problem__title {
+  max-width: 18ch;
+  color: var(--paper);
+  text-wrap: balance;
+}
+
+.problem__title span {
+  display: block;
+  font-style: italic;
+  font-size: 0.88em;
+  color: var(--signal-noise);
+}
+
+.problem__lede {
+  max-width: 46ch;
+  margin: var(--space-5) 0 0;
+  font-size: var(--t-lede);
+  line-height: 1.55;
+  color: var(--on-noise-muted);
+}
+
+/* ── The pinned stage ─────────────────────────────────────────
+   Height drives the sequence: the scroller is four screens tall
+   and the stage holds still inside it. --p is written by main.js
+   as scroll progress 0 → 1 and is the single input everything
+   below reads.                                                  */
+.problem__scroll {
+  position: relative;
+  height: 360svh;
+  height: 360dvh;
+  margin-top: var(--gap-movement);
+}
+
+/* Two tracks: the field runs the full height on the left, the copy sits
+   alongside it on the right. The field's axis and the reader's scroll now
+   travel the same way, which is the whole reason to pin this. */
+/* The stage carries the page measure itself: .problem__scroll sits outside
+   .wrap so the field can run the full height, which left the stage spanning
+   the raw viewport and pushed its labels off the left edge. */
+.problem__stage {
+  position: sticky;
+  top: var(--nav-h);
+  display: grid;
+  /* Field in the middle, copy either side of it. The steps alternate left and
+     right as the sequence advances, so the reader's eye crosses the signal
+     rather than running parallel to it. */
+  grid-template-columns: minmax(0, 1fr) clamp(280px, 30vw, 460px) minmax(0, 1fr);
+  justify-content: center;
+  align-items: center;
+  gap: clamp(40px, 6vw, 112px);
+  /* dvh: a pinned stage sized in svh is shorter than the window whenever
+     the browser chrome is collapsed, and the shortfall shows as an uncovered
+     strip along the bottom edge.
+
+     Less the masthead, and pinned below it rather than at 0. The stage centres
+     its content in its own box, so a full-viewport box centred that content
+     behind the sticky bar — the closing line came up sliced through its first
+     row of glyphs, and the opening statement did the same on the way in. The
+     stage now occupies only the height the reader can actually see. */
+  height: calc(100svh - var(--nav-h));
+  height: calc(100dvh - var(--nav-h));
+  max-width: var(--page-max);
+  margin-inline: auto;
+  padding: clamp(24px, 4vh, 56px) var(--gutter);
+  overflow: hidden;
+}
+
+/* ── The field ────────────────────────────────────────────── */
+/* Label, field, label — the two labels name the ends of the axis the reader
+   is travelling, which is now vertical. */
+.problem__figure {
+  grid-column: 2;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: var(--space-3);
+  margin: 0;
+  height: 100%;
+  min-height: 0;
+}
+
+/* Fades up out of the statement above rather than starting on a hard edge —
+   the noise gathers as the reader enters it. */
+.problem__wave {
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 16%, #000 94%, transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0, #000 16%, #000 94%, transparent 100%);
+}
+
+.problem__wave {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+
+/* Context recedes as the reader scrolls; the signal is drawn through it.
+   Both read --p, so they cannot drift out of step with each other. */
+.problem__wave .figure__ctx {
+  opacity: calc(1 - (var(--p, 0) * 0.82));
+}
+
+/* --draw and --node are clamped in main.js rather than here. A clamp() nested
+   inside calc() silently failed to resolve and left the stroke fully drawn
+   from the first frame; the simple multiply below is dependable. */
+.problem__wave .figure__signal {
+  stroke-dasharray: var(--dash, none);
+  stroke-dashoffset: calc(var(--dash, 0) * (1 - var(--draw, 0)));
+}
+
+.problem__wave .figure__node { opacity: var(--node, 0); }
+
+/* display:contents so the two labels become grid rows 1 and 3, bracketing
+   the field, while the figcaption still associates them with the figure. */
+.problem__caption { display: contents; }
+
+.problem__axis {
+  font-size: var(--t-label);
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--on-noise-muted);
+}
+
+.problem__axis--start {
+  grid-row: 1;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--rule-noise);
+}
+
+.problem__axis--end {
+  grid-row: 3;
+  padding-top: 10px;
+  border-top: 1px solid var(--rule-noise);
+  text-align: right;
+}
+
+.problem__axis b {
+  font-weight: 600;
+  color: var(--signal-noise);
+  opacity: var(--node, 0);
+  transition: opacity 200ms linear;
+}
+
+/* ── The advancing copy ───────────────────────────────────────
+   All four steps occupy the same grid cell, so the stage never
+   changes height as they cross-fade.                            */
+/* Both side tracks are one grid area each; every step is placed into the
+   column its modifier names, and they all share a row so the stage never
+   changes height as they hand over. */
+.problem__steps { display: contents; }
+
+.problem__step {
+  grid-row: 1;
+  align-self: center;
+  max-width: 40ch;
+  margin: 0;
+  font-size: var(--t-body);
+  line-height: 1.62;
+  color: var(--on-noise-muted);
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 420ms var(--ease), transform 420ms var(--ease);
+}
+
+.problem__step.is-active {
+  opacity: 1;
+  transform: none;
+}
+
+.problem__step--left  { grid-column: 1; justify-self: end;   text-align: right; }
+.problem__step--right { grid-column: 3; justify-self: start; text-align: left; }
+
+/* The last step is the conclusion the whole sequence resolves to, so it
+   arrives at display scale rather than as another paragraph. */
+.problem__step--final {
+  max-width: 15ch;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(26px, 3.1vw, 46px);
+  line-height: 1.12;
+  letter-spacing: clamp(-1px, 0.35px - 0.09vw, -0.2px);
+  color: var(--paper);
+}
+
+.problem__step--final em {
+  font-style: italic;
+  color: var(--signal-noise);
+}
+
+/* ── Without the pin ──────────────────────────────────────────
+   No JS, or reduced motion: the scroller collapses, the stage
+   stops sticking, every step is visible in order, and the field
+   is shown resolved. The argument survives; only the pin goes.  */
+.problem--static .problem__scroll { height: auto; margin-top: var(--gap-movement); }
+
+.problem--static .problem__stage {
+  position: static;
+  height: auto;
+  display: block;
+  overflow: visible;
+}
+
+.problem--static .problem__steps {
+  display: block;
+  min-height: 0;
+  margin-top: var(--space-6);
+}
+
+.problem--static .problem__step {
+  opacity: 1;
+  transform: none;
+  margin-bottom: var(--space-5);
+}
+
+.problem--static .problem__wave .figure__ctx { opacity: 0.5; }
+.problem--static .problem__wave .figure__signal { stroke-dashoffset: 0; }
+.problem--static .problem__wave .figure__node { opacity: 1; }
+.problem--static .problem__wave .figure__node,
+.problem--static .problem__axis b { opacity: 1; }
+
+@media (prefers-reduced-motion: reduce) {
+  .problem__step { transition: opacity 200ms linear; transform: none; }
+  .problem__step.is-active { transform: none; }
+}
+
+/* Narrow: the field keeps its axis but steps behind the copy as a quiet
+   ground, because two tracks cannot both be legible at this width. */
+/* Narrow: the field keeps its axis but steps behind the copy as a ground,
+   because three tracks cannot all be legible at this width. */
+@media (max-width: 900px) {
+  .problem__stage {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr);
+  }
+
+  .problem__figure {
+    grid-area: 1 / 1;
+    grid-template-rows: minmax(0, 1fr);
+    opacity: 0.4;
+  }
+
+  .problem__step {
+    grid-area: 1 / 1;
+    align-self: center;
+    justify-self: center;
+    max-width: 32ch;
+    text-align: center;
+  }
+
+  .problem__step--left,
+  .problem__step--right { grid-column: 1; justify-self: center; text-align: center; }
+  .problem__step--final { max-width: 14ch; }
+  .problem__axis { display: none; }
+  .problem__scroll { height: 320svh; height: 320dvh; }
+}

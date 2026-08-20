@@ -13,3 +13,16 @@
 # Logs / local scratch
 *.log
 .cache/
+
+# Agent tooling and local skill state — not part of the site
+.agents/
+.impeccable/
+skills-lock.json
+
+# Brand source material. This repo is public (GitHub Pages), so the strategy
+# decks and layered artwork would be downloadable by anyone. An earlier commit
+# already removed the reference images for this reason.
+reference/
+
+# Local scratch
+screenshot.png

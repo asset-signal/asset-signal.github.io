@@ -48,13 +48,14 @@
       if (Math.abs(next - axis) < 0.0005) return; // already there — no redraw churn
       axis = next;
       pushAxis();
+    },
 
-    const uCopy = loc("uCopy");
-    pushCopy = () => {
-      gl.useProgram(program);
-      gl.uniform4fv(uCopy, copyBox);
-    };
-    pushCopy();
+    // The page covers the field with an opaque sheet below the fold. Drawing
+    // into a covered layer is pure cost, so the page reports whether the
+    // canvas is actually on screen and the loop stops when it is not.
+    setVisible(v) {
+      onscreen = !!v;
+      sync();
     },
   };
 
@@ -62,6 +63,12 @@
   // WebGL is unavailable) so the setter is always safe to call.
   let pushAxis = () => {};
   let pushCopy = () => {};
+
+  // Two independent reasons to stop drawing — a hidden tab and a field that
+  // has scrolled out of view — resolved through one gate, so neither can
+  // restart the loop while the other still wants it stopped.
+  let onscreen = true;
+  let sync = () => {};
 
   const mount = document.getElementById("signal-bg");
   if (!mount) return; // page without the background layer — nothing to do
@@ -158,7 +165,13 @@
     CLEAR_PAD:  -0.088,      // halo inset INTO the copy block, height-normalised
     CLEAR_FADE: 0.248,       // how far it takes the field to come back in — long,
                              // so the clearing reads as a gradient, not an edge
-    CLEAR_WASH: 0.88,        // how far toward paper the background goes inside it
+    // 0.66, down from 0.88. This is the white that was drowning the field in
+    // the fold: inside the copy halo the background went nearly all the way to
+    // paper, and the halo covers the left 44% of the viewport plus a 0.248
+    // feather past it — so most of the hero was being washed out to protect
+    // copy that has contrast to spare. At 0.66 the strands read through the
+    // feather and the headline still measures far above the AA floor.
+    CLEAR_WASH: 0.66,        // how far toward paper the background goes inside it
 
     // Per-strand variance. The surface stays one surface — same harmonics,
     // same travelling phase — but each streamline reads it a little
@@ -480,8 +493,15 @@
         // Knockout: a breath of paper held either side of the stroke, so the
         // line stays legible crossing the mesh instead of tangling into it.
         // Scaled to the stroke, so it tapers away with the line.
+        //
+        // 0.36, down from 0.58. This is the white on the right-hand side. It
+        // is applied per strand, so wherever the mesh is dense — which is the
+        // whole right of the fold — dozens of these paper breaths overlap and
+        // compound, and the region washes out to near paper no matter how much
+        // alpha the strands themselves carry. Enough separation to keep the
+        // crossings readable, not enough to bleach the bundle.
         float knock = (1.0 - smoothstep(hw * 1.15, hw * 5.20, abs(bd))) * vis;
-        col = mix(col, PAPER, knock * 0.58);
+        col = mix(col, PAPER, knock * 0.36);
 
         // Along its own length: Light Signal where it is still distant,
         // resolving hard into the deep green. It reaches full strength early
@@ -511,7 +531,10 @@
       col = mix(col, PAPER, (1.0 - clear) * CLEAR_WASH);
 
       // Gentle top/bottom falloff so the bundle sits in the page, not on it.
-      col = mix(col, PAPER, smoothstep(1.12, 1.50, abs(uv.y - uAxis) * 2.0) * 0.50);
+      // 0.36 rather than 0.50 — the same tone-down as CLEAR_WASH, for the same
+      // reason: it is a wash toward paper, and it was costing more of the
+      // animation than it was buying in seating.
+      col = mix(col, PAPER, smoothstep(1.12, 1.50, abs(uv.y - uAxis) * 2.0) * 0.36);
 
       // Soft vignette.
       vec2 vc = (uv - 0.5) * vec2(1.0, 0.86);
@@ -643,7 +666,12 @@
     // alpha would make the back ranks vanish instead of going soft. We
     // state the peak opacity we want at this depth and divide it back out.
     const energy = hw / (hw + soft * 0.78);
-    const peak   = moreContrast ? mix(0.50, 0.24, d) : mix(0.32, 0.150, d);
+    // Raised from 0.32/0.150. The field is the one animated thing on the page
+    // and it was reading as a texture rather than as movement — measured, the
+    // strongest row contributed 136 units but the mean across the fold was
+    // only 13. The high-contrast branch is left alone: it is already louder,
+    // and users on that setting did not ask for more.
+    const peak   = moreContrast ? mix(0.50, 0.24, d) : mix(0.42, 0.205, d);
     const alpha  = clamp(peak * mix(1.0, 1.20, accent) / energy, 0, 2.4);
 
     // Rows crowding the horizon pick up the hero's mint, so the convergence
@@ -652,7 +680,10 @@
     // Aerial perspective: distant strands wash toward the paper, the way
     // haze desaturates a far ridgeline. Cheap, and a very strong depth cue.
     // Suppressed under prefers-contrast, where washing out is the enemy.
-    const haze = (moreContrast ? 0.10 : 0.24) * d * d;
+    // 0.15 rather than 0.24: the same tone-down, one layer up. The distant
+    // strands are the ones crowding the right of the fold, so washing them
+    // toward paper is most of what made that side read as empty.
+    const haze = (moreContrast ? 0.10 : 0.15) * d * d;
     const lc = [0, 1, 2].map((c) =>
       mix(mix(mix(INK[c], MINT_J[c], prox * 0.55), ACCENT[c], accent), PAPER_J[c], haze)
     );
@@ -935,31 +966,36 @@
     gl.drawArrays(gl.TRIANGLES, 0, 3);
   }
 
-  raf = requestAnimationFrame(frame);
-
-  // Don't burn GPU on a hidden tab; resume without a phase jump.
-  document.addEventListener("visibilitychange", () => {
-    if (document.hidden) {
-      cancelAnimationFrame(raf);
-      raf = 0;
-    } else if (!raf) {
+  // Don't burn GPU on a hidden tab or a field nobody can see; resume without
+  // a phase jump, because `last` is re-stamped on the way back in.
+  let lost = false;
+  sync = () => {
+    const want = onscreen && !document.hidden && !lost;
+    if (want && !raf) {
       last = performance.now();
       raf = requestAnimationFrame(frame);
+    } else if (!want && raf) {
+      cancelAnimationFrame(raf);
+      raf = 0;
     }
-  });
+  };
+
+  sync();
+
+  document.addEventListener("visibilitychange", sync);
 
   // ── Context loss ───────────────────────────────────────────────────
   canvas.addEventListener("webglcontextlost", (e) => {
     e.preventDefault();
-    cancelAnimationFrame(raf);
-    raf = 0;
+    lost = true;
+    sync();
   }, false);
 
   canvas.addEventListener("webglcontextrestored", () => {
     gl = canvas.getContext("webgl2", glOpts) || canvas.getContext("webgl", glOpts);
     if (!gl || !initGL()) return;
     needsResize = true;
-    last = performance.now();
-    if (!raf) raf = requestAnimationFrame(frame);
+    lost = false;
+    sync();
   }, false);
 })();

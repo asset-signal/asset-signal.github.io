@@ -2,6 +2,18 @@
    base.css — tokens, reset, shared primitives, background layer
    ───────────────────────────────────────────────────────────── */
 
+/* --ramp is registered rather than left as a plain custom property so that
+   getComputedStyle resolves it to pixels. main.js positions the scroll cue
+   against it, and an unregistered property hands back the literal
+   "clamp(560px, 92vh, 1040px)" string — parseFloat returns NaN, and the cue
+   silently fell back to its floor and sat above the fold instead of in the
+   gradient. Registering it also type-checks the value. */
+@property --ramp {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 0px;
+}
+
 :root {
   /* Core colour system.
      Mirrored in the signal field shader in js/signal-background.js, which
@@ -20,21 +32,118 @@
   --signal:       var(--eucalyptus);
   --signal-soft:  var(--sage);
   --signal-deep:  var(--forest);
-  --ink-muted:    var(--slate);
+  --ink-muted:    #616C68;   /* see note below */
 
-  /* Derived: body copy sits between the main and muted text colours. Slate
-     alone lands at 4.2:1 on the ivory — just under AA for text this size —
-     so secondary copy takes a darker step of the same hue. */
+  /* Two derived steps of the slate, because the slate itself does not carry
+     text. On the ivory it lands at 4.45:1 — under AA at any size — so body
+     copy takes a much darker step (--ink-soft, 8.3:1) and the small muted
+     labels take the smallest step that clears AA on every surface the page
+     uses: ivory, pale sage, and the tinted row in the demonstration panel
+     (--ink-muted, 4.67:1 at worst). --slate itself is kept as the brand
+     value and used only where nothing has to be read from it. */
   --ink-soft:     #3E4B47;
+
+  /* State. The only non-brand hue on the page, and it earns its place by
+     naming a problem. Both steps clear AA on the ivory. */
+  --danger:       #9A3B32;
+  --danger-ink:   #8E362D;
+
+  /* Form field underlines are UI component boundaries, so WCAG 1.4.11 wants
+     3:1 — not the 1.4.3 text threshold. --rule-strong composites to 1.79:1 on
+     the ivory, which made the "highlighted field" on a validation error a
+     change to a line nobody could see. 3.23:1 on ivory, 3.06:1 on pale sage. */
+  --field-line:   #848981;
   --rule:         rgba(23, 37, 34, 0.14);
+  --rule-strong:  rgba(23, 37, 34, 0.28);
+
+  /* On the dark surface. Soft Sage lands at 3.9:1 on Deep Forest — large
+     text and rules only — so copy there takes the Pale Sage (8.7:1). */
+  --on-dark:         var(--sage-pale);
+  /* Soft Sage lifted toward the Pale Sage until it clears AA on the Deep
+     Forest (3.9:1 → 4.6:1). The accent still reads as the accent; it is
+     only used where the green has to carry small text on the dark band. */
+  --signal-on-dark:  #94B7AB;
+
+  /* On the noise ground (--ink #172522). Soft Sage measures 6.08:1 there, so
+     the brand accent carries text without being lightened — which it cannot
+     do on Deep Forest. */
+  --on-noise:        var(--sage-pale);
+  --on-noise-muted:  rgba(232, 239, 235, 0.74);
+  --signal-noise:    var(--sage);
+  --rule-noise:      rgba(232, 239, 235, 0.18);
+  --on-dark-muted:   rgba(232, 239, 235, 0.72);
+  --rule-dark:       rgba(232, 239, 235, 0.20);
 
   /* Type */
   --font-sans:    "Inter", ui-sans-serif, system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
   --font-display: "Newsreader", ui-serif, Georgia, "Times New Roman", serif;
 
+  /* The small end of the scale, as four steps rather than the twelve values
+     it had drifted into — 15px, 15.1px and 15.8px were three tokens doing one
+     job, and nothing below 11px is legible as functional text. Display sizes
+     stay fluid per component; these do not need to. */
+  --t-label:      11px;    /* uppercase micro-labels */
+  --t-meta:       12px;    /* nav, captions, status */
+  --t-sm:         14px;    /* dense supporting copy */
+  --t-body:       clamp(15px, 1.05vw, 17px);
+  --t-lede:       clamp(16.5px, 1.2vw, 19px);
+
   /* Rhythm */
   --gutter:       clamp(20px, 4.2vw, 60px);
   --page-max:     1560px;
+  --measure:      66ch;
+
+  /* Vertical scale. Section spacing is visibly larger than the spacing
+     between related items — the brand's layout rule, expressed as tokens
+     rather than re-decided per section. */
+  --space-2:      8px;
+  --space-3:      14px;
+  --space-4:      22px;
+  --space-5:      34px;
+  --space-6:      clamp(44px, 5vw, 68px);
+  --space-7:      clamp(72px, 9vw, 116px);
+
+  /* Three intervals, not one. Measured, the page had a single 116px gap doing
+     the work inside sections and a 207px gap between them — a 1.45:1 ratio,
+     which is not enough for a reader to feel an argument end. These separate
+     "next block" from "next movement", and --section-y keeps the boundary at
+     roughly 3x the block gap. */
+  --gap-block:    clamp(44px, 5.4vw, 72px);    /* head → its content        */
+  --gap-movement: var(--space-7);              /* new movement in a section */
+  --section-y:    clamp(88px, 11.5vh, 172px);  /* x2 at a section boundary  */
+
+  /* The hero-to-problem ramp. Declared here rather than on .band--noise
+     because the scroll cue is positioned against it from the hero side, and
+     the two must not be able to drift apart.
+
+     56vh is not a taste call, it is the constraint. The cue is flat white with
+     no disc and no shadow, so it is only legible over the dark part of the
+     gradient — and how far down the page that starts is set by this value:
+     with the source below the ramp box (which the progression needs to stay
+     monotonic) the colour walk always spans ~0.44 of the ramp from its top.
+     Swept across five lengths with the cue as deep as the fold allows, white
+     measured 1.45 at 92vh, 1.91 at 74, 2.44 at 64, 3.12 at 56 and 3.87 at 50 —
+     monotonic, because a shorter ramp brings the green up the page while the
+     cue's depth stays pinned to the fold. 46vh buys back what lowering the
+     hero copy spent: every pixel the copy moves down pushes the join down with
+     it, and the cue loses that pixel of gradient. A taller gradient, a taller
+     fold and lower copy all cost the same thing. */
+  --ramp: clamp(360px, 46vh, 560px);
+
+  /* The masthead's height, computed from the same values nav.css lays it out
+     with, so the fold and the anchor offsets are right before any script
+     runs. It is a floor, not the truth: whatever is tallest in the bar sets
+     the real height, and the demo pill beats the logo by about 20px, so
+     main.js measures the masthead and overwrites this. */
+  /* Symmetric by construction, and measured to be so: at 1440 the ink sits
+     34.0px from the masthead's top and 35.5px from its bottom, the 1.5px being
+     the demo pill's antialiased edge against the border. The rail was not
+     unbalanced, just tight — its top edge is the viewport's top edge, with no
+     page margin above it — so this adds room on both sides rather than
+     favouring one. */
+  --nav-pad:      clamp(24px, 2.9vw, 41px);
+  --nav-logo:     clamp(27px, 2.3vw, 36px);
+  --nav-h:        calc(var(--nav-pad) * 2 + var(--nav-logo));
 
   /* Motion — Apple-style ease; one curve for the whole page */
   --ease:         cubic-bezier(0.22, 0.61, 0.36, 1);
@@ -47,11 +156,23 @@
 html {
   -webkit-text-size-adjust: 100%;
   scroll-behavior: smooth;
+
+  /* Anchored sections clear the sticky masthead rather than hiding under it. */
+  scroll-padding-top: calc(var(--nav-h) + 12px);
 }
 
 body {
   margin: 0;
+
+  /* dvh, not svh. svh is by definition the viewport height with the browser's
+     chrome SHOWN, so anything sized in it comes up short the moment that
+     chrome collapses — and the strip it leaves at the bottom of the window is
+     outside every element's box, so what paints there is the root canvas.
+     That is the pale bar: it is not a layout gap, it is the page failing to
+     reach the bottom of the window. dvh tracks the viewport as it actually
+     is. The svh line stays first as a fallback for browsers without dvh. */
   min-height: 100svh;
+  min-height: 100dvh;
   background: var(--paper);
   color: var(--ink);
   font-family: var(--font-sans);
@@ -60,6 +181,24 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+/* The parts we did not draw. Selection, caret, scrollbar and underline
+   offset ship with browser defaults that belong to no design system. */
+::selection {
+  background: rgba(127, 169, 155, 0.46);
+  color: var(--ink);
+}
+
+html {
+  scrollbar-color: var(--signal-soft) transparent;
+  scrollbar-width: thin;
+  caret-color: var(--signal);
+}
+
+a { text-underline-offset: 0.18em; text-decoration-thickness: from-font; }
+
+/* Financial figures line up in columns; proportional numerals do not. */
+.demo__impact, .demo__detail dd b, .demo__count b { font-variant-numeric: tabular-nums; }
 
 img, svg { display: block; max-width: 100%; }
 svg { width: 100%; height: 100%; }
@@ -81,6 +220,28 @@ button {
   border-radius: 3px;
 }
 
+/* Focus on the dark surface needs the light side of the palette. */
+.band--dark :focus-visible { outline-color: var(--sage); }
+
+.skip-link {
+  position: absolute;
+  left: var(--gutter);
+  top: 10px;
+  z-index: 20;
+  padding: 10px 16px;
+  border-radius: 999px;
+  background: var(--signal-deep);
+  color: var(--paper);
+  font-size: var(--t-meta);
+  font-weight: 600;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  transform: translateY(-160%);
+  transition: transform var(--dur-fast) var(--ease);
+}
+
+.skip-link:focus-visible { transform: none; }
+
 /* ── Background layer ─────────────────────────────────────────
    Fixed behind everything. `contain: strict` isolates it from
    page layout/paint so the canvas never triggers a page reflow.
@@ -93,9 +254,58 @@ button {
   pointer-events: none;
   overflow: hidden;
   contain: strict;
+  /* No --paper here any more. The mask below fades this whole layer out, and
+     what it fades to has to be the page's own paper — which body already
+     paints — or the fade would reveal nothing and there would be no fade. */
   background:
-    radial-gradient(60% 55% at 82% 62%, rgba(127, 169, 155, 0.20), transparent 70%),
-    var(--paper);
+    radial-gradient(60% 55% at 82% 62%, rgba(127, 169, 155, 0.20), transparent 70%);
+
+  /* Declared HERE, on the container, not on the canvas that consumes it.
+     main.js writes --field-fade to this element's inline style; a default
+     declared on the canvas itself would shadow the inherited value and win,
+     which is exactly what it did — the mask resolved to 108% forever and never
+     attenuated anything. The hero's wash was quietly covering for it, so the
+     bug only surfaced when the wash came off and the strands cut dead at the
+     sheet's edge. 108% parks the fade off-screen, so without JS the field is
+     simply never masked. */
+  --field-fade: 108%;
+
+  /* The field attenuates where the ramp arrives, and the fade line is
+     SCROLL-LINKED rather than fixed to the viewport. This layer is
+     position: fixed, so a static mask leaves the texture standing still while
+     the colour ramp scrolls past it — measured, the gradient stack alone kinks
+     by 2-3 (the 8-bit floor) while the field on top of it kinks by 25. Moving
+     the fade with the ramp is what makes the two read as one surface.
+
+     Nine stops on a smoothstep falloff, not three. A three-stop mask has a
+     derivative kink at its middle stop, and that kink is itself a visible
+     edge — the same mistake as an un-eased colour ramp, one layer up.
+
+     The mask belongs on the container rather than on the canvas because the
+     tint above is part of the field too. Masking only the canvas left that
+     radial unfaded, and since it is visible above the sheet and covered below
+     it, it stepped ~16 units in red right at the join — a faint line exactly
+     where all this work is trying not to draw one.
+
+     The run is 18% of the viewport, not 30%. Profiled row by row, the strands
+     are concentrated between 50% and 65% of the fold; a 30% run began fading
+     at 44% and so spent most of its length dimming the only part of the field
+     worth seeing. 18% starts the fade below the strands' peak and still has
+     162px at 900px tall to reach zero, which is far more than the join needs. */
+  --field-mask: linear-gradient(to bottom,
+    #000                 calc(var(--field-fade) - 18%),
+    rgba(0, 0, 0, 0.97)  calc(var(--field-fade) - 15.5%),
+    rgba(0, 0, 0, 0.90)  calc(var(--field-fade) - 13%),
+    rgba(0, 0, 0, 0.78)  calc(var(--field-fade) - 11%),
+    rgba(0, 0, 0, 0.62)  calc(var(--field-fade) - 9%),
+    rgba(0, 0, 0, 0.44)  calc(var(--field-fade) - 7%),
+    rgba(0, 0, 0, 0.27)  calc(var(--field-fade) - 5.2%),
+    rgba(0, 0, 0, 0.13)  calc(var(--field-fade) - 3.5%),
+    rgba(0, 0, 0, 0.04)  calc(var(--field-fade) - 2%),
+    rgba(0, 0, 0, 0.008) calc(var(--field-fade) - 0.9%),
+    transparent          var(--field-fade));
+  -webkit-mask-image: var(--field-mask);
+  mask-image: var(--field-mask);
 }
 
 #signal-bg canvas {
@@ -103,12 +313,6 @@ button {
   width: 100%;
   height: 100%;
 
-  /* The field materialises rather than simply being there: it resolves in
-     alongside the copy, scale and opacity together, so it reads as a surface
-     arriving rather than a layer switched on. */
-  opacity: 0;
-  transform: scale(1.014);
-  transition: opacity 1400ms var(--ease), transform 1800ms var(--ease);
 }
 
 .is-ready #signal-bg canvas {
@@ -120,16 +324,44 @@ button {
 .page {
   position: relative;
   z-index: 1;
-  display: flex;
-  flex-direction: column;
-  min-height: 100svh;
+}
+
+/* main had no rule of its own — its height was purely its content, and it
+   carried no guarantee of covering the window. This does not paint (a
+   background here would sit above the fixed signal field and hide it), but it
+   guarantees the element reaches the bottom of the viewport even if the fold's
+   content is short, so nothing downstream has to assume it does. */
+main {
+  min-height: calc(100svh - var(--nav-h));
+  min-height: calc(100dvh - var(--nav-h));
+}
+
+/* The one measure every block is set to. Applied directly to a block, or to
+   an inner element where the block itself needs to run full-bleed. */
+.wrap {
+  width: 100%;
   max-width: var(--page-max);
   margin: 0 auto;
   padding: 0 var(--gutter);
 }
 
-/* Press feedback is instant and lives on pointer-down, not on release —
-   the moment it waits for a click, directness falls off a cliff. */
+/* ── The sheet ────────────────────────────────────────────────
+   Everything below the fold. The signal field is a fixed layer,
+   so the page would otherwise scroll its content across a live
+   background for the whole document. Instead the sheet fades up
+   out of the field and holds opaque paper from there down: the
+   composition resolves from atmosphere into structure, which is
+   the brand's noise → clarity transition read vertically.       */
+.sheet {
+  position: relative;
+  background: linear-gradient(to bottom,
+    rgba(247, 243, 236, 0) 0,
+    var(--paper) clamp(120px, 18vh, 240px));
+}
+
+/* ── Press feedback ───────────────────────────────────────────
+   Instant and on pointer-down, not on release — the moment it
+   waits for a click, directness falls off a cliff.              */
 .btn--pill:active,
 .cta:active .cta__disc {
   transform: scale(0.97);
@@ -137,7 +369,6 @@ button {
 }
 
 .nav__links a:active,
-.nav__signin:active,
 .link-quiet:active {
   opacity: 0.55;
   transition-duration: 100ms;
@@ -156,7 +387,7 @@ button {
   display: inline-flex;
   align-items: center;
   gap: 14px;
-  font-size: 12.5px;
+  font-size: var(--t-meta);
   font-weight: 600;
   letter-spacing: 0.11em;
   text-transform: uppercase;
@@ -189,7 +420,55 @@ button {
 
 .btn--pill:hover .btn__icon { transform: translateX(3px); }
 
-/* ── Reveal-on-load ───────────────────────────────────────── */
+.cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.cta__disc {
+  display: grid;
+  place-items: center;
+  width: clamp(52px, 4vw, 62px);
+  height: clamp(52px, 4vw, 62px);
+  border-radius: 50%;
+  background: var(--signal-deep);
+  color: var(--paper);
+  flex: none;
+  transition: transform 260ms var(--ease), background-color var(--dur-fast) var(--ease);
+}
+
+.cta__disc svg { width: 42%; height: 42%; }
+
+.cta:hover .cta__disc {
+  transform: translate(2px, -2px) scale(1.04);
+  background: var(--eucalyptus);
+}
+
+.cta__label {
+  font-size: var(--t-meta);
+  font-weight: 600;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.link-quiet {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 5px 0;
+  font-size: var(--t-meta);
+  font-weight: 500;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--ink);
+  transition: opacity var(--dur-fast) var(--ease);
+}
+
+.link-quiet:hover { opacity: 0.62; }
+
+/* ── Reveal-on-load ───────────────────────────────────────────
+   The fold only. Everything below it uses [data-enter].         */
 [data-reveal] {
   opacity: 0;
   transform: translateY(14px);
@@ -203,6 +482,23 @@ button {
   transition-delay: var(--reveal-delay, 0ms);
 }
 
+/* ── Reveal-on-scroll ─────────────────────────────────────────
+   Slower and shorter than the entrance: below the fold the move
+   is a settle, not an arrival. Elements stay revealed once seen.
+   Without JS the initial state never applies, so the page reads
+   normally — the rule is scoped to .has-enter, set by main.js.   */
+.has-enter [data-enter] {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 820ms var(--ease), transform 820ms var(--ease);
+  transition-delay: var(--enter-delay, 0ms);
+}
+
+.has-enter [data-enter].is-in {
+  opacity: 1;
+  transform: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
 
@@ -214,5 +510,7 @@ button {
   }
   [data-reveal] { opacity: 1; transform: none; }
   .is-ready [data-reveal] { transition: none; }
+
+  .has-enter [data-enter] { transform: none; transition: opacity 240ms ease; }
   * { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; }
 }

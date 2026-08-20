@@ -1,0 +1,79 @@
+/* ─────────────────────────────────────────────────────────────
+   legal.css — the privacy notice
+
+   One column, one measure, no ornament. The page exists to be
+   read and believed, so it uses the reading end of the system
+   and nothing from the marketing end: no display sizes above
+   the h1, no signal green except on links.
+   ───────────────────────────────────────────────────────────── */
+
+.legal {
+  padding-block: clamp(56px, 9vh, 104px) var(--section-y);
+}
+
+.legal__wrap { max-width: min(72ch, var(--page-max)); }
+
+.legal__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(34px, 4vw, 54px);
+  line-height: 1.04;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+}
+
+.legal__meta {
+  margin: var(--space-3) 0 0;
+  font-size: var(--t-meta);
+  color: var(--ink-muted);
+}
+
+.legal__lede {
+  margin: var(--space-5) 0 0;
+  max-width: 34em;
+  font-size: var(--t-lede);
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+
+.legal h2 {
+  margin: var(--space-6) 0 var(--space-3);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--rule);
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(21px, 1.8vw, 26px);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+
+.legal p {
+  margin: 0 0 var(--space-4);
+  font-size: var(--t-body);
+  line-height: 1.66;
+  color: var(--ink-soft);
+}
+
+.legal a {
+  color: var(--signal);
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+  text-decoration-thickness: 1px;
+}
+
+.legal a:hover { color: var(--signal-deep); }
+
+/* A standalone navigation control, not a link inside a sentence — so it does
+   not get 2.5.8's inline exemption and buys its own 24px with padding. */
+.legal__back {
+  margin-top: var(--space-6);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--rule);
+}
+
+.legal__back a {
+  display: inline-block;
+  padding: 4px 0;
+}

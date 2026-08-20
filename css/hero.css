@@ -1,33 +1,68 @@
 /* ─────────────────────────────────────────────────────────────
-   hero.css — hero section
+   hero.css — the fold
    ───────────────────────────────────────────────────────────── */
 
 .hero {
-  /* Takes every pixel the masthead leaves behind, so the copy can be
-     centred against the viewport rather than against its own box — the
-     wave field is a fixed viewport layer and ignores page flow. */
-  flex: 1 1 auto;
+  position: relative;
   display: flex;
-  align-items: center;
-  min-height: clamp(420px, 52svh, 640px);
+
+  /* stretch, not center: the measure block has to fill the fold so the scroll
+     cue can sit against the bottom of the SCREEN. The copy is centred inside
+     it instead — an absolutely positioned child of a centred block measures
+     against the copy's height, not the fold's. */
+  align-items: stretch;
+
+  /* Exactly the viewport, less the masthead above it. --nav-h is computed in
+     base.css from the masthead's own tokens, which is the right answer
+     without JS; main.js then overwrites it with the measured height, because
+     the demo pill is taller than the logo the token is derived from. The
+     floor keeps the copy from being crushed on a short landscape phone. */
+  /* Not a full viewport. At 100svh the fold had more empty height than its
+     content needed, and the copy position, the scroll cue and the band's ramp
+     all competed for the surplus. The fold is now sized to its content, and
+     the slice of ramp showing below it does the same job the cue does.
+
+     74svh, and this is a ceiling rather than a preference. The fold and the
+     scroll cue compete for the same pixels: the ramp starts where the fold
+     ends, and the cue can only go as deep as what is left below it, so every
+     pixel given to the hero is a pixel of gradient the flat white cue cannot
+     reach. Swept at three viewports, the cue holds 3.12:1 at 62, 66, 70 and 74
+     and falls to 2.96 at 78 — under the 3:1 bar. Note that below 74 this value
+     is inert at common sizes: at 1440x900 the copy already makes the fold
+     549px, taller than 74svh less the masthead, so the min-height only bites
+     on tall viewports. The floor keeps the copy from being crushed on a short
+     landscape phone. */
+  min-height: max(460px, calc(74svh - var(--nav-h)));
   padding: clamp(24px, 3vh, 48px) 0;
 }
 
+/* The fold's own box: full height, cue pinned to the bottom edge.
+   The copy sits in the upper third rather than dead centre — centred, it left
+   ~180px of empty ivory between the masthead and the headline at 1440x900 and
+   243px at 1920, which read as the page not having started yet. Weighted up,
+   the space collects at the bottom instead, where the field and the scroll cue
+   are doing something with it. */
+.hero > .wrap {
+  position: relative;
+  z-index: 1;                 /* above the fixed signal field */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
 .hero__copy {
+  /* 11.5vh, up from 8.5. Worth knowing this is not free: the fold's height is
+     content-driven at common sizes, so every pixel added here pushes the join
+     down and takes a pixel of gradient the scroll cue needs to stay legible.
+     The ramp was shortened to pay for it. */
+  margin-top: clamp(36px, 14.5vh, 174px);
+
   /* The shader veils roughly the left third of the viewport for copy —
      this column is sized to stay inside that cleared area. */
   width: min(100%, 560px);
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-
-  /* Wave-axis alignment. The field publishes its reference line as a
-     fraction of the VIEWPORT, while centring inside .hero lands the copy
-     midway between the masthead and the bottom of the page. The gap between
-     those two references changes with viewport height, so js/main.js
-     measures it and writes --hero-axis-shift. Untouched (0) without JS,
-     which leaves the copy centred in its own box: close, never broken. */
-  transform: translateY(var(--hero-axis-shift, 0px));
 }
 
 /* ── Headline ─────────────────────────────────────────────── */
@@ -75,11 +110,24 @@
 
 /* ── Lede ─────────────────────────────────────────────────── */
 .hero__lede {
-  max-width: 24.5em;
+  /* Wide enough for the longer of the two lines below to hold on one row.
+     That line measures ~27.5em set in Inter; the em unit keeps the ratio
+     across the whole font-size clamp, and 493px at the top of it still
+     sits well inside the 560px copy column. */
+  max-width: 29em;
   margin: clamp(22px, 3vh, 38px) 0 0;
-  font-size: clamp(15px, 1.05vw, 17px);
+  font-size: var(--t-body);
   line-height: 1.62;
   color: var(--ink-soft);
+}
+
+/* The lede breaks by clause rather than wherever the measure runs out —
+   two rows, one thought each. Only where there is room for it: below that,
+   forcing the break would just move the ragged edge into the middle of a
+   sentence, so the lines go back to being inline and wrap normally. The
+   newline between them in the markup is the space that rejoins them. */
+@media (min-width: 660px) {
+  .hero__lede-line { display: block; }
 }
 
 /* ── Actions ──────────────────────────────────────────────── */
@@ -90,54 +138,8 @@
   margin-top: clamp(30px, 4.4vh, 56px);
 }
 
-.cta {
-  display: inline-flex;
-  align-items: center;
-  gap: 20px;
-}
-
-.cta__disc {
-  display: grid;
-  place-items: center;
-  width: clamp(52px, 4vw, 62px);
-  height: clamp(52px, 4vw, 62px);
-  border-radius: 50%;
-  background: var(--signal-deep);
-  color: var(--paper);
-  transition: transform 260ms var(--ease), background-color var(--dur-fast) var(--ease);
-}
-
-.cta__disc svg { width: 42%; height: 42%; }
-
-.cta:hover .cta__disc {
-  transform: translate(2px, -2px) scale(1.04);
-  background: var(--eucalyptus);
-}
-
-.cta__label {
-  font-size: 12.5px;
-  font-weight: 600;
-  letter-spacing: 0.13em;
-  text-transform: uppercase;
-}
-
-.link-quiet {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 12.5px;
-  font-weight: 500;
-  letter-spacing: 0.13em;
-  text-transform: uppercase;
-  color: var(--ink);
-  transition: opacity var(--dur-fast) var(--ease);
-}
-
-.link-quiet:hover { opacity: 0.62; }
-
 /* ── Responsive ───────────────────────────────────────────── */
 @media (max-width: 900px) {
-  .hero { min-height: clamp(460px, 62svh, 640px); }
   .hero__copy { width: min(100%, 620px); }
   .hero__title { font-size: clamp(46px, 9.5vw, 76px); }
 }
@@ -149,3 +151,83 @@
     gap: 22px;
   }
 }
+
+/* ── Scroll cue ───────────────────────────────────────────────
+   Centred on the page and sized to be found. An outlined disc,
+   not a filled one, so it reads below the primary CTA in the
+   hierarchy while still being unmissable.
+   ───────────────────────────────────────────────────────────── */
+.hero__scroll {
+  position: absolute;
+  left: 50%;
+
+  /* Positioned against --ramp, not against the fold's edge. The cue has to
+     land deep enough into the gradient that the ground behind it is green
+     rather than ivory — a white chevron on paper is not a cue, it is nothing —
+     and the only value that knows where the green is is the ramp's own length.
+     That is why --ramp lives on :root now instead of on .band--noise: the two
+     sides of this must not be able to drift apart. */
+  /* --cue-drop is written by main.js: the deepest the cue can sit and still be
+     fully on screen, capped at the depth where the ramp has gone dark. It has
+     to be measured rather than expressed in vh, because where the fold ends
+     depends on how tall the copy renders, not on the viewport alone — a 20vh
+     guess put the cue back up on the ivory at 1440x900 and 5px off the bottom
+     edge at 1280x800. The fallback only matters before JS runs. */
+  bottom: calc(-1 * var(--cue-drop, 24vh));
+  transform: translateX(-50%);
+  display: grid;
+  place-items: center;
+
+  /* No disc. On ivory the chevron needed a container to hold its own against
+     the paper; sitting on the green it does not, and that ring was the only
+     hard edge in a part of the page whose whole job is having none. The box
+     stays large for the touch target — 2.5.8 asks for 24x24 and this is well
+     past it — but nothing about it paints. */
+  width: clamp(64px, 5.5vw, 84px);
+  height: clamp(64px, 5.5vw, 84px);
+  border: 0;
+  background: none;
+  color: #FFFFFF;
+  transition: color var(--dur-fast) var(--ease),
+              opacity 420ms var(--ease);
+}
+
+.hero__scroll svg {
+  width: clamp(32px, 2.8vw, 40px);
+  height: auto;
+}
+
+.hero__scroll:hover { color: var(--sage-pale); }
+
+.hero__scroll:active { transform: translate(-50%, 2px); transition-duration: 90ms; }
+
+/* Once the reader is moving, the prompt has done its job. */
+.hero__scroll[data-spent] {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* And its loop stops with it — a nonessential animation must not keep running
+   on an element nobody can see. */
+.hero__scroll[data-spent] svg { animation: none; }
+
+/* A slow, shallow drift — an affordance hint, not a performance. It is the
+   only looping motion on the page and it stops the moment it is not needed. */
+@media (prefers-reduced-motion: no-preference) {
+  .hero__scroll svg { animation: hero-cue 2.6s var(--ease) infinite; }
+
+  @keyframes hero-cue {
+    0%, 62%, 100% { transform: translateY(0); opacity: 0.78; }
+    31%           { transform: translateY(5px); opacity: 1; }
+  }
+}
+
+/* Too short to spare the room, and the affordance matters least where the
+   whole page is already one gesture away. 720 rather than 660: shortening the
+   fold to 88svh moved the cue up with it, and at 700 its box began overlapping
+   the copy's. Nothing visibly collides — the copy's children shrink-wrap — but
+   a longer headline would land on it. */
+@media (max-height: 720px) {
+  .hero__scroll { display: none; }
+}
+

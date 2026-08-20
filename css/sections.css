@@ -1,0 +1,483 @@
+/* ─────────────────────────────────────────────────────────────
+   sections.css — the narrative below the fold
+
+   One band anatomy for every section: an eyebrow that numbers
+   and names it, a display statement, a lede, then the section's
+   own content. Hierarchy comes from spacing, type and alignment
+   before it comes from borders — so almost nothing here is a card.
+   ───────────────────────────────────────────────────────────── */
+
+.band {
+  position: relative;
+  padding-block: var(--section-y);
+}
+
+/* The first band rises out of the signal field. It needs enough room above
+   the type for the sheet's fade to finish before anything has to be read
+   against it. */
+.sheet > .band:first-child {
+  padding-top: clamp(112px, 15vh, 208px);
+}
+
+.band--surface { background: var(--surface); }
+
+.band--dark {
+  background: var(--signal-deep);
+  color: var(--on-dark);
+}
+
+/* ── Section head ─────────────────────────────────────────────
+   Asymmetric: the statement takes the wide left column, the lede
+   the narrow right one, and the two share a baseline grid rather
+   than being stacked and centred.                                */
+.section-head {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  gap: var(--space-5) clamp(32px, 5vw, 90px);
+  align-items: end;
+}
+
+.section-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(34px, 4.3vw, 62px);
+  line-height: 1.03;
+  letter-spacing: clamp(-1.5px, 0.55px - 0.14vw, -0.4px);
+  font-optical-sizing: auto;
+  color: var(--ink);
+  text-wrap: balance;
+}
+
+.band--dark .section-title { color: var(--on-dark); }
+
+.section-title em {
+  font-style: italic;
+  color: var(--signal);
+}
+
+.band--dark .section-title em { color: var(--signal-soft); }
+
+/* The second line of a two-part statement, set italic and a step down —
+   the same relationship the hero uses. */
+.section-title span {
+  display: block;
+  font-style: italic;
+  font-size: 0.88em;
+}
+
+.section-lede {
+  margin: 0;
+  max-width: 34em;
+  font-size: var(--t-lede);
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+
+.band--dark .section-lede { color: var(--on-dark-muted); }
+
+/* The noise-to-signal field now lives in css/problem.css. It is driven by
+   scroll progress rather than a one-shot reveal, so the rules that used to
+   sit here would have fought it — and worse, their `.figure.is-in` activator
+   no longer exists, which would have pinned the signal permanently hidden. */
+
+/* ── The loop ─────────────────────────────────────────────────
+   Six stages on one rule. The rule is a border on each stage
+   rather than a line behind the row, so it stays continuous
+   when the grid rewraps — and column gaps become padding for
+   the same reason.                                              */
+.loop {
+  display: grid;
+  /* 3x2, not 6x1. At six columns the text track measured 197px — 21-25
+     characters a line, and narrower at 1440 than it was at 1024, because the
+     breakpoint promoted 3→6 exactly when the copy stopped fitting. At three
+     the track is ~430px and 48-55 characters, and the row break lands between
+     Recommendation and Decision, which is where the copy says the turn is. */
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: var(--gap-block) 0 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: stage;
+}
+
+.loop__stage {
+  position: relative;
+  border-top: 1px solid var(--rule);
+  padding: var(--space-4) clamp(12px, 1.6vw, 26px) var(--space-5) 0;
+}
+
+.loop__stage::before {
+  content: "";
+  position: absolute;
+  top: -3.5px;
+  left: 0;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--paper);
+  box-shadow: inset 0 0 0 1.5px var(--signal-soft);
+}
+
+.loop__name {
+  margin: 0 0 10px;
+  font-size: var(--t-meta);
+  font-weight: 600;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.loop__name::before {
+  counter-increment: stage;
+  content: counter(stage, decimal-leading-zero) " ";
+  color: var(--signal);
+  font-variant-numeric: tabular-nums;
+}
+
+.loop__body {
+  margin: 0;
+  font-size: var(--t-sm);
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
+
+/* The loop closes on its last stage rather than under a drawn arc: the sixth
+   node is filled and ringed, and the sentence underneath says what that means.
+   A bracket floating below the row connected to nothing and read as a bug. */
+.loop__stage--closes::before {
+  background: var(--signal);
+  box-shadow: 0 0 0 4px rgba(63, 117, 104, 0.18);
+}
+
+.loop__return {
+  max-width: 62ch;
+  margin: var(--space-5) 0 0;
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--rule);
+  font-size: var(--t-sm);
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
+
+.loop__return b { font-weight: 600; color: var(--ink); }
+
+/* ── Pillars ──────────────────────────────────────────────── */
+/* The rules used to span the full 1320px measure while the text stopped at
+   ~1000px — 373px of bare hairline on eleven consecutive rows, growing to
+   478px at 1920. A hairline pointing at nothing reads as content that failed
+   to load. The block is now exactly its own two tracks plus their gap, so the
+   rule and the text end together at every width. */
+.pillars {
+  margin: var(--gap-block) 0 0;
+  max-width: calc(27ch + 62ch + clamp(24px, 3.4vw, 64px));
+}
+
+/* The rule spans the full measure — it is the structure — but the content
+   does not. A 4fr/8fr split left the label marooned at the far left with a
+   90px gap and ran the description out to a 90-character line. The label
+   column is now sized to the labels, and the description keeps a readable
+   measure. */
+.pillars__row {
+  display: grid;
+  grid-template-columns: minmax(0, 27ch) minmax(0, 62ch);
+  gap: var(--space-2) clamp(24px, 3.4vw, 64px);
+  padding: clamp(18px, 2.2vw, 30px) 0;
+  border-top: 1px solid var(--rule);
+}
+
+.pillars__row:last-child { border-bottom: 1px solid var(--rule); }
+
+/* Sentence case, not uppercase: these read as short statements now rather
+   than as taxonomy labels, and letter-spaced caps fight that. */
+.pillars__row dt {
+  font-size: var(--t-body);
+  font-weight: 600;
+  color: var(--signal-deep);
+  text-wrap: balance;
+}
+
+.pillars__row dd {
+  margin: 0;
+  font-size: var(--t-body);
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
+
+/* ── Principles ───────────────────────────────────────────────
+   Used twice: for value on the light surface and for trust on
+   the dark one. The base is light and .band--dark re-tints it,
+   so neither copy carries a variant class of its own.           */
+.principles {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-6) clamp(32px, 5vw, 96px);
+  margin: var(--gap-block) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.principle {
+  border-top: 1px solid var(--rule-strong);
+  padding-top: var(--space-4);
+}
+
+.band--dark .principle { border-top-color: var(--rule-dark); }
+
+.principle__title {
+  margin: 0 0 var(--space-3);
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(20px, 1.75vw, 26px);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+
+.band--dark .principle__title { color: var(--on-dark); }
+
+.principle__body {
+  margin: 0;
+  font-size: var(--t-body);
+  line-height: 1.64;
+  color: var(--ink-soft);
+}
+
+.band--dark .principle__body { color: var(--on-dark-muted); }
+
+/* ── Subhead ──────────────────────────────────────────────────
+   A second movement inside a section. Smaller than a section
+   title and separated by a rule, so it reads as a continuation
+   rather than as a new section that lost its number.            */
+.subhead {
+  max-width: 38em;
+  margin-top: var(--gap-movement);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--rule);
+}
+
+.subhead__title {
+  margin: 0 0 var(--space-3);
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(23px, 2.3vw, 34px);
+  line-height: 1.14;
+  letter-spacing: -0.012em;
+  color: var(--ink);
+}
+
+/* A subhead opens its own movement; the block it introduces belongs to that
+   movement and must not re-open the section-level gap. Without this the gap
+   under a subhead (98px) was nearly the gap between sections (116px), which
+   flattens the hierarchy the spacing is there to express. */
+.subhead + .pillars,
+.subhead + .profiles,
+.subhead + .principles,
+.subhead + .loop { margin-top: var(--space-5); }
+
+.subhead__body {
+  margin: 0;
+  font-size: var(--t-body);
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
+
+/* ── Who it's for ─────────────────────────────────────────── */
+.profiles {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-6) clamp(28px, 3.6vw, 68px);
+  margin: var(--gap-block) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.profile {
+  border-top: 1px solid var(--rule-strong);
+  padding-top: var(--space-4);
+}
+
+/* Sentence case: "Head of asset management · CIO · COO" is 36 characters,
+   and letterspaced uppercase at that length is a passage, not a label.
+   Size, weight and colour still mark it as one. */
+.profile__role {
+  margin: 0 0 var(--space-4);
+  font-size: var(--t-meta);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--ink-muted);
+}
+
+.profile__line {
+  margin: 0 0 var(--space-3);
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(20px, 1.8vw, 26px);
+  line-height: 1.2;
+  letter-spacing: -0.008em;
+  color: var(--signal-deep);
+}
+
+.profile__body {
+  margin: 0;
+  font-size: var(--t-body);
+  line-height: 1.62;
+  color: var(--ink-soft);
+}
+
+/* ── Vision ───────────────────────────────────────────────────
+   One statement, one motif, nothing else. The quietest band on
+   the page and the only one with no supporting copy at all.      */
+.vision {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  gap: var(--space-6) clamp(32px, 5vw, 80px);
+  align-items: center;
+}
+
+.vision__statement {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(25px, 2.9vw, 44px);
+  line-height: 1.16;
+  letter-spacing: clamp(-0.9px, 0.3px - 0.08vw, -0.2px);
+  color: var(--ink);
+  text-wrap: pretty;
+}
+
+.vision__statement em { font-style: italic; color: var(--signal); }
+
+.vision__motif { color: var(--signal-soft); }
+
+/* Closing band: the vision, a rule, then the form. */
+.vision + .contact {
+  margin-top: clamp(64px, 8vw, 116px);
+  padding-top: clamp(56px, 7vw, 96px);
+  border-top: 1px solid var(--rule);
+}
+
+/* ── Responsive ───────────────────────────────────────────── */
+@media (max-width: 1080px) {
+  .profiles { gap: var(--space-6) clamp(24px, 3vw, 44px); }
+}
+
+@media (max-width: 900px) {
+  .section-head,
+  .vision { grid-template-columns: minmax(0, 1fr); }
+
+  .section-head { align-items: start; }
+
+  .profiles,
+  .principles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+  .pillars__row { grid-template-columns: minmax(0, 1fr); gap: var(--space-3); }
+
+  .vision__motif { order: -1; max-width: 320px; }
+}
+
+@media (max-width: 760px) {
+  .loop { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 620px) {
+
+  .profiles,
+  .principles { grid-template-columns: minmax(0, 1fr); gap: var(--space-5); }
+
+}
+
+/* ── Who is building this ─────────────────────────────────────
+   Deliberately denser than the bands above it: title and lede
+   share the left column while the people sit right, so the one
+   section that answers "who are you" does not arrive in the
+   same 7fr/5fr shape as the six argument sections before it.
+
+   Not cards. Hairline-ruled entries, like every other list on
+   the page — a grid of equal boxes with a name in each is the
+   team-page default, and this system does not use containers. */
+.who {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: var(--space-6) clamp(32px, 5vw, 96px);
+  align-items: start;
+}
+
+.who .section-lede { margin-top: var(--space-5); }
+
+/* align-content:start stops the two founder entries stretching to match the
+   taller left column, which was opening a 206px hole under them — the largest
+   intra-section gap on the page. */
+.founders {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-content: start;
+  gap: var(--space-5) clamp(28px, 3.4vw, 56px);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.founder {
+  border-top: 1px solid var(--rule-strong);
+  padding-top: var(--space-4);
+}
+
+.founder__name {
+  margin: 0 0 4px;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(20px, 1.75vw, 26px);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+
+.founder__role {
+  margin: 0 0 var(--space-3);
+  font-size: var(--t-meta);
+  font-weight: 600;
+  color: var(--signal);
+}
+
+.founder__bio {
+  margin: 0;
+  font-size: var(--t-sm);
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
+
+/* The block closes on the one thing the reader can act on. */
+.who__people {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.who__note {
+  grid-column: 1 / -1;
+  max-width: 46em;
+  margin: 0;              /* the grid's row gap already separates it */
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--rule);
+  font-size: var(--t-body);
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
+
+.who__note a {
+  color: var(--signal);
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+  text-decoration-thickness: 1px;
+}
+
+.who__note a:hover { color: var(--signal-deep); }
+
+@media (max-width: 900px) {
+  .who { grid-template-columns: minmax(0, 1fr); }
+}
+
+@media (max-width: 620px) {
+  .founders { grid-template-columns: minmax(0, 1fr); }
+}

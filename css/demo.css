@@ -1,0 +1,298 @@
+/* ─────────────────────────────────────────────────────────────
+   demo.css — the illustrative product surface
+
+   One panel, not a stack of cards: the rows are separated by
+   hairlines and space, and only the open signal has any interior
+   structure. Everything on it is an example — see the caption.
+   ───────────────────────────────────────────────────────────── */
+
+/* The product proof sat at exactly the prose measure, at 13.1% ink coverage —
+   quieter than the trust boilerplate. A screenshot competing with body copy
+   for width always loses, so the panel steps outside --page-max. */
+/* Breaks out of the prose measure symmetrically. Expressed as negative inline
+   margin against the wrap rather than in vw, because vw includes the scrollbar
+   and would reintroduce horizontal overflow at the very widths this is for. */
+.demo {
+  margin-block: var(--gap-block) 0;
+  margin-inline: calc(-1 * clamp(0px, 2.6vw, 110px));
+}
+
+@media (max-width: 1100px) {
+  .demo { margin-inline: 0; }
+}
+
+.demo__panel {
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+/* ── Panel bar ────────────────────────────────────────────── */
+.demo__bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px clamp(12px, 1.6vw, 22px);
+  padding: clamp(16px, 1.8vw, 22px) clamp(18px, 2.2vw, 30px);
+  border-bottom: 1px solid var(--rule);
+}
+
+.demo__title {
+  font-size: var(--t-meta);
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.demo__meta {
+  font-size: var(--t-meta);
+  color: var(--ink-muted);
+}
+
+.demo__count {
+  margin-left: auto;
+  font-size: var(--t-meta);
+  color: var(--ink-soft);
+}
+
+.demo__count b {
+  font-weight: 600;
+  color: var(--signal);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Rows ─────────────────────────────────────────────────── */
+.demo__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.demo__row {
+  padding: clamp(14px, 1.6vw, 20px) clamp(18px, 2.2vw, 30px);
+}
+
+.demo__row + .demo__row { border-top: 1px solid var(--rule); }
+
+/* The open signal is the one the composition is about. The surface tint
+   carries that on its own — a 3px green edge on a list row is the coloured
+   side-tab, and the priority dot already says which row this is. */
+.demo__row--open {
+  background: #F1F1E9;                     /* fallback for no color-mix */
+  background: color-mix(in srgb, var(--surface) 60%, var(--paper));
+}
+
+.demo__head {
+  display: grid;
+  grid-template-columns: 92px minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 6px clamp(14px, 1.8vw, 26px);
+}
+
+/* Priority reads from the word first and the colour second — colour alone
+   never carries the meaning. The label itself always stays at full reading
+   contrast; the priority hue lives on the dot, where nothing has to be
+   read from it. */
+.demo__flag {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: var(--t-label);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.demo__flag::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--rule-strong);
+  flex: none;
+}
+
+.demo__flag--high { color: var(--signal); }
+.demo__flag--high::before   { background: var(--signal); }
+.demo__flag--medium::before { background: var(--signal-soft); }
+
+.demo__asset {
+  font-size: var(--t-body);
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.demo__asset span {
+  font-weight: 400;
+  color: var(--ink-muted);
+}
+
+.demo__impact {
+  font-size: var(--t-sm);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+.demo__what {
+  grid-column: 2 / -1;
+  margin: 6px 0 0;
+  font-size: var(--t-sm);
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+
+/* ── The open signal's interior ───────────────────────────── */
+.demo__detail {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4) clamp(24px, 3vw, 52px);
+  margin: var(--space-5) 0 0;
+  padding-left: calc(92px + clamp(14px, 1.8vw, 26px));
+}
+
+.demo__detail > div { min-width: 0; }
+
+.demo__detail dt {
+  margin-bottom: 7px;
+  font-size: var(--t-label);
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+
+.demo__detail dd {
+  margin: 0;
+  font-size: var(--t-sm);
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+
+.demo__detail dd b {
+  display: block;
+  margin-bottom: 2px;
+  font-family: var(--font-display);
+  font-size: clamp(22px, 2vw, 28px);
+  font-weight: 400;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+
+/* Sources listed as evidence, one per line, so they read as citations
+   rather than prose. */
+.demo__sources {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 5px;
+  font-size: var(--t-sm);
+  line-height: 1.45;
+  color: var(--ink-soft);
+}
+
+.demo__sources li {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 9px;
+}
+
+.demo__sources li::before {
+  content: "";
+  width: 4px;
+  height: 4px;
+  margin-top: 8px;
+  border-radius: 50%;
+  background: var(--signal-soft);
+}
+
+/* ── Recommendation ───────────────────────────────────────── */
+.demo__rec {
+  margin: var(--space-5) 0 0;
+  padding: var(--space-4) 0 0;
+  margin-left: calc(92px + clamp(14px, 1.8vw, 26px));
+  border-top: 1px solid var(--rule);
+}
+
+.demo__rec dt {
+  margin-bottom: 7px;
+  font-size: var(--t-label);
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--signal);
+}
+
+.demo__rec dd {
+  margin: 0;
+  max-width: 46em;
+  font-size: var(--t-body);
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+.demo__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 12px;
+  margin-top: var(--space-4);
+}
+
+/* Non-interactive by construction: spans, not buttons. The panel is a
+   picture of the product, and a control that does nothing is worse than
+   no control at all. */
+.demo__act {
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1px solid var(--rule-strong);
+  font-size: var(--t-meta);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.demo__act--primary {
+  background: var(--signal-deep);
+  border-color: var(--signal-deep);
+  color: var(--paper);
+}
+
+.demo__state {
+  margin: var(--space-4) 0 0;
+  font-size: var(--t-meta);
+  color: var(--ink-muted);
+}
+
+/* ── Caption ──────────────────────────────────────────────── */
+.demo__caption {
+  margin-top: var(--space-4);
+  font-size: var(--t-meta);
+  line-height: 1.5;
+  color: var(--ink-muted);
+}
+
+.demo__caption b {
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+/* ── Responsive ───────────────────────────────────────────── */
+@media (max-width: 860px) {
+  .demo__head { grid-template-columns: minmax(0, 1fr) auto; }
+  .demo__flag { grid-column: 1 / -1; margin-bottom: 4px; }
+  .demo__what { grid-column: 1 / -1; }
+
+  .demo__detail,
+  .demo__rec { padding-left: 0; margin-left: 0; }
+  .demo__detail { grid-template-columns: minmax(0, 1fr); }
+}

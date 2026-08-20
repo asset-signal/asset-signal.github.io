@@ -1,0 +1,284 @@
+/* ─────────────────────────────────────────────────────────────
+   form.css — the demo request
+
+   Underlined fields rather than boxed ones: the page has no
+   other containers, and a stack of input chrome would be the
+   first place it acquired some.
+   ───────────────────────────────────────────────────────────── */
+
+.contact {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  gap: var(--space-7) clamp(40px, 6vw, 120px);
+  align-items: start;
+}
+
+/* Not sticky. Measured, the aside is 462px against a 478px form — 16px of
+   travel, which is intent expressed in CSS with no rendered consequence. */
+.contact__aside {}
+
+.contact__lede { margin-top: var(--space-5); }
+
+.contact__points {
+  margin: var(--space-6) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.contact__points li {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 14px;
+  padding: 14px 0;
+  border-top: 1px solid var(--rule);
+  font-size: var(--t-sm);
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+
+.contact__points li::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  margin-top: 8px;
+  border-radius: 50%;
+  background: var(--signal-soft);
+}
+
+/* ── Fields ───────────────────────────────────────────────── */
+.form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-5) clamp(20px, 2.6vw, 44px);
+}
+
+.field { display: flex; flex-direction: column; }
+.field--wide { grid-column: 1 / -1; }
+
+/* Sentence case. A 39-character question set in letterspaced uppercase is a
+   passage, not a label, and uppercase removes the word shapes we read by. */
+.field > label {
+  margin-bottom: 10px;
+  font-size: var(--t-sm);
+  font-weight: 600;
+  color: var(--signal-deep);
+}
+
+.field__optional {
+  margin-left: 6px;
+  font-size: var(--t-label);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+
+.field input,
+.field select,
+.field textarea {
+  width: 100%;
+  min-width: 0;             /* a grid item must be allowed to shrink below its content */
+  padding: 10px 2px;
+  font: inherit;
+  font-size: 16px;          /* 16px or iOS zooms the page on focus */
+  color: var(--ink);
+  background: none;
+  border: 0;
+  border-bottom: 1px solid var(--field-line);
+  border-radius: 0;
+  transition: border-color var(--dur-fast) var(--ease);
+}
+
+.field textarea {
+  min-height: 92px;
+  resize: vertical;
+  line-height: 1.55;
+  overflow-wrap: break-word;   /* a pasted URL must not widen the column */
+}
+
+.field select {
+  appearance: none;
+  padding-right: 28px;
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--ink-soft) 50%),
+    linear-gradient(135deg, var(--ink-soft) 50%, transparent 50%);
+  background-size: 6px 6px, 6px 6px;
+  background-position: right 12px center, right 6px center;
+  background-repeat: no-repeat;
+}
+
+.field input::placeholder,
+.field textarea::placeholder { color: var(--ink-muted); opacity: 1; }
+
+.field input:hover,
+.field select:hover,
+.field textarea:hover { border-bottom-color: var(--ink-soft); }
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  outline: none;
+  border-bottom-color: var(--signal);
+  border-bottom-width: 1.5px;
+  padding-bottom: 9.5px;    /* hold the baseline as the rule thickens */
+}
+
+/* Keyboard users still get the ring; the border change alone is not a
+   focus indicator. */
+.field input:focus-visible,
+.field select:focus-visible,
+.field textarea:focus-visible {
+  outline: 2px solid var(--signal-deep);
+  outline-offset: 4px;
+}
+
+/* Errors are attached to the field that caused them, not only to the shared
+   status line, so a screen reader hears the problem when it reaches the input
+   and a sighted user does not have to work out which field "highlighted" means. */
+.field [aria-invalid="true"] { border-bottom-color: var(--danger); border-bottom-width: 2px; }
+
+.field__error {
+  margin: 8px 0 0;
+  font-size: var(--t-meta);
+  line-height: 1.45;
+  color: var(--danger-ink);
+}
+
+/* Required and optional are both stated. Marking only the optional one implies
+   the rest are optional too. */
+.field__req {
+  margin-left: 6px;
+  font-size: var(--t-label);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--signal);
+}
+
+/* The spam trap. Off-screen rather than display:none, because some bots skip
+   what is not rendered. */
+.field--trap {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.field--trap input { width: 1px; height: 1px; padding: 0; border: 0; }
+
+/* Sending: the control says what it is doing and refuses a second press. */
+.btn--pill[disabled] {
+  opacity: 0.62;
+  cursor: progress;
+  transform: none;
+}
+
+.form__foot {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4) var(--space-5);
+  margin-top: var(--space-2);
+}
+
+.form__note {
+  margin: 0;
+  max-width: 32em;
+  font-size: var(--t-meta);
+  line-height: 1.5;
+  color: var(--ink-muted);
+}
+
+.form__note a {
+  color: var(--signal);
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+
+.form__note a:hover { color: var(--signal-deep); }
+
+/* Reserved by the markup, not created on submit, so the layout below it
+   never jumps when a message appears. Long messages wrap rather than stretch
+   the grid column. */
+.form__status {
+  grid-column: 1 / -1;
+  min-height: 1.5em;
+  max-width: 52ch;
+  margin: 0;
+  font-size: var(--t-sm);
+  line-height: 1.5;
+  color: var(--signal-deep);
+  overflow-wrap: break-word;
+}
+
+.form__status:empty { min-height: 0; }
+
+.form__status[data-state="error"] { color: var(--danger-ink); }
+
+@media (max-width: 900px) {
+  .contact { grid-template-columns: minmax(0, 1fr); }
+}
+
+@media (max-width: 560px) {
+  .form { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* ── Sent ─────────────────────────────────────────────────────
+   The confirmation that replaces the form. Deliberately the same
+   weight as the form it stands in for, so the column does not
+   collapse and the page does not jump on success.
+   ───────────────────────────────────────────────────────────── */
+.sent {
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--field-line);
+}
+
+.sent__title {
+  margin: 0 0 var(--space-4);
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(26px, 2.4vw, 34px);
+  line-height: 1.14;
+  letter-spacing: -0.012em;
+  color: var(--ink);
+}
+
+/* Focused programmatically, so it must not show a ring as if it were a control,
+   but keyboard users still need to see where they landed. */
+.sent__title:focus { outline: none; }
+.sent__title:focus-visible { outline: 2px solid var(--signal-deep); outline-offset: 4px; }
+
+.sent__body {
+  margin: 0;
+  max-width: 44ch;
+  font-size: var(--t-body);
+  line-height: 1.62;
+  color: var(--ink-soft);
+}
+
+.sent__body a {
+  color: var(--signal);
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+
+.sent__meta {
+  margin: var(--space-5) 0 0;
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--rule);
+  font-size: var(--t-meta);
+  color: var(--ink-muted);
+}
+
+.sent__again {
+  padding: 4px 0;
+  font: inherit;
+  color: var(--signal);
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+
+.sent__again:hover { color: var(--signal-deep); }
