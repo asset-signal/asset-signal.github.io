@@ -21,6 +21,38 @@
 
 .band--surface { background: var(--surface); }
 
+/* The closing band. Paper at the top settling into Pale Sage, rather than a
+   flat fill — and the top stop is not a decoration: the section above ends on
+   paper, so starting here on the same value makes that boundary vanish
+   instead of stepping. The footer below is Deep Forest, and THAT edge is
+   meant to be an edge.
+
+   Fifteen eased stops over the top half, not two. The distance from Warm
+   Ivory to Pale Sage is short enough that a two-stop ramp bands visibly
+   across a section this tall; easing the colour on evenly-spaced stops is the
+   same construction the hero-to-problem ramp uses. sRGB first as the
+   fallback, oklab second. */
+.band--cta {
+  background: linear-gradient(to bottom,
+    var(--paper) 0, var(--surface) 52%);
+  background: linear-gradient(to bottom in oklab,
+    #F7F3EC 0,
+    #F7F3EC 3.7%,
+    #F7F3EC 7.4%,
+    #F6F3EC 11.1%,
+    #F5F2EC 14.9%,
+    #F3F2EC 18.6%,
+    #F2F2EC 22.3%,
+    #F0F1EC 26.0%,
+    #EEF0EB 29.7%,
+    #ECF0EB 33.4%,
+    #EAF0EB 37.1%,
+    #E9EFEB 40.9%,
+    #E8EFEB 44.6%,
+    #E8EFEB 48.3%,
+    #E8EFEB 52.0%);
+}
+
 .band--dark {
   background: var(--signal-deep);
   color: var(--on-dark);
@@ -159,60 +191,14 @@
   box-shadow: 0 0 0 4px rgba(63, 117, 104, 0.18);
 }
 
-/* ── Pillars ──────────────────────────────────────────────── */
-/* The rules used to span the full 1320px measure while the text stopped at
-   ~1000px — 373px of bare hairline on eleven consecutive rows, growing to
-   478px at 1920. A hairline pointing at nothing reads as content that failed
-   to load. The block is now exactly its own two tracks plus their gap, so the
-   rule and the text end together at every width. */
-.pillars {
-  margin: var(--gap-block) 0 0;
-  max-width: calc(27ch + 62ch + clamp(24px, 3.4vw, 64px));
-}
-
 /* The rule spans the full measure — it is the structure — but the content
    does not. A 4fr/8fr split left the label marooned at the far left with a
    90px gap and ran the description out to a 90-character line. The label
    column is now sized to the labels, and the description keeps a readable
    measure. */
-.pillars__row {
-  display: grid;
-  grid-template-columns: minmax(0, 27ch) minmax(0, 62ch);
-  gap: var(--space-2) clamp(24px, 3.4vw, 64px);
-  padding: clamp(18px, 2.2vw, 30px) 0;
-  border-top: 1px solid var(--rule);
-}
-
-.pillars__row:last-child { border-bottom: 1px solid var(--rule); }
 
 /* Sentence case, not uppercase: these read as short statements now rather
    than as taxonomy labels, and letter-spaced caps fight that. */
-.pillars__row dt {
-  font-size: var(--t-body);
-  font-weight: 600;
-  color: var(--signal-deep);
-  text-wrap: balance;
-}
-
-.pillars__row dd {
-  margin: 0;
-  font-size: var(--t-body);
-  line-height: 1.6;
-  color: var(--ink-soft);
-}
-
-/* ── Principles ───────────────────────────────────────────────
-   Used twice: for value on the light surface and for trust on
-   the dark one. The base is light and .band--dark re-tints it,
-   so neither copy carries a variant class of its own.           */
-.principles {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--space-6) clamp(32px, 5vw, 96px);
-  margin: var(--gap-block) 0 0;
-  padding: 0;
-  list-style: none;
-}
 
 .principle {
   border-top: 1px solid var(--rule-strong);
@@ -241,53 +227,6 @@
 }
 
 .band--dark .principle__body { color: var(--on-dark-muted); }
-
-/* ── Subhead ──────────────────────────────────────────────────
-   A second movement inside a section. Smaller than a section
-   title and separated by a rule, so it reads as a continuation
-   rather than as a new section that lost its number.            */
-.subhead {
-  max-width: 38em;
-  margin-top: var(--gap-movement);
-  padding-top: var(--space-5);
-  border-top: 1px solid var(--rule);
-}
-
-.subhead__title {
-  margin: 0 0 var(--space-3);
-  font-family: var(--font-display);
-  font-weight: 400;
-  font-size: clamp(23px, 2.3vw, 34px);
-  line-height: 1.14;
-  letter-spacing: -0.012em;
-  color: var(--ink);
-}
-
-/* A subhead opens its own movement; the block it introduces belongs to that
-   movement and must not re-open the section-level gap. Without this the gap
-   under a subhead (98px) was nearly the gap between sections (116px), which
-   flattens the hierarchy the spacing is there to express. */
-.subhead + .pillars,
-.subhead + .profiles,
-.subhead + .principles,
-.subhead + .loop { margin-top: var(--space-5); }
-
-.subhead__body {
-  margin: 0;
-  font-size: var(--t-body);
-  line-height: 1.6;
-  color: var(--ink-soft);
-}
-
-/* ── Who it's for ─────────────────────────────────────────── */
-.profiles {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--space-6) clamp(28px, 3.6vw, 68px);
-  margin: var(--gap-block) 0 0;
-  padding: 0;
-  list-style: none;
-}
 
 .profile {
   border-top: 1px solid var(--rule-strong);
@@ -323,161 +262,16 @@
   color: var(--ink-soft);
 }
 
-/* ── Vision ───────────────────────────────────────────────────
-   One statement, one motif, nothing else. The quietest band on
-   the page and the only one with no supporting copy at all.      */
-.vision {
-  display: grid;
-  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
-  gap: var(--space-6) clamp(32px, 5vw, 80px);
-  align-items: center;
-}
-
-.vision__statement {
-  margin: 0;
-  font-family: var(--font-display);
-  font-weight: 400;
-  font-size: clamp(25px, 2.9vw, 44px);
-  line-height: 1.16;
-  letter-spacing: clamp(-0.9px, 0.3px - 0.08vw, -0.2px);
-  color: var(--ink);
-  text-wrap: pretty;
-}
-
-.vision__statement em { font-style: italic; color: var(--signal); }
-
-.vision__motif { color: var(--signal-soft); }
-
-/* Closing band: the vision, a rule, then the form. */
-.vision + .contact {
-  margin-top: clamp(64px, 8vw, 116px);
-  padding-top: clamp(56px, 7vw, 96px);
-  border-top: 1px solid var(--rule);
-}
-
 /* ── Responsive ───────────────────────────────────────────── */
-@media (max-width: 1080px) {
-  .profiles { gap: var(--space-6) clamp(24px, 3vw, 44px); }
-}
-
 @media (max-width: 900px) {
   .section-head,
-  .vision { grid-template-columns: minmax(0, 1fr); }
 
   .section-head { align-items: start; }
 
-  .profiles,
-  .principles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-
-  .pillars__row { grid-template-columns: minmax(0, 1fr); gap: var(--space-3); }
-
-  .vision__motif { order: -1; max-width: 320px; }
 }
 
 @media (max-width: 760px) {
   .loop { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-}
-
-@media (max-width: 620px) {
-
-  .profiles,
-  .principles { grid-template-columns: minmax(0, 1fr); gap: var(--space-5); }
-
-}
-
-/* ── Who is building this ─────────────────────────────────────
-   Deliberately denser than the bands above it: title and lede
-   share the left column while the people sit right, so the one
-   section that answers "who are you" does not arrive in the
-   same 7fr/5fr shape as the six argument sections before it.
-
-   Not cards. Hairline-ruled entries, like every other list on
-   the page — a grid of equal boxes with a name in each is the
-   team-page default, and this system does not use containers. */
-.who {
-  display: grid;
-  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-  gap: var(--space-6) clamp(32px, 5vw, 96px);
-  align-items: start;
-}
-
-.who .section-lede { margin-top: var(--space-5); }
-
-/* align-content:start stops the two founder entries stretching to match the
-   taller left column, which was opening a 206px hole under them — the largest
-   intra-section gap on the page. */
-.founders {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  align-content: start;
-  gap: var(--space-5) clamp(28px, 3.4vw, 56px);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.founder {
-  border-top: 1px solid var(--rule-strong);
-  padding-top: var(--space-4);
-}
-
-.founder__name {
-  margin: 0 0 4px;
-  font-family: var(--font-display);
-  font-weight: 400;
-  font-size: clamp(20px, 1.75vw, 26px);
-  line-height: 1.2;
-  letter-spacing: -0.01em;
-  color: var(--ink);
-}
-
-.founder__role {
-  margin: 0 0 var(--space-3);
-  font-size: var(--t-meta);
-  font-weight: 600;
-  color: var(--signal);
-}
-
-.founder__bio {
-  margin: 0;
-  font-size: var(--t-sm);
-  line-height: 1.6;
-  color: var(--ink-soft);
-}
-
-/* The block closes on the one thing the reader can act on. */
-.who__people {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-6);
-}
-
-.who__note {
-  grid-column: 1 / -1;
-  max-width: 46em;
-  margin: 0;              /* the grid's row gap already separates it */
-  padding-top: var(--space-4);
-  border-top: 1px solid var(--rule);
-  font-size: var(--t-body);
-  line-height: 1.6;
-  color: var(--ink-soft);
-}
-
-.who__note a {
-  color: var(--signal);
-  text-decoration: underline;
-  text-underline-offset: 0.18em;
-  text-decoration-thickness: 1px;
-}
-
-.who__note a:hover { color: var(--signal-deep); }
-
-@media (max-width: 900px) {
-  .who { grid-template-columns: minmax(0, 1fr); }
-}
-
-@media (max-width: 620px) {
-  .founders { grid-template-columns: minmax(0, 1fr); }
 }
 
 /* ── The cycle ────────────────────────────────────────────────
