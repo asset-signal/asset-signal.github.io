@@ -64,6 +64,11 @@
      only used where the green has to carry small text on the dark band. */
   --signal-on-dark:  #94B7AB;
 
+  /* Light Signal — the value the artifact's resolved line ends on. Reserved
+     for the moment something has resolved, which is why it is brighter than
+     --signal-noise: that one names the problem, this one names the answer. */
+  --signal-lit:      #B7D6C9;
+
   /* On the noise ground (--ink #172522). Soft Sage measures 6.08:1 there, so
      the brand accent carries text without being lightened — which it cannot
      do on Deep Forest. */

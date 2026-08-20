@@ -213,7 +213,10 @@
 }
 
 .problem__title {
-  max-width: 18ch;
+  /* 22ch, not 18. At 18 the statement broke into four short lines with a
+     ragged right, which read as cramped against the width of the band it
+     sits on. balance keeps the two sentences from splitting unevenly. */
+  max-width: 22ch;
   color: var(--paper);
   text-wrap: balance;
 }
@@ -226,11 +229,29 @@
 }
 
 .problem__lede {
-  max-width: 46ch;
+  /* Wider, larger and less muted than the shared lede token allows.
+
+     This is the only body copy on the page set centred on a dark ground, and
+     all three of those work against reading it: centred text gives the eye no
+     fixed left edge, a dark ground makes light type look thinner than it
+     measures, and --on-noise-muted's 0.74 alpha thins it further. At the
+     shared --t-lede size it came out at 17px and read as a caption under the
+     statement rather than as its second half.
+
+     Alpha to 0.90 rather than 0.74: composited on the band's near-black that
+     is 13.6:1 against 7.9:1 — both pass, but the higher one carries the weight
+     this line is doing.
+
+     balance, not pretty. pretty only avoids orphans, and measured it left the
+     three lines at 676px / 684px / 162px — two full measures and a stub, which
+     is what read as unbalanced under a centred statement. balance evens the
+     lengths instead, which is the whole point of centring them. */
+  max-width: 54ch;
   margin: var(--space-5) 0 0;
-  font-size: var(--t-lede);
-  line-height: 1.55;
-  color: var(--on-noise-muted);
+  font-size: clamp(18px, 1.45vw, 23px);
+  line-height: 1.52;
+  color: rgba(232, 239, 235, 0.90);
+  text-wrap: balance;
 }
 
 /* ── The pinned stage ─────────────────────────────────────────
@@ -254,14 +275,15 @@
 .problem__stage {
   position: sticky;
   top: var(--nav-h);
-  display: grid;
-  /* Field in the middle, copy either side of it. The steps alternate left and
-     right as the sequence advances, so the reader's eye crosses the signal
-     rather than running parallel to it. */
-  grid-template-columns: minmax(0, 1fr) clamp(280px, 30vw, 460px) minmax(0, 1fr);
-  justify-content: center;
-  align-items: center;
-  gap: clamp(40px, 6vw, 112px);
+
+  /* Full bleed, and no grid of its own. The artifact has to run the whole
+     width of the page, which it cannot do from inside a measured, padded
+     three-column box — so the stage is now just the pinned viewport, the
+     figure fills it edge to edge, and .problem__steps carries the measure
+     and the columns on top. */
+  display: block;
+  width: 100%;
+
   /* dvh: a pinned stage sized in svh is shorter than the window whenever
      the browser chrome is collapsed, and the shortfall shows as an uncovered
      strip along the bottom edge.
@@ -269,13 +291,9 @@
      Less the masthead, and pinned below it rather than at 0. The stage centres
      its content in its own box, so a full-viewport box centred that content
      behind the sticky bar — the closing line came up sliced through its first
-     row of glyphs, and the opening statement did the same on the way in. The
-     stage now occupies only the height the reader can actually see. */
+     row of glyphs, and the opening statement did the same on the way in. */
   height: calc(100svh - var(--nav-h));
   height: calc(100dvh - var(--nav-h));
-  max-width: var(--page-max);
-  margin-inline: auto;
-  padding: clamp(24px, 4vh, 56px) var(--gutter);
   overflow: hidden;
 }
 
@@ -283,75 +301,17 @@
 /* Label, field, label — the two labels name the ends of the axis the reader
    is travelling, which is now vertical. */
 .problem__figure {
-  grid-column: 2;
-  display: grid;
-  grid-template-rows: auto minmax(0, 1fr) auto;
-  gap: var(--space-3);
+  position: absolute;
+  inset: 0;
+  z-index: 0;
   margin: 0;
-  height: 100%;
-  min-height: 0;
+  pointer-events: none;
 }
 
-/* Fades up out of the statement above rather than starting on a hard edge —
-   the noise gathers as the reader enters it. */
-.problem__wave {
-  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 16%, #000 94%, transparent 100%);
-  mask-image: linear-gradient(to bottom, transparent 0, #000 16%, #000 94%, transparent 100%);
-}
-
-.problem__wave {
+.problem__canvas {
   display: block;
   width: 100%;
   height: 100%;
-  min-height: 0;
-}
-
-/* Context recedes as the reader scrolls; the signal is drawn through it.
-   Both read --p, so they cannot drift out of step with each other. */
-.problem__wave .figure__ctx {
-  opacity: calc(1 - (var(--p, 0) * 0.82));
-}
-
-/* --draw and --node are clamped in main.js rather than here. A clamp() nested
-   inside calc() silently failed to resolve and left the stroke fully drawn
-   from the first frame; the simple multiply below is dependable. */
-.problem__wave .figure__signal {
-  stroke-dasharray: var(--dash, none);
-  stroke-dashoffset: calc(var(--dash, 0) * (1 - var(--draw, 0)));
-}
-
-.problem__wave .figure__node { opacity: var(--node, 0); }
-
-/* display:contents so the two labels become grid rows 1 and 3, bracketing
-   the field, while the figcaption still associates them with the figure. */
-.problem__caption { display: contents; }
-
-.problem__axis {
-  font-size: var(--t-label);
-  font-weight: 500;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: var(--on-noise-muted);
-}
-
-.problem__axis--start {
-  grid-row: 1;
-  padding-bottom: 10px;
-  border-bottom: 1px solid var(--rule-noise);
-}
-
-.problem__axis--end {
-  grid-row: 3;
-  padding-top: 10px;
-  border-top: 1px solid var(--rule-noise);
-  text-align: right;
-}
-
-.problem__axis b {
-  font-weight: 600;
-  color: var(--signal-noise);
-  opacity: var(--node, 0);
-  transition: opacity 200ms linear;
 }
 
 /* ── The advancing copy ───────────────────────────────────────
@@ -360,16 +320,64 @@
 /* Both side tracks are one grid area each; every step is placed into the
    column its modifier names, and they all share a row so the stage never
    changes height as they hand over. */
-.problem__steps { display: contents; }
+/* The measure and the columns live here now that the stage is full bleed.
+   Sits above the artifact, and passes pointer events through to nothing —
+   there is nothing interactive underneath, but text selection should not be
+   blocked by an absolutely positioned sibling. */
+.problem__steps {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) clamp(280px, 30vw, 460px) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(40px, 6vw, 112px);
+  height: 100%;
+  max-width: var(--page-max);
+  margin-inline: auto;
+  padding: clamp(24px, 4vh, 56px) var(--gutter);
+}
 
 .problem__step {
   grid-row: 1;
   align-self: center;
+
+  /* Larger and less muted than the shared body token gives. These sit on a
+     dark ground, over a moving texture, in a column the eye only visits for a
+     few seconds before the next one replaces it — none of which the --t-body
+     token was sized for, and at 15-17px they read as footnotes beside an
+     artifact running the full width of the page.
+
+     Alpha 0.90 rather than --on-noise-muted's 0.74 for the same reason the
+     opening lede needed it: light type on dark optically thins, and the
+     thicket behind these is live rather than flat. */
+  /* Newsreader, not Inter. Everything else in this section is already the
+     display face — the opening statement, the closing line — so setting the
+     three steps between them in the sans made the sequence change voice
+     halfway through and change back. These are narrative prose read for a few
+     seconds each, not interface copy, which is the line the two faces divide
+     on in this system.
+
+     Serif needs the extra size and leading on a dark ground: Newsreader's
+     x-height is smaller than Inter's at the same nominal size, and its thin
+     strokes lose more to the optical thinning that light-on-dark causes. */
   max-width: 40ch;
   margin: 0;
-  font-size: var(--t-body);
-  line-height: 1.62;
-  color: var(--on-noise-muted);
+  font-family: var(--font-display);
+  font-size: clamp(18.5px, 1.6vw, 23px);
+  line-height: 1.5;
+
+  /* Two defences against a widow, because one is not enough. pretty asks the
+     engine to avoid a single-word last line, and it is the better fix where
+     it exists — but Firefox has no support, so it cannot be the only one.
+     The non-breaking spaces in the markup bind each step's last two words,
+     which guarantees at least two words on the final line in every engine.
+
+     Measured before fixing: at 1512x982 the second step ended on a 45px line
+     carrying only "over.", and at 1024x768 two of the three steps did the
+     same. It is viewport-dependent, which is why it needs a rule rather than
+     a copy edit. */
+  text-wrap: pretty;
+  color: rgba(232, 239, 235, 0.90);
   opacity: 0;
   transform: translateY(10px);
   transition: opacity 420ms var(--ease), transform 420ms var(--ease);
@@ -385,8 +393,21 @@
 
 /* The last step is the conclusion the whole sequence resolves to, so it
    arrives at display scale rather than as another paragraph. */
+/* The conclusion is not another step to one side of the artifact — it is what
+   the artifact has been resolving toward, so it takes the centre and the line
+   converges through it to the point below. Spanning all three columns rather
+   than sitting in one is what lets it centre on the page instead of on a
+   column, which is where the signal actually lands. */
 .problem__step--final {
-  max-width: 15ch;
+  grid-column: 1 / -1;
+  justify-self: center;
+  text-align: center;
+
+  /* 24ch and balanced. At 20ch the roman clause broke into three uneven
+     lines and left "what" stranded at the end of the third, with "matters
+     now." alone on a fourth — the payoff split across a line break. */
+  max-width: 24ch;
+  text-wrap: balance;
   font-family: var(--font-display);
   font-weight: 400;
   font-size: clamp(26px, 3.1vw, 46px);
@@ -395,9 +416,19 @@
   color: var(--paper);
 }
 
+/* The italic clause takes its own line, the same way the opening statement's
+   second sentence does — the two bookend the section and should be built the
+   same way. Blocking it also stops the balancer from breaking "what" away
+   from "matters now."
+
+   Light Signal rather than --signal-noise. The opening statement's italic is
+   sage because it names the problem; this one is the resolution, and it is
+   set in the exact value the artifact's line ends on, so the sentence and the
+   signal land on the same green. */
 .problem__step--final em {
+  display: block;
   font-style: italic;
-  color: var(--signal-noise);
+  color: var(--signal-lit);
 }
 
 /* ── Without the pin ──────────────────────────────────────────
@@ -425,12 +456,6 @@
   margin-bottom: var(--space-5);
 }
 
-.problem--static .problem__wave .figure__ctx { opacity: 0.5; }
-.problem--static .problem__wave .figure__signal { stroke-dashoffset: 0; }
-.problem--static .problem__wave .figure__node { opacity: 1; }
-.problem--static .problem__wave .figure__node,
-.problem--static .problem__axis b { opacity: 1; }
-
 @media (prefers-reduced-motion: reduce) {
   .problem__step { transition: opacity 200ms linear; transform: none; }
   .problem__step.is-active { transform: none; }
@@ -441,16 +466,22 @@
 /* Narrow: the field keeps its axis but steps behind the copy as a ground,
    because three tracks cannot all be legible at this width. */
 @media (max-width: 900px) {
-  .problem__stage {
+  /* The three-column split is gone below 900: at this width there is no room
+     for copy beside the artifact, so every step takes the single column,
+     centred, and the artifact sits behind all of them.
+
+     These target .problem__steps, not .problem__stage. The grid moved to the
+     steps wrapper when the stage went full-bleed for the artifact, and this
+     block was left pointing at the old owner — which put every step back in
+     column 1 of a still-three-column grid, stacked on top of each other and
+     shoved to the left edge. */
+  .problem__steps {
     grid-template-columns: minmax(0, 1fr);
     grid-template-rows: minmax(0, 1fr);
+    gap: 0;
   }
 
-  .problem__figure {
-    grid-area: 1 / 1;
-    grid-template-rows: minmax(0, 1fr);
-    opacity: 0.4;
-  }
+  .problem__figure { opacity: 0.55; }
 
   .problem__step {
     grid-area: 1 / 1;
@@ -461,8 +492,13 @@
   }
 
   .problem__step--left,
-  .problem__step--right { grid-column: 1; justify-self: center; text-align: center; }
-  .problem__step--final { max-width: 14ch; }
-  .problem__axis { display: none; }
+  .problem__step--right,
+  .problem__step--final {
+    grid-column: 1;
+    justify-self: center;
+    text-align: center;
+  }
+
+  .problem__step--final { max-width: 16ch; }
   .problem__scroll { height: 320svh; height: 320dvh; }
 }

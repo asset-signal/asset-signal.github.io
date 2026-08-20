@@ -168,8 +168,11 @@
   if (problem) {
     const stage = problem.querySelector(".problem__stage");
     const steps = [...problem.querySelectorAll("[data-step]")];
-    const wave = problem.querySelector(".figure__signal");
+    const canvas = problem.querySelector("[data-problem-canvas]");
     const section = problem.closest("section");
+    const artifact = window.ProblemField && canvas
+      ? window.ProblemField.create(canvas, { fadeTop: 0.30 })
+      : null;
 
     // The pin is an enhancement. Anything missing, and the section renders as
     // an ordinary stack with the field already resolved.
@@ -179,16 +182,16 @@
 
     if (!canPin) {
       if (section) section.classList.add("problem--static");
+      // Still frame: the resolved signal, not the thicket. Someone who never
+      // scrolls the sequence should see what it resolves TO.
+      if (artifact) artifact.setProgress(1);
     } else {
-      if (wave && typeof wave.getTotalLength === "function") {
-        const len = wave.getTotalLength();
-        // Units matter: calc(<number> * …) is rejected where a <length> is
-        // expected, which silently left the stroke fully drawn.
-        if (len) wave.style.setProperty("--dash", `${Math.ceil(len)}px`);
-      }
-
       let active = -1;
       let ticking = false;
+
+      // Clamped here rather than in CSS: clamp() nested in calc() does not
+      // resolve, which is how the old signal ended up fully drawn on frame one.
+      const span = (v, a, b) => Math.min(1, Math.max(0, (v - a) / (b - a)));
 
       const sync = () => {
         ticking = false;
@@ -203,11 +206,29 @@
         const p = Math.min(1, Math.max(0, -box.top / travel));
         stage.style.setProperty("--p", p.toFixed(4));
 
-        // Clamped here, not in CSS: clamp() nested in calc() did not resolve
-        // and left the signal fully drawn from the first frame.
-        const span = (v, a, b) => Math.min(1, Math.max(0, (v - a) / (b - a)));
-        stage.style.setProperty("--draw", span(p, 0.06, 0.70).toFixed(4));
-        stage.style.setProperty("--node", span(p, 0.72, 0.88).toFixed(4));
+        // The artifact owns its own easings — --draw and --node existed to
+        // drive a dash offset and a marker on the old static SVG, and there
+        // is nothing left in CSS that reads them.
+        if (artifact) {
+          artifact.setProgress(p);
+
+          // Hold the field off the closing statement, in step with the
+          // statement arriving. Measured from the DOM rather than assumed:
+          // the text is centred and balanced, so its box is whatever the
+          // wrapping made it, and it differs at every viewport.
+          const last = steps[steps.length - 1];
+          const strength = span(p, 0.62, 0.84);
+          if (last && canvas && strength > 0) {
+            const c = canvas.getBoundingClientRect();
+            const b = last.getBoundingClientRect();
+            artifact.setClear(
+              { x: b.left - c.left, y: b.top - c.top, w: b.width, h: b.height },
+              strength
+            );
+          } else if (last) {
+            artifact.setClear(null, 0);
+          }
+        }
 
         // Steps hand over in equal windows, with the last one held to the end
         // so the conclusion is still on screen when the reader leaves.
