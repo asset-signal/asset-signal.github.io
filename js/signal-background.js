@@ -897,6 +897,20 @@
   let ema = 16.7;   // rolling frame time, ms
   let cooldown = 1.5;
 
+  // Retirement. Adaptive resolution has a floor — below ~0.55 the field stops
+  // looking like itself — and on a machine with no usable GPU that floor is
+  // not enough: measured under software rasterisation it walks 1440px down to
+  // 792px over nine seconds and still lands at ~159ms a frame. A decorative
+  // layer running at six frames a second is worse than no layer at all. It
+  // costs battery, it makes the whole page feel broken rather than just
+  // itself, and it delayed the hero headline's LCP from 1.7s to 4.7s because
+  // the main thread never got quiet.
+  //
+  // So when the field is at its floor and still missing badly, it stops. On
+  // any machine that can draw it this never fires.
+  let stalled = false;
+  let slowAtFloor = 0;
+
   function frame(now) {
     raf = requestAnimationFrame(frame);
 
@@ -909,8 +923,17 @@
     // Adaptive resolution. Frame time is vsync-quantised, so >20.5ms means
     // we are actually missing frames, not merely idling at 60Hz.
     if (raw > 0 && raw < 500) ema += (raw - ema) * 0.05;
+
+    // Wall-clock, not dt. dt is clamped to 50ms so a stalled frame cannot jump
+    // the animation phase, which is right for the phase and wrong for every
+    // timer built on it: at 3fps a 1.5s cooldown accrues 0.15s per real
+    // second and takes ten seconds to expire. Measured, that left the canvas
+    // at full resolution sixteen seconds into a load it could not sustain —
+    // the adaptation starved exactly when it was needed most.
+    const wall = Math.min(raw, 1000) / 1000;
+
     if (cooldown > 0) {
-      cooldown -= dt;
+      cooldown -= wall;
     } else if (ema > 20.5 && quality > 0.55) {
       quality = Math.max(0.55, quality * 0.85);
       needsResize = true;
@@ -919,6 +942,25 @@
       quality = Math.min(1.0, quality * 1.08);
       needsResize = true;
       cooldown = 1.5;
+    }
+
+    // 45ms is ~3x the budget: not a dropped frame here and there, a machine
+    // that cannot do this. Two and a half seconds of it at the floor, and the
+    // field retires rather than limping.
+    if (quality <= 0.5501 && ema > 45) {
+      slowAtFloor += wall;
+      if (slowAtFloor > 2.5) {
+        stalled = true;
+        // preserveDrawingBuffer is false, so a stopped loop cannot be trusted
+        // to keep its last frame. Fade out deliberately and let the hero sit
+        // on its own paper — which is exactly what it does with no WebGL at
+        // all, and is measurably the faster page.
+        canvas.classList.add("is-retired");
+        sync();
+        return;
+      }
+    } else {
+      slowAtFloor = 0;
     }
 
     applySize();
@@ -969,8 +1011,26 @@
   // Don't burn GPU on a hidden tab or a field nobody can see; resume without
   // a phase jump, because `last` is re-stamped on the way back in.
   let lost = false;
+
+  // The loop does not start with the script. Two reasons, and the second is
+  // the one that matters:
+  //
+  // The canvas is opacity 0 until main.js adds .is-ready, which waits on the
+  // display face — so every frame drawn before that is invisible by
+  // construction. And on a machine without a usable GPU those invisible
+  // frames are not free: measured under software rasterisation they held the
+  // main thread through the whole paint window and pushed the hero
+  // headline's LCP from 1.7s to 4.9s. The page was paying its worst
+  // performance cost for pixels nobody could see.
+  //
+  // requestIdleCallback fires once the thread has room, which is after the
+  // text has painted; the timeout caps the wait on a thread that never goes
+  // quiet. Neither the API nor the uniforms are deferred — only the drawing —
+  // so setAxisFromTop and setCopyBox keep working from the first frame.
+  let booted = false;
+
   sync = () => {
-    const want = onscreen && !document.hidden && !lost;
+    const want = booted && onscreen && !document.hidden && !lost && !stalled;
     if (want && !raf) {
       last = performance.now();
       raf = requestAnimationFrame(frame);
@@ -980,7 +1040,21 @@
     }
   };
 
-  sync();
+  const boot = () => {
+    if (booted) return;
+    booted = true;
+    last = performance.now();   // no phase jump for the time spent waiting
+    sync();
+  };
+
+  if (typeof requestIdleCallback === "function") {
+    requestIdleCallback(boot, { timeout: 1200 });
+  } else {
+    // Safari before 16.4. Two frames puts us past first paint, and the
+    // timeout covers the case where frames are not being served at all.
+    requestAnimationFrame(() => requestAnimationFrame(() => setTimeout(boot, 200)));
+    setTimeout(boot, 1200);
+  }
 
   document.addEventListener("visibilitychange", sync);
 
