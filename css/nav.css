@@ -79,9 +79,16 @@
 
 .nav__logo__mark { display: none; }
 
+/* Left, beside the logo — not centred in the bar. The links already sit in
+   the flexible middle track, so this is the justification rather than a
+   different grid. margin-inline-start buys separation from the wordmark: the
+   grid's own 24px gap put "About" hard against the "l" of "signal", and a nav
+   reads as part of the lockup at that distance rather than as a list beside
+   it. */
 .nav__links {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
+  margin-inline-start: clamp(16px, 2.4vw, 40px);
   gap: clamp(18px, 2.6vw, 44px);
 }
 
@@ -205,6 +212,11 @@
     align-items: flex-start;
     gap: 18px;
     padding-top: 8px;
+    /* The desktop bar sets a left margin to hold the links off the wordmark.
+       In the dropdown there is no wordmark beside them — they are a stacked
+       panel, and they belong on the same gutter as everything else on the
+       page. */
+    margin-inline-start: 0;
   }
 
   .nav__links a { letter-spacing: 0.13em; }

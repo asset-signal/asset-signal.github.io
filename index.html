@@ -12,22 +12,33 @@ styles: [hero, sections, problem, demo, form, footer]
       <section class="hero" id="top">
         <div class="wrap">
           <div class="hero__copy">
-            <!-- The category, at display size. This sentence was previously the
-                 #how title, five screens down — the one line that says what the
-                 product is, in the third section. "Clarity at the moment of
-                 decision" is the brand line and it keeps its home in the footer;
-                 a tagline introduces a company the reader already knows, which
-                 is not this one yet. -->
+            <!-- Brand line at display size, category immediately under it. The
+                 category used to be the #how title, five screens down — the one
+                 sentence saying what the product is, in the third section. It
+                 does not need the H1 to land, it needs to be in the fold and
+                 legible; both arrangements were built and this one keeps the
+                 headline the page was designed around. -->
             <h1 class="hero__title" data-reveal>
-              <span class="hero__line hero__line--display">The decision layer</span>
-              <span class="hero__line hero__line--italic">for real estate</span>
-              <span class="hero__line hero__line--italic"><em>asset management.</em></span>
+              <span class="hero__line hero__line--display">Clarity</span>
+              <span class="hero__line hero__line--italic">at the moment</span>
+              <span class="hero__line hero__line--italic">of <em>decision.</em></span>
             </h1>
 
-            <p class="hero__lede" data-reveal>
-              <span class="hero__lede-line">Asset Signal reads the reporting your team already produces.</span>
-              <span class="hero__lede-line">It says what changed, what it is worth, and who needs to decide.</span>
+            <!-- The category, directly under the brand line and at a size that
+                 is read rather than skimmed. Not an eyebrow: an 11px kicker
+                 above the headline would put the most important sentence on
+                 the page in the smallest type in the fold.
+
+                 It is also the fold's ONLY subtext. A third block under it
+                 measured 65px, and the scroll cue needs that room: the cue is
+                 white with no disc, so it is legible only where the ramp has
+                 gone green, which is ~0.27 of --ramp below the join. At
+                 1280x800 the fold left 77px of room where the cue needed 133,
+                 and the chevron sat on near-ivory at 1.10:1. -->
+            <p class="hero__category" data-reveal>
+              The decision layer for real estate asset management.
             </p>
+
 
             <div class="hero__actions" data-reveal>
               <!-- The fold converts. Neither action here used to: one scrolled to

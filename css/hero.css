@@ -95,10 +95,19 @@
      reaches its 80px ceiling at 713px, which is where the column stops
      growing.
 
-     Smaller type, more headline: measured at 1440 the block is 607x213px
-     against the old 465x242 — about 15% MORE area, because 52 characters at
-     80px occupy more of the fold than 34 at 92. Nothing was given up here. */
-  font-size: clamp(33px, 11.88vw - 4.75px, 80px);
+     ONE curve, not two. A separate mobile clamp under a 900px breakpoint put
+     a cliff at the breakpoint itself: 72px at 900 and 58px at 901, the
+     headline shrinking as the viewport grew. This is continuous from 320 to
+     2560 and solved so the widest line ("at the moment", italic at 0.86em,
+     5.05px of width per px of font-size) always holds in the copy column. */
+  /* Bounded on BOTH axes. The clamp scales with viewport WIDTH, but the space
+     the fold has to fit into is bounded by viewport HEIGHT — so a 1920x900
+     laptop got 104px of headline in 900px of page, the fold ran long, and the
+     scroll cue below it could not reach the green part of the ramp. The vh
+     term only bites on short viewports: at 1440x900 the width term already
+     asks for 95 and this caps it at 90; at 1440x1080 it asks for 95 and the
+     cap is 108, so nothing changes. */
+  font-size: min(clamp(46px, 27.7px + 4.696vw, 104px), 10vh);
   line-height: 0.98;
   color: var(--ink);
   font-optical-sizing: auto;
@@ -108,10 +117,10 @@
      scales. An em value would be proportionally constant — the exact thing
      that is wrong. This tracks the font-size clamp above, -0.012em at the
      small end to -0.025em at the large one. */
-     Re-solved for the 33-80px range the single clamp above now spans. Same
-     intent and the same em endpoints as before: -0.012em where the type is
+     Re-solved for the 46-104px range the single clamp above now spans. Same
+     intent and the same em endpoints throughout: -0.012em where the type is
      smallest, -0.025em where it is largest. */
-  letter-spacing: clamp(-2px, 0.888px - 0.405vw, -0.4px);
+  letter-spacing: clamp(-2.6px, 0.097px - 0.166vw, -0.55px);
 }
 
 .hero__line { display: block; }
@@ -119,7 +128,7 @@
 /* The roman line carries more counter space than the italics at the same
    size, so it takes a touch more tightening. */
 .hero__line--display {
-  letter-spacing: clamp(-2.4px, 1.048px - 0.4835vw, -0.49px);
+  letter-spacing: clamp(-3.1px, 0.097px - 0.1968vw, -0.67px);
 }
 
 /* The italic lines run marginally smaller than the roman first line, the
@@ -139,6 +148,24 @@
   color: var(--signal);
 }
 
+/* ── Category ─────────────────────────────────────────────────
+   The sentence that names what this is, sitting between the brand
+   line and the mechanism. Inter, not Newsreader: two display faces
+   stacked compete, and this one's job is to be read flatly rather
+   than to perform. It is the second-largest type in the fold, which
+   is the position it has to hold — the visitor who does not read
+   past it should still leave knowing the category.               */
+.hero__category {
+  max-width: 26em;
+  margin: clamp(20px, 2.6vh, 30px) 0 0;
+  font-size: clamp(18.5px, 1.5vw, 23px);
+  font-weight: 500;
+  line-height: 1.32;
+  letter-spacing: -0.008em;
+  color: var(--ink);
+  text-wrap: balance;
+}
+
 /* ── Lede ─────────────────────────────────────────────────── */
 .hero__lede {
   /* Wide enough for the longer of the two lines below to hold on one row.
@@ -146,12 +173,12 @@
      and who needs to decide." is the longer clause. The em unit keeps the
      ratio across the whole font-size clamp. */
   max-width: 33em;
-  margin: clamp(26px, 3.4vh, 42px) 0 0;
-  /* --t-lede, not --t-body. This is no longer a supporting line: with the
-     category in the H1 it is the sentence that says what the thing actually
-     does, and at 15px under a 79px headline it read as a caption. */
-  font-size: var(--t-lede);
-  line-height: 1.55;
+  margin: clamp(16px, 2vh, 24px) 0 0;
+  /* Back to --t-body. With the category line above it at 23px, a lede at
+     --t-lede put two near-equal sizes next to each other and flattened the
+     step between "what this is" and "what it does". */
+  font-size: var(--t-body);
+  line-height: 1.6;
   color: var(--ink-soft);
 }
 
@@ -287,4 +314,16 @@
 @media (max-height: 720px) {
   .hero__scroll { display: none; }
 }
+
+/* The same rule, measured rather than guessed. main.js sets this when the
+   cue's centre lands shallower than a quarter of --ramp below the join —
+   where the gradient is still near-ivory and a white chevron reads at 1.1:1.
+   The 720px media query above was standing in for this condition and was set
+   too low: at 768 the cue was still on paper.
+
+   Hidden, not recoloured. A dark chevron reads as a different object — it was
+   considered and rejected when the cue was designed — and it is better for
+   the affordance to be absent than to be invisible while still sitting in the
+   tab order. */
+.hero__scroll[data-no-ground] { display: none; }
 

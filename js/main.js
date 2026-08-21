@@ -358,6 +358,26 @@
       const drop = Math.max(72, Math.min(ramp * 0.62, room));
       cueEl.style.setProperty("--cue-drop", `${Math.round(drop)}px`);
 
+      // Legible, or not shown. The chevron is white with no disc and no
+      // shadow — deliberately, it is the only mark on this part of the page
+      // and a ring or a shadow would be the hard edge the dissolve exists to
+      // avoid — so it can only be read where the ramp has actually gone
+      // green. Measured, that is about a quarter of --ramp below the join:
+      // at 0.27 the mark holds 3.9:1, at 0.21 it drops to 2.5, and at 0.09
+      // it is 1.1 — white on near-ivory, an affordance that is technically
+      // present and visually absent.
+      //
+      // The stylesheet already hid the cue under 720px of viewport for
+      // exactly this reason. That was a guess at where the room runs out and
+      // it was too low: at 768 there is still not enough. This measures the
+      // condition the guess was standing in for, so it holds at any viewport
+      // and against any headline length rather than at the sizes that were
+      // checked by hand.
+      const cueBox = cueEl.getBoundingClientRect();
+      const centreDepth =
+        cueBox.top + cueBox.height / 2 - noise.getBoundingClientRect().top;
+      cueEl.toggleAttribute("data-no-ground", ramp > 0 && centreDepth < ramp * 0.25);
+
       // Publish how far the cue's bottom edge falls past the join, so the
       // problem band can hold a guaranteed clearance under it. Without this
       // the gap is not controlled by anything: the cue is placed by whatever

@@ -135,24 +135,44 @@ img/
 
 `#value`, `#use-cases`, `#trust` and `#who` were cut; the page is five bands.
 
-### Category first, not promise first
+### The fold's three elements
 
-This inverts the brand's homepage rule, which is promise first and category
-second. The rule is right for a brand the reader already knows — a tagline
-introduces a company, it does not explain one. Measured, the old order put
-"The decision layer for real estate asset management" **5.3 screens down** on
-desktop and 4.8 on mobile: the one sentence naming the category sat in the
-third section, behind four screens of the problem band, for a cold reader who
-had never heard of the company.
+Brand line at display size, the category directly under it, then the actions.
+The category used to be the `#how` title, 5.3 screens down.
 
-So the category line took the H1 and "Clarity at the moment of decision" kept
-its home in the footer, where a brand sign-off belongs. Worth knowing this is
-a deliberate override of a documented rule, not an oversight — revisit it once
-the name carries recognition on its own.
+There is deliberately **no third text block**. One was there and it measured
+65px, which is room the scroll cue needs: the cue is white with no disc, so it
+is legible only where the ramp has gone green — about a quarter of `--ramp`
+below the join. With a lede in the fold, 1280x800 left 77px of room where the
+cue needed 133, and the chevron sat on near-ivory at 1.10:1.
+
+The headline is bounded on **both axes**: `min(clamp(...vw...), 10vh)`. The
+clamp scales with viewport width, but the space the fold fits into is bounded
+by height, so a 1920x900 laptop was getting 104px of headline in 900px of page.
+
+`.hero__scroll[data-no-ground]` hides the cue where it still cannot reach the
+green. `main.js` sets it from the measured depth; the `max-height: 720px` media
+query was a guess standing in for the same condition and was set too low. Swept
+across 35 viewports: every cue that renders clears 3:1, and 11 are hidden — all
+at viewport heights of 850px or less.
+
+### Category-in-the-fold, not promise-only
+
+The brand's homepage rule is promise first, category second, and this keeps
+it — but it does not leave the category five screens down. Measured, the old
+order put "The decision layer for real estate asset management" **5.3 screens
+down** on desktop and 4.8 on mobile: the one sentence naming the category sat
+in the third section, behind four screens of the problem band, for a cold
+reader who had never heard of the company.
+
+Both arrangements were built and measured. Category-as-H1 works and reads
+clearly; this one keeps the headline the page was designed around and still
+lands the category in the fold at 23px, which is read rather than skimmed.
 
 Note what this is NOT: an eyebrow above the headline. That was considered and
-rejected for the reason the next section gives — it would have put the most
-important sentence on the page in the smallest type in the fold.
+rejected — it would have put the most important sentence on the page in the
+smallest type in the fold, which is the same objection the section below
+raises against kickers generally.
 
 ### Why the sections have no labels above their headings
 
