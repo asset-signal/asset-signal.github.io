@@ -65,8 +65,12 @@ order given** — the cascade depends on it.
 The masthead lists **routes only**. It used to carry `#how` and `#demonstration`,
 which made it a scroll control on the homepage and a set of cross-page jumps
 everywhere else — and it named two of the homepage's five sections, so the
-position indicator was dark for 65% of the scroll. The homepage's section list
-now lives in the footer, which is where a contents list belongs.
+position indicator was dark for 65% of the scroll.
+
+Nothing lists the homepage's own sections any more, in either nav. That is the
+same decision applied consistently: `#problem`, `#how` and `#demonstration` are
+places in a document, not destinations on a site, and a reader reaches them by
+reading. The IDs still exist and still work as deep links.
 
 `Platform` joins `About` and `Writing` when it has content.
 
