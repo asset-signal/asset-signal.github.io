@@ -1,0 +1,146 @@
+/* ─────────────────────────────────────────────────────────────
+   about.css — who is building this
+
+   The page answers the question a pre-launch company cannot
+   answer with product copy: does this exist, and will it exist
+   in eighteen months. It is a reading page, so it takes the
+   reading measure — but it is still a Persuade surface, so the
+   opening statement gets display type rather than the legal
+   pages' flat h1.
+   ───────────────────────────────────────────────────────────── */
+
+.about {
+  padding-block: clamp(56px, 9vh, 104px) var(--section-y);
+}
+
+.about__wrap { max-width: min(74ch, var(--page-max)); }
+
+.about__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(34px, 4vw, 54px);
+  line-height: 1.04;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  text-wrap: balance;
+}
+
+.about__title em {
+  font-style: italic;
+  color: var(--signal);
+}
+
+.about__lede {
+  margin: var(--space-5) 0 0;
+  max-width: 36em;
+  font-size: var(--t-lede);
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+
+.about__section {
+  margin-top: var(--space-6);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--rule);
+}
+
+.about__section h2 {
+  margin: 0 0 var(--space-3);
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(21px, 1.8vw, 26px);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+
+.about__section p {
+  margin: 0 0 var(--space-4);
+  max-width: 40em;
+  font-size: var(--t-body);
+  line-height: 1.66;
+  color: var(--ink-soft);
+}
+
+.about__section p:last-child { margin-bottom: 0; }
+
+.about__section a {
+  color: var(--signal);
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+  text-decoration-thickness: 1px;
+}
+
+.about__section a:hover { color: var(--signal-deep); }
+
+/* ── People ───────────────────────────────────────────────────
+   A list, not a card grid with circular photographs. One or two
+   founders in six-inch portraits reads as a team page padded to
+   look like a company; a name, a role and what they did before
+   is the information a buyer is actually checking.             */
+.people {
+  margin: var(--space-5) 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: var(--space-5);
+}
+
+.person {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: var(--space-3) clamp(24px, 4vw, 56px);
+  align-items: start;
+}
+
+.person__name {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(20px, 1.7vw, 25px);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+
+.person__role {
+  margin: 6px 0 0;
+  font-size: var(--t-meta);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--ink-muted);
+}
+
+.person__body {
+  margin: 0;
+  font-size: var(--t-body);
+  line-height: 1.64;
+  color: var(--ink-soft);
+}
+
+@media (max-width: 640px) {
+  .person { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* ── Close ────────────────────────────────────────────────── */
+.about__close {
+  margin-top: var(--space-6);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--rule);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3) var(--space-5);
+  align-items: baseline;
+}
+
+.about__close a {
+  display: inline-block;
+  padding: 4px 0;
+  font-size: var(--t-sm);
+  color: var(--signal);
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+
+.about__close a:hover { color: var(--signal-deep); }

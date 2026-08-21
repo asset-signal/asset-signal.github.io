@@ -50,6 +50,45 @@ Pages carry front matter rather than markup: `title`, `description`, `robots`,
 `styles`, a list of stylesheet basenames loaded after `base` and `nav` **in the
 order given** — the cascade depends on it.
 
+### Pages and routes
+
+| URL | Source | Layout |
+| --- | --- | --- |
+| `/` | `index.html` | `default` |
+| `/about.html` | `about.html` | `default` — **contains placeholders** |
+| `/blog/` | `blog/index.html` | `default` |
+| `/blog/<slug>/` | `_posts/YYYY-MM-DD-<slug>.md` | `post` |
+| `/privacy.html` | `privacy.html` | `default` |
+| `/thanks.html` | `thanks.html` | `default` |
+| `/feed.xml`, `/sitemap.xml` | generated | jekyll-feed, jekyll-sitemap |
+
+The masthead lists **routes only**. It used to carry `#how` and `#demonstration`,
+which made it a scroll control on the homepage and a set of cross-page jumps
+everywhere else — and it named two of the homepage's five sections, so the
+position indicator was dark for 65% of the scroll. The homepage's section list
+now lives in the footer, which is where a contents list belongs.
+
+`Platform` joins `About` and `Writing` when it has content.
+
+### Writing a post
+
+One file. `_posts/2026-09-01-a-title.md`:
+
+```markdown
+---
+title: "What a review costs when it waits for the quarter"
+standfirst: "One sentence under the headline. Optional."
+---
+
+Body in Markdown.
+```
+
+`layout: post`, the date and the URL all come from `_config.yml` and the
+filename. `standfirst` shows on the index and above the body.
+
+**The blog index is not linked as `Blog` — it is `Writing`, and it has no posts
+yet.** An empty index states that plainly rather than promising a schedule.
+
 ### Two things not to undo
 
 **Filenames stay as filenames.** `privacy.html` builds to `/privacy.html`, not
@@ -141,18 +180,20 @@ belong between `#trust` and `#demo`.
 
 ## Placeholders that must be replaced before launch
 
-Two strings are stubbed and both are factual claims about the company, so nothing
+One block is stubbed, and it is a factual claim about the company, so nothing
 here was invented:
 
-1. **`[FOUNDER NAME]` / `[Role]` / `[BACKGROUND]`** in `#who` — real names, roles
-   and one or two sentences of relevant background. Delete the second `<li>` if
-   there is only one founder.
-2. **`EMAIL@PLACEHOLDER.INVALID`** — 6 occurrences across 4 lines: the `#who`
-   note, the footer's "Get in touch" (href and link text), and `privacy.html`'s
-   contact line (href and link text). A find-and-replace across both files does
-   it.
-   `.invalid` is an IANA-reserved TLD, so the stub can never deliver mail to a real
-   party by accident — but it is also plainly not an address, which is the point.
+**`[FOUNDER NAME]` / `[ROLE]` / `[BACKGROUND]`** in `about.html`, under "Who is
+building it". Real names, roles, and one or two sentences of verifiable
+background — where they worked, what they built or ran. Delete the second
+`<li>` if there is only one founder.
+
+This is the one block on the site that cannot be written from the product, and
+it is the block the About page exists for: a buyer reading it is checking
+whether the people are credible. **A founders section with no founders in it is
+worse than no About page**, so either fill it or take About out of the nav.
+
+The email is live at `service@assetsignal.ai` throughout.
 
 `privacy.html` is an honest description of what the form actually collects (five
 fields, no cookies, no analytics, Google Fonts as the only third party). It is a

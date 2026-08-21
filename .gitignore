@@ -28,6 +28,7 @@ reference/
 # servers, so a committed _site would be dead weight that also masks
 # whether the source actually builds.
 _site/
+.bundle/
 .jekyll-cache/
 .jekyll-metadata
 .sass-cache/

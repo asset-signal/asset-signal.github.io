@@ -44,10 +44,18 @@
   color: var(--on-dark);
 }
 
+/* Three groups since the masthead became routes only and the homepage's
+   section index moved down here. At 1440 the nav track is ~770px, so three
+   columns are ~230px each — wide enough for "Demonstration" and for an email
+   address once the word-break below does its job. */
 .footer__nav {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: var(--space-5) clamp(24px, 3vw, 56px);
+}
+
+@media (max-width: 900px) {
+  .footer__nav { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 /* An email address is one unbreakable token. In a 163px track at 390px it
@@ -91,6 +99,12 @@
 }
 
 .footer__group a:hover { color: var(--signal-lit); }
+
+/* With no footer__top above it the bottom rule inherits a top margin meant to
+   separate it from content that is not there — 80px of empty Deep Forest on
+   every legal, About and Writing page. */
+.footer--minimal .footer__bottom { margin-top: 0; }
+.footer--minimal { padding-block: clamp(32px, 4vw, 48px) clamp(28px, 3vw, 40px); }
 
 .footer__bottom {
   display: flex;

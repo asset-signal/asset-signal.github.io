@@ -1,0 +1,35 @@
+---
+layout: default
+styles: [sections, footer, blog]
+footer: minimal
+og: true
+og_type: article
+---
+    <main id="main" class="writing">
+      <div class="wrap writing__wrap">
+        <article class="post">
+          <header class="post__head">
+            {%- comment -%}
+              datetime carries the machine-readable value; the visible text is
+              the one a person reads. Both come from the filename's date.
+            {%- endcomment -%}
+            <p class="post__date">
+              <time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%-d %B %Y" }}</time>
+            </p>
+            <h1 class="post__title">{{ page.title }}</h1>
+            {%- if page.standfirst %}
+            <p class="post__standfirst">{{ page.standfirst }}</p>
+            {%- endif %}
+          </header>
+
+          <div class="post__body">
+            {{ content }}
+          </div>
+
+          <footer class="post__foot">
+            <a href="{{ '/blog/' | relative_url }}">All writing</a>
+            <a href="{{ '/#demo' | relative_url }}">Request a demo</a>
+          </footer>
+        </article>
+      </div>
+    </main>

@@ -1,0 +1,55 @@
+---
+layout: default
+title: "Writing — Asset Signal"
+description: "Notes from Asset Signal on real estate asset management and the decision layer above it."
+canonical: "https://asset-signal.github.io/blog/"
+permalink: /blog/
+robots: "index, follow"
+og: true
+footer: minimal
+styles: [sections, footer, blog]
+heading: "Writing"
+lede: "Notes on real estate asset management, and on building the decision layer above the systems that already run it."
+---
+    <main id="main" class="writing">
+      <div class="wrap writing__wrap">
+        <h1 class="writing__title">{{ page.heading }}</h1>
+        <p class="writing__lede">{{ page.lede }}</p>
+
+        {%- if site.posts.size > 0 %}
+        <ul class="posts">
+          {%- for post in site.posts %}
+          <li class="posts__item">
+            {%- comment -%}
+              The date sits inside the link visually but outside its accessible
+              name, so the link is announced as its title rather than as a date
+              followed by a title.
+            {%- endcomment -%}
+            <a class="posts__link" href="{{ post.url | relative_url }}"
+               aria-label="{{ post.title }}">
+              <span class="posts__date" aria-hidden="true">
+                <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%-d %B %Y" }}</time>
+              </span>
+              <h2 class="posts__name">{{ post.title }}</h2>
+            </a>
+            {%- if post.standfirst %}
+            <p class="posts__standfirst">{{ post.standfirst }}</p>
+            {%- endif %}
+          </li>
+          {%- endfor %}
+        </ul>
+        {%- else %}
+        <div class="posts--none">
+          <p>
+            Nothing published yet. We would rather write when there is something
+            worth reading than keep a schedule.
+          </p>
+          <p>
+            If you would like to hear from us in the meantime,
+            <a href="{{ '/#demo' | relative_url }}">request a demo</a> or write to
+            <a href="mailto:{{ site.email }}">{{ site.email }}</a>.
+          </p>
+        </div>
+        {%- endif %}
+      </div>
+    </main>

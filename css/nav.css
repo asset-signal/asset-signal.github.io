@@ -125,8 +125,12 @@
    band. That is a 1.4.3 failure on the one link whose job is to tell you where
    you are. Traced across nine scroll positions: ink runs 11.26-14.34, this
    runs 6.1-8.0, Eucalyptus was the only value that dipped. */
-.nav__links a[aria-current="true"] { color: var(--signal-ink); }
-.nav__links a[aria-current="true"]::after {
+/* [aria-current], not [aria-current="true"]. Two different things set this:
+   the scrollspy in main.js writes "true" for a section, and the masthead
+   writes "page" for the route you are on — which is the correct ARIA value
+   and which the "true" selector silently did not match. */
+.nav__links a[aria-current] { color: var(--signal-ink); }
+.nav__links a[aria-current]::after {
   background: var(--signal-ink);
   transform: scaleX(1);
 }

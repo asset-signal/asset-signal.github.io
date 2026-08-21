@@ -19,6 +19,17 @@ baseurl:     ""
 email:       service@assetsignal.ai
 lang:        en
 
+# Both are on GitHub Pages' allowlist, so they run on the deployed
+# build without a custom Actions workflow. jekyll-feed publishes
+# /feed.xml for the blog; jekyll-sitemap publishes /sitemap.xml,
+# which matters now that the site is more than one page.
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+
+feed:
+  path: feed.xml
+
 # Sass/coffee are off; the CSS in css/ is hand-written and is
 # copied verbatim. Nothing in this project is compiled.
 sass:

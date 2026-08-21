@@ -5,7 +5,7 @@
 {%- endcomment -%}
 {%- assign home = '/' | relative_url -%}
 {%- if page.url == '/' -%}{%- assign anchor = '' -%}{%- else -%}{%- assign anchor = home -%}{%- endif -%}
-  <footer class="footer">
+  <footer class="footer{% if page.footer == 'minimal' %} footer--minimal{% endif %}">
     <div class="wrap">
       {%- if page.footer != 'minimal' %}
       <div class="footer__top">
@@ -16,9 +16,14 @@
           <p class="footer__line">Clarity at the moment of decision.</p>
         </div>
 
+        {%- comment -%}
+          The homepage's section index lives here now that the masthead is
+          routes only. This is where a contents list belongs: at the end of
+          the page it describes, for a reader who has finished it.
+        {%- endcomment -%}
         <nav class="footer__nav" aria-label="Footer">
           <div class="footer__group">
-            <h2>Explore</h2>
+            <h2>On this page</h2>
             <ul>
               <li><a href="{{ anchor }}#problem">The problem</a></li>
               <li><a href="{{ anchor }}#how">How it works</a></li>
@@ -26,11 +31,18 @@
             </ul>
           </div>
           <div class="footer__group">
+            <h2>Company</h2>
+            <ul>
+              <li><a href="{{ '/about.html' | relative_url }}">About</a></li>
+              <li><a href="{{ '/blog/' | relative_url }}">Writing</a></li>
+              <li><a href="{{ '/privacy.html' | relative_url }}">Privacy</a></li>
+            </ul>
+          </div>
+          <div class="footer__group">
             <h2>Get in touch</h2>
             <ul>
               <li><a href="{{ anchor }}#demo">Request a demo</a></li>
               <li><a href="mailto:{{ site.email }}">{{ site.email }}</a></li>
-              <li><a href="{{ '/privacy.html' | relative_url }}">Privacy</a></li>
             </ul>
           </div>
         </nav>

@@ -28,9 +28,23 @@
           <img class="nav__logo__mark" src="{{ '/img/symbol.svg' | relative_url }}" alt="" width="226" height="226" />
         </a>
 
+        {%- comment -%}
+          Routes, not in-page anchors. The masthead used to hold #how and
+          #demonstration, which made it a scroll control on the homepage and a
+          set of cross-page jumps everywhere else — and it named two of the
+          homepage's five sections, leaving the position indicator dark for
+          65% of the scroll.
+
+          A site nav lists destinations; a page's own contents belong to the
+          page. The homepage section links live in the footer.
+
+          Platform joins these two once it has content. aria-current marks the
+          route the reader is on — the scrollspy in main.js only ever sets it
+          on same-page anchors, so the two cannot collide.
+        {%- endcomment -%}
         <nav class="nav__links" aria-label="Primary">
-          <a href="{{ anchor }}#how">How it works</a>
-          <a href="{{ anchor }}#demonstration">Demonstration</a>
+          <a href="{{ '/about.html' | relative_url }}"{% if page.url == '/about.html' %} aria-current="page"{% endif %}>About</a>
+          <a href="{{ '/blog/' | relative_url }}"{% if page.url contains '/blog/' %} aria-current="page"{% endif %}>Writing</a>
         </nav>
 
         <div class="nav__actions">
