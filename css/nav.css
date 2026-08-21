@@ -29,6 +29,22 @@
   .masthead.is-stuck { backdrop-filter: blur(16px) saturate(1.1); }
 }
 
+/* The masthead stops being translucent when more contrast is asked for. A
+   blurred paper over a moving ground is precisely the surface that made the
+   active link fail — the ground darkens as you scroll into the problem band,
+   so no ink colour fixes it, only an opaque bar does.
+
+   This lives in nav.css, not with the other prefers-contrast token overrides
+   in base.css, because both rules are (0,2,0) and base.css loads first — the
+   override there lost on source order and silently did nothing. Component
+   overrides belong next to the component. */
+@media (prefers-contrast: more) {
+  .masthead.is-stuck {
+    background: var(--paper);
+    backdrop-filter: none;
+  }
+}
+
 .nav {
   position: relative;
   display: grid;
@@ -48,11 +64,20 @@
 
 /* Sized by HEIGHT, not width: a horizontal lockup has to sit on the same
    optical line as the nav links whatever the viewport does, and the intrinsic
-   width/height on the img reserves the right box before it loads. */
+   width/height on the img reserves the right box before it loads.
+
+   max-width: none overrides the global img reset. In the grid the logo sits
+   in an `auto` track that the 184px pill and the 44px toggle can squeeze to
+   nothing; with max-width: 100% the mark did not overflow, it DISTORTED —
+   held at 27px tall and compressed to 61px wide at 390px, and to zero at
+   320px, where the brand mark simply was not on the page. */
 .nav__logo img {
   height: var(--nav-logo);
   width: auto;
+  max-width: none;
 }
+
+.nav__logo__mark { display: none; }
 
 .nav__links {
   display: flex;
@@ -92,10 +117,17 @@
 .nav__links a:hover::after { transform: scaleX(1); }
 
 /* The section currently under the reader. Green rather than ink, and always
-   drawn: it reports position, it is not a hover state. */
-.nav__links a[aria-current="true"] { color: var(--signal); }
+   drawn: it reports position, it is not a hover state.
+
+   --signal-ink, not --signal. Eucalyptus at this size measured 4.75:1 on paper
+   and 3.77:1 once the masthead sticks — the bar is a translucent paper over
+   whatever is beneath it, so the ground darkens as you scroll into the problem
+   band. That is a 1.4.3 failure on the one link whose job is to tell you where
+   you are. Traced across nine scroll positions: ink runs 11.26-14.34, this
+   runs 6.1-8.0, Eucalyptus was the only value that dipped. */
+.nav__links a[aria-current="true"] { color: var(--signal-ink); }
 .nav__links a[aria-current="true"]::after {
-  background: var(--signal);
+  background: var(--signal-ink);
   transform: scaleX(1);
 }
 
@@ -106,13 +138,19 @@
 }
 
 /* ── Mobile ───────────────────────────────────────────────── */
+/* place-CONTENT as well as place-items. place-items centres each bar inside
+   its row; without place-content the two auto rows STRETCH to fill the 44px
+   target, so the declared 6px gap rendered as 19px and the ±3.75px close
+   transform could not bring the bars together — the open state drew a ">"
+   chevron rather than an "×", which reads as "forward", not "close". */
 .nav__toggle {
   display: none;
   width: 44px;
   height: 44px;
   margin-right: -11px;      /* keep the glyph optically on the gutter */
   place-items: center;
-  gap: 6px;
+  place-content: center;
+  gap: 9px;
   grid-auto-flow: row;
 }
 
@@ -134,15 +172,23 @@
   /* The demo pill stays in the bar. Hiding it behind the hamburger left the
      mobile fold of a Persuade page with no route to its one conversion — the
      only two visible controls both pointed at an explainer section. */
-  .nav { grid-template-columns: auto 1fr auto; }
-  .nav__toggle { display: grid; }
+  /* Four items, three columns, and the links span all of them — so without
+     explicit placement the toggle got auto-flowed onto a later row the moment
+     the menu opened. Measured: it moved 109px left and 162px down between the
+     press that opens it and the press that closes it, which is the one control
+     that must not move, because the second press is aimed at where the first
+     one was. Every item is placed. */
+  .nav { grid-template-columns: auto 1fr auto auto; }
+
+  .nav__logo    { grid-row: 1; grid-column: 1; }
+  .nav__actions { grid-row: 1; grid-column: 3; display: flex; }
+  .nav__toggle  { grid-row: 1; grid-column: 4; display: grid; }
 
   .nav__links {
+    grid-row: 2;
     grid-column: 1 / -1;
     display: none;
   }
-
-  .nav__actions { display: flex; }
 
   .nav__actions .btn--pill {
     padding: 11px 16px 11px 20px;
@@ -159,6 +205,19 @@
 
   .nav__links a { letter-spacing: 0.13em; }
 
+  /* Below the width that seats the wordmark, the symbol stands in. The cut is
+     at 520 because that is where the 172px lockup, the pill and the toggle
+     stop fitting between the gutters. Measured at the tightest supported
+     viewport: at 320px the bar ends at 313, with the 27px mark, the 180px
+     pill and the 44px toggle all at full size. */
+  @media (max-width: 520px) {
+    .nav { gap: 14px; }
+    .nav__logo__lockup { display: none; }
+    .nav__logo__mark   { display: block; }
+
+    .nav__actions .btn--pill { padding: 11px 14px 11px 18px; }
+  }
+
   /* An open panel always needs its own surface — it is over page content by
      definition, whether or not the masthead has stuck yet. */
   .masthead.is-open {
@@ -168,6 +227,7 @@
 
   .nav.is-open .nav__links { display: flex; }
 
-  .nav.is-open .nav__toggle span:first-child { transform: translateY(3.75px) rotate(45deg); }
-  .nav.is-open .nav__toggle span:last-child  { transform: translateY(-3.75px) rotate(-45deg); }
+  /* Half the distance between the bar centres: (gap 9 + height 1.5) / 2. */
+  .nav.is-open .nav__toggle span:first-child { transform: translateY(5.25px) rotate(45deg); }
+  .nav.is-open .nav__toggle span:last-child  { transform: translateY(-5.25px) rotate(-45deg); }
 }

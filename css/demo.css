@@ -237,32 +237,27 @@
   color: var(--ink);
 }
 
-.demo__actions {
+/* Not controls, and no longer shaped like them. The three words are the
+   decisions this recommendation is waiting on; the label carries the state.
+   Kept on one line with the owner/date readout beneath, so the panel reads as
+   a record rather than as an interface with dead buttons in it. */
+.demo__await {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
-  gap: 10px 12px;
-  margin-top: var(--space-4);
-}
-
-/* Non-interactive by construction: spans, not buttons. The panel is a
-   picture of the product, and a control that does nothing is worse than
-   no control at all. */
-.demo__act {
-  padding: 8px 16px;
-  border-radius: 999px;
-  border: 1px solid var(--rule-strong);
-  font-size: var(--t-meta);
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  align-items: baseline;
+  gap: 6px 10px;
+  margin: var(--space-4) 0 0;
+  font-size: var(--t-sm);
+  line-height: 1.5;
   color: var(--ink-soft);
 }
 
-.demo__act--primary {
-  background: var(--signal-deep);
-  border-color: var(--signal-deep);
-  color: var(--paper);
+.demo__await__label {
+  font-size: var(--t-label);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
 }
 
 .demo__state {

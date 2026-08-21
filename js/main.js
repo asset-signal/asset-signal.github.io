@@ -431,10 +431,24 @@
       nav.classList.toggle("is-open", open);
       if (masthead) masthead.classList.toggle("is-open", open);
       toggle.setAttribute("aria-expanded", String(open));
+      // The name says what the press will do, not what the thing is. A control
+      // called "Toggle menu" in both states makes a screen reader announce the
+      // same words whether it is about to open or close.
+      toggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
     };
 
     toggle.addEventListener("click", () => {
-      setOpen(!nav.classList.contains("is-open"));
+      const open = !nav.classList.contains("is-open");
+      setOpen(open);
+      // Move focus into the panel it just revealed. The links sit BEFORE the
+      // toggle in source order — the grid places them below it visually, but
+      // tab order follows the DOM — so tabbing on from the toggle walked past
+      // the menu into the hero. Opening a menu you then cannot reach by
+      // keyboard is worse than not opening it.
+      if (open) {
+        const firstLink = nav.querySelector(".nav__links a");
+        if (firstLink) firstLink.focus();
+      }
     });
 
     // Following a link should close the panel, including same-page anchors
@@ -444,7 +458,12 @@
     });
 
     document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") setOpen(false);
+      // Escape returns focus to the control that opened the panel, otherwise
+      // focus is left inside a menu that is no longer on screen.
+      if (e.key === "Escape" && nav.classList.contains("is-open")) {
+        setOpen(false);
+        toggle.focus();
+      }
     });
   }
 

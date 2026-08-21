@@ -13,10 +13,6 @@
   align-items: start;
 }
 
-/* Not sticky. Measured, the aside is 462px against a 478px form — 16px of
-   travel, which is intent expressed in CSS with no rendered consequence. */
-.contact__aside {}
-
 .contact__lede { margin-top: var(--space-5); }
 
 .contact__points {

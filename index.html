@@ -6,7 +6,7 @@
   <title>Asset Signal — Clarity at the moment of decision</title>
   <meta name="description" content="Asset Signal is the decision layer for real estate asset management. Know what needs attention, understand why, and decide what to do next." />
   <meta name="theme-color" content="#F7F3EC" />
-  <link rel="canonical" href="https://assetsignal.github.io/" />
+  <link rel="canonical" href="https://asset-signal.github.io/" />
 
   <link rel="icon" href="img/symbol.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="img/symbol.svg" />
@@ -39,8 +39,15 @@
   <div class="page">
     <div class="masthead" data-masthead>
       <header class="nav wrap" data-nav>
+        <!-- Two marks, one link. The horizontal lockup is 172px at the nav's
+             logo height, and below ~520px the bar cannot seat it alongside the
+             demo pill and the toggle — max-width:100% then squashed it rather
+             than overflowing (61px at 390, 0px at 320). The symbol carries the
+             identity where the wordmark does not fit. alt is empty on both:
+             the anchor's aria-label is the accessible name. -->
         <a class="nav__logo" href="#top" aria-label="Asset Signal — home">
-          <img src="img/asset_signal_h_logo.png" alt="Asset Signal" width="1080" height="170" />
+          <img class="nav__logo__lockup" src="img/asset_signal_h_logo.png" alt="" width="1080" height="170" />
+          <img class="nav__logo__mark" src="img/symbol.svg" alt="" width="226" height="226" />
         </a>
 
         <nav class="nav__links" aria-label="Primary">
@@ -57,7 +64,7 @@
           </a>
         </div>
 
-        <button class="nav__toggle" type="button" aria-label="Toggle menu" aria-expanded="false" data-nav-toggle>
+        <button class="nav__toggle" type="button" aria-label="Open menu" aria-expanded="false" data-nav-toggle>
           <span></span><span></span>
         </button>
       </header>
@@ -319,12 +326,20 @@
                       <dt>Recommended action</dt>
                       <dd>Match the two-week concession running at the two comparables through 30 September, then reassess conversion before extending it further.</dd>
                       <dd>
-                        <div class="demo__actions">
-                          <span class="demo__act demo__act--primary">Approve</span>
-                          <span class="demo__act">Assign</span>
-                          <span class="demo__act">Dismiss</span>
-                        </div>
-                        <p class="demo__state">Owner — unassigned · Awaiting decision · Raised 14 Sep</p>
+                        <!-- A readout, not three controls. These were pills —
+                             999px radius, one filled Deep Forest exactly like
+                             the page's primary CTA — sitting under a figure at
+                             the panel's peak moment. The markup was already
+                             non-interactive spans; the RENDERING was the
+                             control, and tapping it taught the visitor the
+                             product was a mockup. Stated as what the decision
+                             is waiting on, it carries the same information and
+                             promises nothing. -->
+                        <p class="demo__await">
+                          <span class="demo__await__label">Awaiting</span>
+                          Approve · Assign · Dismiss
+                        </p>
+                        <p class="demo__state">Owner — unassigned · Raised 14 Sep</p>
                       </dd>
                     </dl>
                   </li>
@@ -492,7 +507,7 @@
                 <p class="sent__body">
                   We will read it properly and reply within one business day, from a
                   person rather than a sequence. If it is easier to talk sooner,
-                  <a href="mailto:EMAIL@PLACEHOLDER.INVALID">write to us directly</a>.
+                  <a href="mailto:service@assetsignal.ai">write to us directly</a>.
                 </p>
                 <p class="sent__meta">
                   Sent to Asset Signal · <button type="button" class="sent__again" data-send-again>Send another request</button>
@@ -510,7 +525,7 @@
       <div class="footer__top">
         <div>
           <a class="footer__logo" href="#top" aria-label="Asset Signal — home">
-            <img src="img/asset_signal_h_logo_reversed.png" alt="Asset Signal" width="1080" height="170" loading="lazy" decoding="async" />
+            <img src="img/asset_signal_h_logo_reversed.png" alt="" width="1080" height="170" loading="lazy" decoding="async" />
           </a>
           <p class="footer__line">Clarity at the moment of decision.</p>
         </div>
@@ -528,11 +543,7 @@
             <h2>Get in touch</h2>
             <ul>
               <li><a href="#demo">Request a demo</a></li>
-              <!-- PLACEHOLDER: swap EMAIL@PLACEHOLDER.INVALID for the real address in
-                   every place it appears (here, the form note, privacy.html, thanks.html).
-                   .invalid is a reserved TLD, so this can never deliver mail to a real
-                   party by accident. -->
-              <li><a href="mailto:EMAIL@PLACEHOLDER.INVALID">EMAIL@PLACEHOLDER.INVALID</a></li>
+              <li><a href="mailto:service@assetsignal.ai">service@assetsignal.ai</a></li>
               <li><a href="privacy.html">Privacy</a></li>
             </ul>
           </div>

@@ -111,7 +111,6 @@
   /* Rhythm */
   --gutter:       clamp(20px, 4.2vw, 60px);
   --page-max:     1560px;
-  --measure:      66ch;
 
   /* Vertical scale. Section spacing is visibly larger than the spacing
      between related items — the brand's layout rule, expressed as tokens
@@ -240,8 +239,14 @@ button {
   border-radius: 3px;
 }
 
-/* Focus on the dark surface needs the light side of the palette. */
-.band--dark :focus-visible { outline-color: var(--sage); }
+/* Focus on the dark surface needs the light side of the palette. This was
+   keyed to .band--dark, which no longer exists in the markup — so when the
+   footer took the Deep Forest, every link in it drew a --signal-deep ring on
+   a --signal-deep ground: 1.00:1, the same colour, an invisible focus stop
+   for five of the page's twenty-two. Pale Sage rather than Soft Sage so the
+   ring reads at the same strength here (8.66:1) as everywhere else (9.16:1)
+   instead of dropping to Soft Sage's 3.9. */
+.footer :focus-visible { outline-color: var(--on-dark); }
 
 .skip-link {
   position: absolute;
@@ -338,6 +343,14 @@ button {
 .is-ready #signal-bg canvas {
   opacity: 1;
   transform: none;
+}
+
+/* The field retires itself when the device cannot draw it — see the frame
+   budget in signal-background.js. Fading rather than cutting, because the
+   trigger is a slow machine and a hard swap on a slow machine is a flash. */
+#signal-bg canvas.is-retired {
+  opacity: 0;
+  transition: opacity 600ms var(--ease);
 }
 
 /* ── Page shell ───────────────────────────────────────────── */
@@ -533,4 +546,52 @@ main {
 
   .has-enter [data-enter] { transform: none; transition: opacity 240ms ease; }
   * { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; }
+}
+
+/* ── prefers-contrast: more ───────────────────────────────────
+   An accommodation, not a theme. The palette, the layout and the
+   type all stay; what changes is that every value chosen to sit
+   quietly is asked to carry its weight instead.
+
+   Redefining tokens rather than restyling components means this
+   reaches every element that was built correctly, including the
+   ones added after this block was written. The signal field
+   already reads the same query in JS — it drops dispersion, lifts
+   stroke opacity and cuts the haze that washes strands toward the
+   paper — so the canvas and the document respond together.
+
+   Ratios below are against the surface each token is used on.  */
+@media (prefers-contrast: more) {
+  :root {
+    /* Secondary and muted text stop being a step down in weight and
+       become a step down in size only. 4.67:1 -> 8.31:1. */
+    --ink-soft:        #24312D;
+    --ink-muted:       #3A4642;
+
+    /* Light-on-dark muted text loses its transparency: composited,
+       0.74 alpha was 7.9:1 and full opacity is 13.6:1. Alpha is the
+       first thing to go, because a translucent glyph thins as well
+       as dims. */
+    --on-noise-muted:  rgb(232, 239, 235);
+    --on-dark-muted:   rgb(232, 239, 235);
+
+    /* Green text goes to the value derived for exactly this problem
+       rather than the brand's mid green: 4.54:1 -> 6.10:1 on Pale
+       Sage, and it holds over the washes too. */
+    --signal:          var(--signal-ink);
+    --signal-noise:    var(--signal-lit);
+
+    /* Hairlines are information here — they separate rows and mark
+       section boundaries — so they stop being 14% ink. */
+    --rule:            rgba(23, 37, 34, 0.42);
+    --rule-strong:     rgba(23, 37, 34, 0.62);
+    --rule-noise:      rgba(232, 239, 235, 0.46);
+    --rule-dark:       rgba(232, 239, 235, 0.48);
+  }
+
+  /* Focus is the one indicator a keyboard user cannot do without. */
+  :focus-visible {
+    outline-width: 3px;
+    outline-offset: 3px;
+  }
 }

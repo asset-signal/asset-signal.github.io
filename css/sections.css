@@ -53,11 +53,6 @@
     #E8EFEB 52.0%);
 }
 
-.band--dark {
-  background: var(--signal-deep);
-  color: var(--on-dark);
-}
-
 /* ── Section head ─────────────────────────────────────────────
    Asymmetric: the statement takes the wide left column, the lede
    the narrow right one, and the two share a baseline grid rather
@@ -81,14 +76,10 @@
   text-wrap: balance;
 }
 
-.band--dark .section-title { color: var(--on-dark); }
-
 .section-title em {
   font-style: italic;
   color: var(--signal);
 }
-
-.band--dark .section-title em { color: var(--signal-soft); }
 
 /* The second line of a two-part statement, set italic and a step down —
    the same relationship the hero uses. */
@@ -106,8 +97,6 @@
   color: var(--ink-soft);
 }
 
-.band--dark .section-lede { color: var(--on-dark-muted); }
-
 /* The noise-to-signal field now lives in css/problem.css. It is driven by
    scroll progress rather than a one-shot reveal, so the rules that used to
    sit here would have fought it — and worse, their `.figure.is-in` activator
@@ -123,8 +112,10 @@
   /* 3x2, not 6x1. At six columns the text track measured 197px — 21-25
      characters a line, and narrower at 1440 than it was at 1024, because the
      breakpoint promoted 3→6 exactly when the copy stopped fitting. At three
-     the track is ~430px and 48-55 characters, and the row break lands between
-     Recommendation and Decision, which is where the copy says the turn is. */
+     the row break lands between Recommendation and Decision, which is where
+     the copy says the turn is. This is the FALLBACK now: the ring takes over
+     at 940 and up, so the three-column grid only ever renders between 761 and
+     939, where the track measures ~260px / ~30 characters. */
   grid-template-columns: repeat(3, minmax(0, 1fr));
   margin: var(--gap-block) 0 0;
   padding: 0;
@@ -183,95 +174,22 @@
   color: var(--ink-soft);
 }
 
-/* The loop closes on its last stage rather than under a drawn arc: the sixth
-   node is filled and ringed, and the sentence underneath says what that means.
-   A bracket floating below the row connected to nothing and read as a bug. */
-.loop__stage--closes::before {
-  background: var(--signal);
-  box-shadow: 0 0 0 4px rgba(63, 117, 104, 0.18);
-}
-
-/* The rule spans the full measure — it is the structure — but the content
-   does not. A 4fr/8fr split left the label marooned at the far left with a
-   90px gap and ran the description out to a 90-character line. The label
-   column is now sized to the labels, and the description keeps a readable
-   measure. */
-
-/* Sentence case, not uppercase: these read as short statements now rather
-   than as taxonomy labels, and letter-spaced caps fight that. */
-
-.principle {
-  border-top: 1px solid var(--rule-strong);
-  padding-top: var(--space-4);
-}
-
-.band--dark .principle { border-top-color: var(--rule-dark); }
-
-.principle__title {
-  margin: 0 0 var(--space-3);
-  font-family: var(--font-display);
-  font-weight: 400;
-  font-size: clamp(20px, 1.75vw, 26px);
-  line-height: 1.2;
-  letter-spacing: -0.01em;
-  color: var(--ink);
-}
-
-.band--dark .principle__title { color: var(--on-dark); }
-
-.principle__body {
-  margin: 0;
-  font-size: var(--t-body);
-  line-height: 1.64;
-  color: var(--ink-soft);
-}
-
-.band--dark .principle__body { color: var(--on-dark-muted); }
-
-.profile {
-  border-top: 1px solid var(--rule-strong);
-  padding-top: var(--space-4);
-}
-
-/* Sentence case: "Head of asset management · CIO · COO" is 36 characters,
-   and letterspaced uppercase at that length is a passage, not a label.
-   Size, weight and colour still mark it as one. */
-.profile__role {
-  margin: 0 0 var(--space-4);
-  font-size: var(--t-meta);
-  font-weight: 600;
-  letter-spacing: 0.01em;
-  color: var(--ink-muted);
-}
-
-.profile__line {
-  margin: 0 0 var(--space-3);
-  font-family: var(--font-display);
-  font-style: italic;
-  font-weight: 400;
-  font-size: clamp(20px, 1.8vw, 26px);
-  line-height: 1.2;
-  letter-spacing: -0.008em;
-  color: var(--signal-deep);
-}
-
-.profile__body {
-  margin: 0;
-  font-size: var(--t-body);
-  line-height: 1.62;
-  color: var(--ink-soft);
-}
-
 /* ── Responsive ───────────────────────────────────────────── */
 @media (max-width: 900px) {
-  .section-head,
-
   .section-head { align-items: start; }
-
 }
 
 @media (max-width: 760px) {
   .loop { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* One column below the width where two tracks stop being readable. The same
+   argument as the 3x2 note above, at the other end: two tracks measure 18.5
+   characters at 390px and 14.5 at 320 — narrower than the six-column layout
+   this section already rejected. The cut is at 600 rather than at the nav's
+   520 because two tracks are still only 25-28 characters between them. */
+@media (max-width: 600px) {
+  .loop { grid-template-columns: minmax(0, 1fr); }
 }
 
 /* ── The cycle ────────────────────────────────────────────────
