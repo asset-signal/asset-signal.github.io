@@ -1,0 +1,49 @@
+{%- comment -%}
+  The masthead, once. It previously existed as three hand-maintained
+  copies, which is how privacy.html and thanks.html ended up carrying
+  three nav links to sections that had been deleted.
+
+  In-page anchors resolve against the homepage from every page except
+  the homepage itself, where they stay bare so the browser scrolls
+  instead of navigating. These become routes as /platform and /blog
+  land; the anchor handling goes away with them.
+{%- endcomment -%}
+{%- assign home = '/' | relative_url -%}
+{%- if page.url == '/' -%}{%- assign anchor = '' -%}{%- else -%}{%- assign anchor = home -%}{%- endif -%}
+    <div class="masthead" data-masthead>
+      <header class="nav wrap" data-nav>
+        <!-- Two marks, one link. The horizontal lockup is 172px at the nav's
+             logo height, and below ~520px the bar cannot seat it alongside the
+             demo pill and the toggle — max-width:100% then squashed it rather
+             than overflowing (61px at 390, 0px at 320). The symbol carries the
+             identity where the wordmark does not fit. alt is empty on both:
+             the anchor's aria-label is the accessible name. -->
+        {%- comment -%}
+          On the homepage the logo scrolls to the top; anywhere else it is a
+          route home. href="/" on the homepage is a navigation, not a scroll —
+          the browser reloads the page you are already on.
+        {%- endcomment -%}
+        <a class="nav__logo" href="{% if page.url == '/' %}#top{% else %}{{ home }}{% endif %}" aria-label="Asset Signal — home">
+          <img class="nav__logo__lockup" src="{{ '/img/asset_signal_h_logo.png' | relative_url }}" alt="" width="1080" height="170" />
+          <img class="nav__logo__mark" src="{{ '/img/symbol.svg' | relative_url }}" alt="" width="226" height="226" />
+        </a>
+
+        <nav class="nav__links" aria-label="Primary">
+          <a href="{{ anchor }}#how">How it works</a>
+          <a href="{{ anchor }}#demonstration">Demonstration</a>
+        </nav>
+
+        <div class="nav__actions">
+          <a class="btn btn--pill" href="{{ anchor }}#demo">
+            Request a demo
+            <span class="btn__icon" aria-hidden="true">
+              <svg viewBox="0 0 16 16" fill="none"><path d="M2 8h11M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+          </a>
+        </div>
+
+        <button class="nav__toggle" type="button" aria-label="Open menu" aria-expanded="false" data-nav-toggle>
+          <span></span><span></span>
+        </button>
+      </header>
+    </div>

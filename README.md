@@ -10,15 +10,55 @@ perspective, with a single green line — the signal — running through it.
 
 ## Running it
 
-Any static server will do. From the repository root:
+The site is built by Jekyll, which is what GitHub Pages already runs. You need
+Ruby, then:
 
 ```sh
-python3 -m http.server 8000
-# then open http://localhost:8000
+bundle install
+bundle exec jekyll serve      # http://localhost:4000
 ```
 
-Opening `index.html` directly over `file://` also works, though the webfonts
-still need a network connection.
+`python3 -m http.server` no longer works against the repository root, and
+opening `index.html` over `file://` shows you the front matter as text — the
+pages are templates now, not documents. To serve the built output with any
+static server instead:
+
+```sh
+bundle exec jekyll build      # writes _site/
+python3 -m http.server 8000 --directory _site
+```
+
+`_site/` is generated and git-ignored. Pages builds from source on its own
+servers, so nothing in `_site/` is ever deployed from here.
+
+### Where the shared markup lives
+
+The masthead, footer and `<head>` used to be copy-pasted into every page. That
+duplication shipped a real bug: `privacy.html` and `thanks.html` carried three
+nav links to sections that had been deleted from the homepage. Each now exists
+once:
+
+| File | What it owns |
+| --- | --- |
+| `_layouts/default.html` | The page shell — skip link, signal field, `.page`, scripts |
+| `_includes/head.html` | Everything in `<head>`, driven by page front matter |
+| `_includes/masthead.html` | The nav |
+| `_includes/footer.html` | Both footer shapes, full and minimal |
+
+Pages carry front matter rather than markup: `title`, `description`, `robots`,
+`canonical`, `og`, `signal_field`, `footer` (`minimal` for the legal pages) and
+`styles`, a list of stylesheet basenames loaded after `base` and `nav` **in the
+order given** — the cascade depends on it.
+
+### Two things not to undo
+
+**Filenames stay as filenames.** `privacy.html` builds to `/privacy.html`, not
+`/privacy/`. A top-level `permalink:` in `_config.yml` applies to pages as well
+as posts and silently moved it, 404ing a URL the demo form's consent line links
+to. The post permalink is set under `defaults` for that reason.
+
+**Asset paths go through `relative_url`.** They used to be document-relative
+(`css/base.css`), which resolves from `/index.html` and not from `/blog/a-post/`.
 
 ## Layout
 

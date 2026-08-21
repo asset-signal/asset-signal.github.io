@@ -1,0 +1,54 @@
+# ─────────────────────────────────────────────────────────────
+# Jekyll configuration
+#
+# GitHub Pages builds this repo with its own Jekyll and its own
+# allowed-plugin list, so nothing here may depend on a gem Pages
+# does not already ship. There are no plugins for that reason.
+#
+# Filenames are kept as they are (privacy.html, thanks.html) so
+# every published URL survives the conversion unchanged. Do not
+# switch these to pretty permalinks without adding redirects —
+# the privacy URL is referenced from the demo form's consent
+# line and from the footer.
+# ─────────────────────────────────────────────────────────────
+
+title:       Asset Signal
+description: The decision layer for real estate asset management.
+url:         https://asset-signal.github.io
+baseurl:     ""
+email:       service@assetsignal.ai
+lang:        en
+
+# Sass/coffee are off; the CSS in css/ is hand-written and is
+# copied verbatim. Nothing in this project is compiled.
+sass:
+  style: expanded
+
+# Source material and local tooling. reference/ holds the brand
+# decks and layered artwork — this repo is public, so they are
+# excluded from the build as well as from git.
+exclude:
+  - README.md
+  - reference/
+  - .agents/
+  - .impeccable/
+  - skills-lock.json
+  - Gemfile
+  - Gemfile.lock
+  - vendor/
+
+# Posts render at /blog/<slug>/ rather than by date. A pre-launch
+# company publishes rarely, and a 2026/08/21 in the URL dates a
+# piece that may be the only one for a month.
+#
+# This is set under defaults, NOT as a top-level `permalink:`. A
+# top-level permalink applies to PAGES as well as posts: it turned
+# privacy.html into /privacy/ and 404'd the published /privacy.html
+# that the demo form's consent line links to.
+defaults:
+  - scope:
+      path: ""
+      type: posts
+    values:
+      layout: post
+      permalink: /blog/:slug/

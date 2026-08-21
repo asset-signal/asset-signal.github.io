@@ -1,0 +1,49 @@
+{%- comment -%}
+  Every <head> on the site. Pages supply title/description/robots and
+  the extra stylesheets they need; base.css and nav.css are on every
+  page because every page has a masthead.
+
+  All asset paths go through relative_url. They used to be document-
+  relative ("css/base.css"), which resolves correctly from /index.html
+  and NOT from /blog/a-post/ — the conversion is what makes nested URLs
+  possible, so this is the moment that stops being safe.
+{%- endcomment -%}
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{{ page.title }}</title>
+  <meta name="description" content="{{ page.description }}" />
+  <meta name="theme-color" content="#F7F3EC" />
+  {%- if page.robots %}
+  <meta name="robots" content="{{ page.robots }}" />
+  {%- endif %}
+  {%- if page.canonical %}
+  <link rel="canonical" href="{{ page.canonical }}" />
+  {%- endif %}
+
+  <link rel="icon" href="{{ '/img/symbol.svg' | relative_url }}" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="{{ '/img/symbol.svg' | relative_url }}" />
+
+  {%- if page.og %}
+  <meta property="og:type" content="{{ page.og_type | default: 'website' }}" />
+  <meta property="og:title" content="{{ page.title }}" />
+  <meta property="og:description" content="{{ page.description }}" />
+  {%- comment -%}
+    absolute_url, not relative. Social scrapers fetch og:image out of any page
+    context, so a site-relative path is a broken image in the card — it was
+    "img/asset_signal_h_logo.png" before, relative to a document the scraper
+    never has.
+  {%- endcomment -%}
+  <meta property="og:image" content="{{ '/img/asset_signal_h_logo.png' | absolute_url }}" />
+  <meta property="og:url" content="{{ page.url | absolute_url }}" />
+  <meta name="twitter:card" content="summary_large_image" />
+  {%- endif %}
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..600&amp;display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="{{ '/css/base.css' | relative_url }}" />
+  <link rel="stylesheet" href="{{ '/css/nav.css' | relative_url }}" />
+  {%- for sheet in page.styles %}
+  <link rel="stylesheet" href="{{ '/css/' | append: sheet | append: '.css' | relative_url }}" />
+  {%- endfor %}

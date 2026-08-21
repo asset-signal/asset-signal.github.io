@@ -1,75 +1,12 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Asset Signal — The decision layer for real estate asset management</title>
-  <meta name="description" content="Asset Signal is the decision layer for real estate asset management. Know what needs attention, understand why, and decide what to do next." />
-  <meta name="theme-color" content="#F7F3EC" />
-  <link rel="canonical" href="https://asset-signal.github.io/" />
-
-  <link rel="icon" href="img/symbol.svg" type="image/svg+xml" />
-  <link rel="apple-touch-icon" href="img/symbol.svg" />
-
-  <meta property="og:type" content="website" />
-  <meta property="og:title" content="Asset Signal — The decision layer for real estate asset management" />
-  <meta property="og:description" content="The decision layer for real estate asset management. Know what needs attention, understand why, and decide what to do next." />
-  <meta property="og:image" content="img/asset_signal_h_logo.png" />
-  <meta name="twitter:card" content="summary_large_image" />
-
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..600&amp;display=swap" rel="stylesheet" />
-
-  <link rel="stylesheet" href="css/base.css" />
-  <link rel="stylesheet" href="css/nav.css" />
-  <link rel="stylesheet" href="css/hero.css" />
-  <link rel="stylesheet" href="css/sections.css" />
-  <link rel="stylesheet" href="css/problem.css" />
-  <link rel="stylesheet" href="css/demo.css" />
-  <link rel="stylesheet" href="css/form.css" />
-  <link rel="stylesheet" href="css/footer.css" />
-</head>
-<body>
-  <a class="skip-link" href="#main">Skip to content</a>
-
-  <!-- Animated signal field. Owned entirely by js/signal-background.js. -->
-  <div id="signal-bg" aria-hidden="true"></div>
-
-  <div class="page">
-    <div class="masthead" data-masthead>
-      <header class="nav wrap" data-nav>
-        <!-- Two marks, one link. The horizontal lockup is 172px at the nav's
-             logo height, and below ~520px the bar cannot seat it alongside the
-             demo pill and the toggle — max-width:100% then squashed it rather
-             than overflowing (61px at 390, 0px at 320). The symbol carries the
-             identity where the wordmark does not fit. alt is empty on both:
-             the anchor's aria-label is the accessible name. -->
-        <a class="nav__logo" href="#top" aria-label="Asset Signal — home">
-          <img class="nav__logo__lockup" src="img/asset_signal_h_logo.png" alt="" width="1080" height="170" />
-          <img class="nav__logo__mark" src="img/symbol.svg" alt="" width="226" height="226" />
-        </a>
-
-        <nav class="nav__links" aria-label="Primary">
-          <a href="#how">How it works</a>
-          <a href="#demonstration">Demonstration</a>
-        </nav>
-
-        <div class="nav__actions">
-          <a class="btn btn--pill" href="#demo">
-            Request a demo
-            <span class="btn__icon" aria-hidden="true">
-              <svg viewBox="0 0 16 16" fill="none"><path d="M2 8h11M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </span>
-          </a>
-        </div>
-
-        <button class="nav__toggle" type="button" aria-label="Open menu" aria-expanded="false" data-nav-toggle>
-          <span></span><span></span>
-        </button>
-      </header>
-    </div>
-
+---
+layout: default
+title: "Asset Signal — The decision layer for real estate asset management"
+description: "Asset Signal is the decision layer for real estate asset management. Know what needs attention, understand why, and decide what to do next."
+canonical: "https://asset-signal.github.io/"
+og: true
+signal_field: true
+styles: [hero, sections, problem, demo, form, footer]
+---
     <main id="main">
       <!-- ── The fold: the promise ──────────────────────────────── -->
       <section class="hero" id="top">
@@ -505,7 +442,7 @@
                   </button>
                   <p class="form__note">
                     We use these details only to arrange the conversation. See our
-                    <a href="privacy.html">privacy notice</a>.
+                    <a href="{{ '/privacy.html' | relative_url }}">privacy notice</a>.
                   </p>
                 </div>
 
@@ -531,47 +468,3 @@
         </section>
       </div>
     </main>
-  </div>
-
-  <footer class="footer">
-    <div class="wrap">
-      <div class="footer__top">
-        <div>
-          <a class="footer__logo" href="#top" aria-label="Asset Signal — home">
-            <img src="img/asset_signal_h_logo_reversed.png" alt="" width="1080" height="170" loading="lazy" decoding="async" />
-          </a>
-          <p class="footer__line">Clarity at the moment of decision.</p>
-        </div>
-
-        <nav class="footer__nav" aria-label="Footer">
-          <div class="footer__group">
-            <h2>Explore</h2>
-            <ul>
-              <li><a href="#problem">The problem</a></li>
-              <li><a href="#how">How it works</a></li>
-              <li><a href="#demonstration">Demonstration</a></li>
-            </ul>
-          </div>
-          <div class="footer__group">
-            <h2>Get in touch</h2>
-            <ul>
-              <li><a href="#demo">Request a demo</a></li>
-              <li><a href="mailto:service@assetsignal.ai">service@assetsignal.ai</a></li>
-              <li><a href="privacy.html">Privacy</a></li>
-            </ul>
-          </div>
-        </nav>
-      </div>
-
-      <div class="footer__bottom">
-        <p>© 2026 Asset Signal. All rights reserved.</p>
-        <p>Decision intelligence for real estate.</p>
-      </div>
-    </div>
-  </footer>
-
-  <script src="js/signal-background.js" defer></script>
-  <script src="js/problem-field.js" defer></script>
-  <script src="js/main.js" defer></script>
-</body>
-</html>

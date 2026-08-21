@@ -24,5 +24,14 @@ skills-lock.json
 # already removed the reference images for this reason.
 reference/
 
+# Jekyll build output. GitHub Pages builds from source on its own
+# servers, so a committed _site would be dead weight that also masks
+# whether the source actually builds.
+_site/
+.jekyll-cache/
+.jekyll-metadata
+.sass-cache/
+vendor/
+
 # Local scratch
 screenshot.png

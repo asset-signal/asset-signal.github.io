@@ -1,0 +1,45 @@
+{%- comment -%}
+  Two shapes. The full footer closes the homepage; the legal and
+  utility pages take the bottom rule alone, which is what they
+  already did before the conversion.
+{%- endcomment -%}
+{%- assign home = '/' | relative_url -%}
+{%- if page.url == '/' -%}{%- assign anchor = '' -%}{%- else -%}{%- assign anchor = home -%}{%- endif -%}
+  <footer class="footer">
+    <div class="wrap">
+      {%- if page.footer != 'minimal' %}
+      <div class="footer__top">
+        <div>
+          <a class="footer__logo" href="{{ anchor }}#top" aria-label="Asset Signal — home">
+            <img src="{{ '/img/asset_signal_h_logo_reversed.png' | relative_url }}" alt="" width="1080" height="170" loading="lazy" decoding="async" />
+          </a>
+          <p class="footer__line">Clarity at the moment of decision.</p>
+        </div>
+
+        <nav class="footer__nav" aria-label="Footer">
+          <div class="footer__group">
+            <h2>Explore</h2>
+            <ul>
+              <li><a href="{{ anchor }}#problem">The problem</a></li>
+              <li><a href="{{ anchor }}#how">How it works</a></li>
+              <li><a href="{{ anchor }}#demonstration">Demonstration</a></li>
+            </ul>
+          </div>
+          <div class="footer__group">
+            <h2>Get in touch</h2>
+            <ul>
+              <li><a href="{{ anchor }}#demo">Request a demo</a></li>
+              <li><a href="mailto:{{ site.email }}">{{ site.email }}</a></li>
+              <li><a href="{{ '/privacy.html' | relative_url }}">Privacy</a></li>
+            </ul>
+          </div>
+        </nav>
+      </div>
+      {%- endif %}
+
+      <div class="footer__bottom">
+        <p>&copy; {{ 'now' | date: "%Y" }} Asset Signal. All rights reserved.</p>
+        <p>Decision intelligence for real estate.</p>
+      </div>
+    </div>
+  </footer>

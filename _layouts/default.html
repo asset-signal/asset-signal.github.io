@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="{{ site.lang }}">
+<head>
+{%- include head.html %}
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+{% if page.signal_field %}
+  <!-- Animated signal field. Owned entirely by js/signal-background.js. -->
+  <div id="signal-bg" aria-hidden="true"></div>
+{% endif %}
+  <div class="page">
+{%- include masthead.html %}
+
+{{ content }}
+  </div>
+
+{%- include footer.html %}
+
+{%- if page.signal_field %}
+  <script src="{{ '/js/signal-background.js' | relative_url }}" defer></script>
+  <script src="{{ '/js/problem-field.js' | relative_url }}" defer></script>
+{%- endif %}
+  <script src="{{ '/js/main.js' | relative_url }}" defer></script>
+</body>
+</html>
