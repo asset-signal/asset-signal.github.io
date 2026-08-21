@@ -57,9 +57,15 @@
      The ramp was shortened to pay for it. */
   margin-top: clamp(36px, 14.5vh, 174px);
 
-  /* The shader veils roughly the left third of the viewport for copy —
-     this column is sized to stay inside that cleared area. */
-  width: min(100%, 560px);
+  /* The shader veils roughly the left third of the viewport for copy — this
+     column is sized to stay inside that cleared area. Widened from 560 to 640
+     for the category headline: "The decision layer" sets 703px at the old
+     92.16px display size, so at 560 it could not hold on one line at any size
+     worth setting it at. The halo is not a fixed region — main.js reports the
+     measured copy box to the field every frame — so the cleared area follows
+     this, and 640 at 1440 still lands inside the default box the shader boots
+     with (0.03-0.44 of the viewport). */
+  width: min(100%, 640px);
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -70,7 +76,29 @@
   margin: 0;
   font-family: var(--font-display);
   font-weight: 400;
-  font-size: clamp(58px, 6.4vw, 104px);
+  /* 80px at the top, down from 104. The headline is 52 characters now rather
+     than 34, and the longest line has to hold in the copy column: measured,
+     "The decision layer" needs 7.63px of width for every px of font-size, so
+     640px of column buys 83px of type and 80 leaves the margin. A category
+     line earns its size by being read, not by being the largest thing on the
+     page — and at 80px it is still the largest thing on the page.
+
+     ONE curve, not two. A separate mobile clamp under a 900px breakpoint put
+     a cliff at the breakpoint itself: 72px at 900 and 58px at 901, the
+     headline shrinking as the viewport grew. And a fixed 46px floor wrapped
+     "The decision layer" onto two rows at 375px — an iPhone SE — because the
+     column there is 335px and the line needs 341.
+
+     So the size is solved from the column instead of guessed per breakpoint:
+     the line needs 7.41px of width per px of font-size, the column is the
+     viewport less two gutters, and this is 88% of what that allows. It
+     reaches its 80px ceiling at 713px, which is where the column stops
+     growing.
+
+     Smaller type, more headline: measured at 1440 the block is 607x213px
+     against the old 465x242 — about 15% MORE area, because 52 characters at
+     80px occupy more of the fold than 34 at 92. Nothing was given up here. */
+  font-size: clamp(33px, 11.88vw - 4.75px, 80px);
   line-height: 0.98;
   color: var(--ink);
   font-optical-sizing: auto;
@@ -80,7 +108,10 @@
      scales. An em value would be proportionally constant — the exact thing
      that is wrong. This tracks the font-size clamp above, -0.012em at the
      small end to -0.025em at the large one. */
-  letter-spacing: clamp(-2.6px, 1.69px - 0.264vw, -0.7px);
+     Re-solved for the 33-80px range the single clamp above now spans. Same
+     intent and the same em endpoints as before: -0.012em where the type is
+     smallest, -0.025em where it is largest. */
+  letter-spacing: clamp(-2px, 0.888px - 0.405vw, -0.4px);
 }
 
 .hero__line { display: block; }
@@ -88,7 +119,7 @@
 /* The roman line carries more counter space than the italics at the same
    size, so it takes a touch more tightening. */
 .hero__line--display {
-  letter-spacing: clamp(-3.1px, 1.9px - 0.31vw, -0.85px);
+  letter-spacing: clamp(-2.4px, 1.048px - 0.4835vw, -0.49px);
 }
 
 /* The italic lines run marginally smaller than the roman first line, the
@@ -111,13 +142,16 @@
 /* ── Lede ─────────────────────────────────────────────────── */
 .hero__lede {
   /* Wide enough for the longer of the two lines below to hold on one row.
-     That line measures ~27.5em set in Inter; the em unit keeps the ratio
-     across the whole font-size clamp, and 493px at the top of it still
-     sits well inside the 560px copy column. */
-  max-width: 29em;
-  margin: clamp(22px, 3vh, 38px) 0 0;
-  font-size: var(--t-body);
-  line-height: 1.62;
+     Re-measured for the new lede: "It says what changed, what it is worth,
+     and who needs to decide." is the longer clause. The em unit keeps the
+     ratio across the whole font-size clamp. */
+  max-width: 33em;
+  margin: clamp(26px, 3.4vh, 42px) 0 0;
+  /* --t-lede, not --t-body. This is no longer a supporting line: with the
+     category in the H1 it is the sentence that says what the thing actually
+     does, and at 15px under a 79px headline it read as a caption. */
+  font-size: var(--t-lede);
+  line-height: 1.55;
   color: var(--ink-soft);
 }
 
@@ -138,11 +172,11 @@
   margin-top: clamp(30px, 4.4vh, 56px);
 }
 
-/* ── Responsive ───────────────────────────────────────────── */
-@media (max-width: 900px) {
-  .hero__copy { width: min(100%, 620px); }
-  .hero__title { font-size: clamp(46px, 9.5vw, 76px); }
-}
+/* ── Responsive ───────────────────────────────────────────────
+   No size override here. The headline's clamp is continuous from
+   320px to 2560px, which is what removed the cliff at this
+   breakpoint; the copy column is min(100%, 640px) at every width
+   and needs no restatement.                                     */
 
 @media (max-width: 560px) {
   .hero__actions {

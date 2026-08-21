@@ -46,20 +46,34 @@ img/
 
 ## Page structure
 
-The order follows the brand's homepage rule — promise first, category second,
-mechanism third — and then the agreed section list.
-
 | Band | `id` | What it does |
 | --- | --- | --- |
-| Hero | `#top` | The promise |
-| The problem | `#problem` | Not a data problem — a noise problem; ends on the signal figure |
-| How Asset Signal works | `#how` | The six-stage loop, then what makes it different |
+| Hero | `#top` | The category, then what the product does |
+| The problem | `#problem` | Not a data problem — a noise problem; the noise-to-signal figure |
+| How Asset Signal works | `#how` | Review is a cycle, not an event — the six-stage ring |
 | Demonstration | `#demonstration` | One signal, opened — **illustrative, see below** |
-| Value | `#value` | What changes, then the same value read by role |
-| Use cases | `#use-cases` | The recurring asset-management workflows |
-| Security, control & trust | `#trust` | Human-in-the-loop, evidence, reversibility |
-| Who is building this | `#who` | Founders, pre-launch status, direct contact — **contains placeholders** |
-| Call to action | `#demo` | The vision statement, then the demo request form |
+| Call to action | `#demo` | The demo request form |
+
+`#value`, `#use-cases`, `#trust` and `#who` were cut; the page is five bands.
+
+### Category first, not promise first
+
+This inverts the brand's homepage rule, which is promise first and category
+second. The rule is right for a brand the reader already knows — a tagline
+introduces a company, it does not explain one. Measured, the old order put
+"The decision layer for real estate asset management" **5.3 screens down** on
+desktop and 4.8 on mobile: the one sentence naming the category sat in the
+third section, behind four screens of the problem band, for a cold reader who
+had never heard of the company.
+
+So the category line took the H1 and "Clarity at the moment of decision" kept
+its home in the footer, where a brand sign-off belongs. Worth knowing this is
+a deliberate override of a documented rule, not an oversight — revisit it once
+the name carries recognition on its own.
+
+Note what this is NOT: an eyebrow above the headline. That was considered and
+rejected for the reason the next section gives — it would have put the most
+important sentence on the page in the smallest type in the fold.
 
 ### Why the sections have no labels above their headings
 
