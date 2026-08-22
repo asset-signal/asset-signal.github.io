@@ -251,7 +251,7 @@ The form posts to **Formspree** at `https://formspree.io/f/maewalwz`. It is live
 | Input | `name` | Required |
 | --- | --- | --- |
 | Name | `name` | yes |
-| Work email | `email` | yes |
+| Email | `email` | yes |
 | Company | `company` | yes |
 | Role | `role` | no |
 | How does your team review assets today? | `memo` | no |
@@ -306,7 +306,7 @@ believing they had made contact.
 
 | Case | Behaviour |
 | --- | --- |
-| Missing/invalid field | Named inline under the field (`Add your work email to continue`), `aria-invalid` set, focus moved to the first offender, error cleared as soon as it becomes valid |
+| Missing/invalid field | Named inline under the field (`Add your email to continue`), `aria-invalid` set, focus moved to the first offender, error cleared as soon as it becomes valid |
 | No endpoint | Error state, says nothing was sent, points at the email address |
 | Non-2xx response | Error state, input preserved, "press Request a demo to try again" |
 | Network failure | Same recovery path |
