@@ -1,0 +1,25 @@
+---
+permalink: /llms.txt
+---
+# Asset Signal
+
+> Asset Signal is an AI-powered decision intelligence platform for commercial real estate owners, asset managers, and portfolio teams. It connects fragmented financial, operational, and market data, identifies what requires attention, and turns those signals into clear, evidence-backed actions.
+
+Asset Signal is currently in its pilot stage: a working MVP, onboarding a select group of users to test the product against real-world commercial real estate workflows and data.
+
+## About
+
+- [About Asset Signal]({{ '/about/' | absolute_url }}): Why we're building it, where we are, and who's building it (Sara Sun, Founder & CEO; Yuya Ong, Co-Founder & CTO).
+
+## Blog
+
+- [The Signal]({{ '/blog/' | absolute_url }}): Notes on real estate asset management and the decision layer above the systems that already run it.
+{%- for post in site.posts %}
+- [{{ post.title }}]({{ post.url | absolute_url }}){% if post.standfirst %}: {{ post.standfirst }}{% endif %}
+{%- endfor %}
+
+## Company
+
+- Contact: {{ site.email }}
+- [Privacy policy]({{ '/privacy/' | absolute_url }})
+- [Terms of use]({{ '/terms/' | absolute_url }})
