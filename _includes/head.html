@@ -21,7 +21,13 @@
   {%- endif %}
 
   <link rel="icon" href="{{ '/img/symbol.svg' | relative_url }}" type="image/svg+xml" />
-  <link rel="apple-touch-icon" href="{{ '/img/symbol.svg' | relative_url }}" />
+  {%- comment -%}
+    iOS/Safari's home-screen icon doesn't reliably rasterize SVG the way the
+    browser-tab favicon above does, so it gets its own full-bleed PNG rather
+    than sharing symbol.svg. iOS applies its own corner rounding and drop
+    shadow, so this is deliberately edge-to-edge with no padding baked in.
+  {%- endcomment -%}
+  <link rel="apple-touch-icon" href="{{ '/img/logo-icon.png' | relative_url }}" />
 
   {%- if page.og %}
   <meta property="og:type" content="{{ page.og_type | default: 'website' }}" />
@@ -29,14 +35,61 @@
   <meta property="og:description" content="{{ page.description }}" />
   {%- comment -%}
     absolute_url, not relative. Social scrapers fetch og:image out of any page
-    context, so a site-relative path is a broken image in the card — it was
-    "img/asset_signal_h_logo.png" before, relative to a document the scraper
-    never has.
+    context, so a site-relative path is a broken image in the card.
+
+    social-card.png is a dedicated 1200x630 share image (brand lockup +
+    tagline), not the 1080x170 wordmark logo — that aspect ratio let every
+    link preview on Facebook/LinkedIn/Twitter render the wordmark tiny and
+    letterboxed. A page can override it with its own `image:` front matter
+    (a future per-post illustration, say) without touching this include.
   {%- endcomment -%}
-  <meta property="og:image" content="{{ '/img/asset_signal_h_logo.png' | absolute_url }}" />
+  <meta property="og:image" content="{{ page.image | default: '/img/social-card.png' | absolute_url }}" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
   <meta property="og:url" content="{{ page.url | absolute_url }}" />
   <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="{{ page.title }}" />
+  <meta name="twitter:description" content="{{ page.description }}" />
+  <meta name="twitter:image" content="{{ page.image | default: '/img/social-card.png' | absolute_url }}" />
   {%- endif %}
+
+  {%- comment -%}
+    Organization schema, once, site-wide. sameAs and foundingDate are
+    omitted rather than filled with placeholders — there are no public
+    LinkedIn/social profiles to point to yet and no founding date is
+    published anywhere on the site. Add both the day they exist.
+  {%- endcomment -%}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "@id": "{{ '/' | absolute_url }}#organization",
+    "name": "Asset Signal",
+    "url": "{{ '/' | absolute_url }}",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "{{ '/img/asset_signal_h_logo.png' | absolute_url }}",
+      "width": 1080,
+      "height": 170
+    },
+    "description": "Asset Signal is an AI-powered decision intelligence platform for commercial real estate owners, asset managers, and portfolio teams.",
+    "email": "{{ site.email }}",
+    "founder": [
+      {
+        "@type": "Person",
+        "name": "Sara Sun",
+        "jobTitle": "Founder & CEO",
+        "url": "{{ '/about/' | absolute_url }}#sara-sun"
+      },
+      {
+        "@type": "Person",
+        "name": "Yuya Ong",
+        "jobTitle": "Co-Founder & CTO",
+        "url": "{{ '/about/' | absolute_url }}#yuya-ong"
+      }
+    ]
+  }
+  </script>
 
   {%- feed_meta %}
 

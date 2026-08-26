@@ -354,7 +354,15 @@
 
 .post__date-sep { margin: 0 6px; }
 
-.post__author { color: var(--ink-soft); font-weight: 600; }
+.post__author {
+  color: var(--ink-soft);
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-color: var(--rule-strong);
+  text-underline-offset: 0.18em;
+}
+
+.post__author:hover { color: var(--signal-ink); text-decoration-color: currentColor; }
 
 .post__title {
   margin: var(--space-3) 0 0;

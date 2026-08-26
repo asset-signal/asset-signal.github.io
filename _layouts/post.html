@@ -1,6 +1,46 @@
 ---
 layout: default
 ---
+{%- if page.author %}
+{%- assign author_slug = page.author | slugify %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "@id": "{{ page.url | absolute_url }}#article",
+  "headline": {{ page.title | jsonify }},
+  {%- if page.standfirst %}
+  "description": {{ page.standfirst | jsonify }},
+  {%- endif %}
+  "datePublished": "{{ page.date | date_to_xmlschema }}",
+  "dateModified": "{{ page.last_modified_at | default: page.date | date_to_xmlschema }}",
+  "author": {
+    "@type": "Person",
+    "name": {{ page.author | jsonify }},
+    "url": "{{ '/about/' | absolute_url }}#{{ author_slug }}"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Asset Signal",
+    "url": "{{ '/' | absolute_url }}",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "{{ '/img/asset_signal_h_logo.png' | absolute_url }}"
+    }
+  },
+  "image": "{{ page.image | default: '/img/asset_signal_h_logo.png' | absolute_url }}",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "{{ page.url | absolute_url }}"
+  },
+  "url": "{{ page.url | absolute_url }}",
+  "speakable": {
+    "@type": "SpeakableSpecification",
+    "cssSelector": [".post__standfirst"]
+  }
+}
+</script>
+{%- endif %}
 {%- comment -%}
   No front matter here beyond `layout` does anything: `page` — which
   head.html and footer.html read `page.styles` / `page.footer` / `page.og`
@@ -31,7 +71,8 @@ layout: default
               <time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%-d %B %Y" }}</time>
               {%- if page.author %}
               <span class="post__date-sep" aria-hidden="true">·</span>
-              <span class="post__author">{{ page.author }}</span>
+              {%- assign author_slug = page.author | slugify %}
+              <a class="post__author" href="{{ '/about/' | relative_url }}#{{ author_slug }}">{{ page.author }}</a>
               {%- endif %}
             </p>
             <h1 class="post__title">{{ page.title }}</h1>
