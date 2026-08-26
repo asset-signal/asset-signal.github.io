@@ -1,13 +1,27 @@
 ---
 layout: default
-styles: [sections, footer, blog]
-footer: minimal
-og: true
-og_type: article
 ---
-    <main id="main" class="writing">
-      <div class="wrap writing__wrap">
+{%- comment -%}
+  No front matter here beyond `layout` does anything: `page` — which
+  head.html and footer.html read `page.styles` / `page.footer` / `page.og`
+  from — resolves against the rendering document's own front matter, not
+  the layout's. For a post that is set once, in _config.yml's `defaults`
+  for `type: posts`, alongside the `layout` and `permalink` that already
+  live there for the same reason.
+{%- endcomment -%}
+    <main id="main" class="signal-post">
+      <div class="wrap">
         <article class="post">
+          <nav class="post__masthead" aria-label="The Signal">
+            <a class="post__wordmark" href="{{ '/blog/' | relative_url }}">
+              The <em>Signal</em>
+            </a>
+            <a class="post__back" href="{{ '/blog/' | relative_url }}">
+              <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M14 8H3M7 4L3 8l4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              All posts
+            </a>
+          </nav>
+
           <header class="post__head">
             {%- comment -%}
               datetime carries the machine-readable value; the visible text is
@@ -15,6 +29,10 @@ og_type: article
             {%- endcomment -%}
             <p class="post__date">
               <time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%-d %B %Y" }}</time>
+              {%- if page.author %}
+              <span class="post__date-sep" aria-hidden="true">·</span>
+              <span class="post__author">{{ page.author }}</span>
+              {%- endif %}
             </p>
             <h1 class="post__title">{{ page.title }}</h1>
             {%- if page.standfirst %}
@@ -26,9 +44,24 @@ og_type: article
             {{ content }}
           </div>
 
+          <div class="post__cta">
+            <p class="post__cta-kicker">From data to decisions</p>
+            <h2 class="post__cta-title">See what Asset Signal finds in your own portfolio</h2>
+            <p class="post__cta-body">
+              Connect your financial, leasing, and market data and we'll show
+              you which assets need attention first, why, and what to do
+              about it — with the evidence attached.
+            </p>
+            <a class="btn btn--pill" href="{{ '/#demo' | relative_url }}">
+              Request a demo
+              <span class="btn__icon" aria-hidden="true">
+                <svg viewBox="0 0 16 16" fill="none"><path d="M2 8h11M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
+            </a>
+          </div>
+
           <footer class="post__foot">
             <a href="{{ '/blog/' | relative_url }}">All posts</a>
-            <a href="{{ '/#demo' | relative_url }}">Request a demo</a>
           </footer>
         </article>
       </div>

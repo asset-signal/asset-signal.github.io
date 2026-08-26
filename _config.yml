@@ -63,3 +63,6 @@ defaults:
     values:
       layout: post
       permalink: /blog/:slug/
+      styles: [sections, footer, blog]
+      og: true
+      og_type: article
