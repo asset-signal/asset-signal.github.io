@@ -19,6 +19,12 @@ baseurl:     ""
 email:       service@assetsignal.ai
 lang:        en
 
+# PostHog analytics — public client-side token (safe to commit).
+# Set these from POSTHOG_PROJECT_TOKEN and POSTHOG_HOST in your .env
+# for local reference; GitHub Pages uses these values directly.
+posthog_key:  phc_rD5j263C2a9AnKZaaVNs7BxcQKSpqDLUc2meeaJ65T7w
+posthog_host: https://us.i.posthog.com
+
 # Both are on GitHub Pages' allowlist, so they run on the deployed
 # build without a custom Actions workflow. jekyll-feed publishes
 # /feed.xml for the blog; jekyll-sitemap publishes /sitemap.xml,

@@ -14,9 +14,13 @@
 *.log
 .cache/
 
+# Local environment configuration
+.env
+
 # Agent tooling and local skill state — not part of the site
 .agents/
 .impeccable/
+.claude/
 skills-lock.json
 
 # Brand source material. This repo is public (GitHub Pages), so the strategy

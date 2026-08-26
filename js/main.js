@@ -135,6 +135,33 @@
     entering.forEach((el) => reveal.observe(el));
   }
 
+  // ── Demonstration section view tracking ──────────────────
+  // Fires once when the product panel first enters the viewport.
+  // Top of the conversion funnel — the moment a visitor sees the
+  // core product illustration.
+  const demoSection = document.getElementById('demonstration');
+  if (demoSection && io) {
+    let demoViewed = false;
+    new IntersectionObserver(([e]) => {
+      if (e.isIntersecting && !demoViewed) {
+        demoViewed = true;
+        if (window.posthog) window.posthog.capture('demonstration_section_viewed');
+      }
+    }, { threshold: 0.25 }).observe(demoSection);
+  }
+
+  // ── Demo CTA click tracking ───────────────────────────────
+  // Catches every "Request a demo" link: hero, nav pill, footer.
+  document.addEventListener('click', (e) => {
+    const a = e.target.closest('a[href*="#demo"]');
+    if (!a) return;
+    const loc =
+      a.closest('.hero') ? 'hero' :
+      a.closest('[data-nav]') ? 'nav' :
+      a.closest('.footer') ? 'footer' : 'page';
+    if (window.posthog) window.posthog.capture('demo_cta_clicked', { location: loc });
+  });
+
 
   // ── Scroll cue ────────────────────────────────────────────
   // Nudges rather than jumps: a short, deliberate move that shows the page
@@ -146,6 +173,7 @@
 
     cue.addEventListener("click", () => {
       scrollTo({ top: Math.round(window.innerHeight * 0.82), behavior: still ? "auto" : "smooth" });
+      if (window.posthog) window.posthog.capture('scroll_cue_clicked');
     });
 
     // It is a prompt to start, so it retires as soon as the reader has.
@@ -511,6 +539,14 @@
     // over, so the browser's bubbles don't fire before our own messages land.
     form.setAttribute("novalidate", "");
 
+    // Track the first time a visitor engages with the form.
+    let formStarted = false;
+    form.addEventListener('focusin', () => {
+      if (formStarted) return;
+      formStarted = true;
+      if (window.posthog) window.posthog.capture('demo_form_started');
+    });
+
     const say = (text, state) => {
       if (!status) return;
       status.textContent = text;
@@ -563,6 +599,7 @@
       if (first) {
         first.focus();
         say("Some details are missing — see the notes below the fields.", "error");
+        if (window.posthog) window.posthog.capture('demo_form_error', { error_type: 'validation' });
         return;
       }
 
@@ -632,9 +669,12 @@
               : `That did not send${detail ? ` — ${detail.replace(/\.$/, "")}` : ""}. Your details are still here — press Request a demo to try again.`,
               "error");
           }
+          if (window.posthog) window.posthog.capture('demo_form_error', { error_type: res.status === 429 ? 'rate_limited' : 'http_error', http_status: res.status });
           return;
         }
 
+        const submittedRole = (form.querySelector('#f-role') || {}).value || '';
+        if (window.posthog) window.posthog.capture('demo_form_submitted', { role: submittedRole });
         form.reset();
         [...form.querySelectorAll("input, select, textarea")].forEach((el) => fieldError(el, ""));
         say("");
@@ -655,6 +695,7 @@
           ? "That took too long. Your details are still here — press Request a demo to try again."
           : "Something went wrong sending that. Your details are still here — press Request a demo to try again.",
           "error");
+        if (window.posthog) window.posthog.capture('demo_form_error', { error_type: err.name === 'AbortError' ? 'timeout' : 'network_error' });
       } finally {
         clearTimeout(timer);
         setSending(false);
