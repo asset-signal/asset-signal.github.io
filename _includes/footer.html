@@ -1,13 +1,12 @@
 {%- comment -%}
-  Two shapes. The full footer closes the homepage; the legal and
-  utility pages take the bottom rule alone, which is what they
-  already did before the conversion.
+  One shape, every page. The minimal (rule-only) variant used to
+  apply to About, Blog, Privacy and Thanks — now every page closes
+  on the same footer the homepage does.
 {%- endcomment -%}
 {%- assign home = '/' | relative_url -%}
 {%- if page.url == '/' -%}{%- assign anchor = '' -%}{%- else -%}{%- assign anchor = home -%}{%- endif -%}
-  <footer class="footer{% if page.footer == 'minimal' %} footer--minimal{% endif %}">
+  <footer class="footer">
     <div class="wrap">
-      {%- if page.footer != 'minimal' %}
       <div class="footer__top">
         <div>
           <a class="footer__logo" href="{{ anchor }}#top" aria-label="Asset Signal — home">
@@ -34,7 +33,6 @@
           </div>
         </nav>
       </div>
-      {%- endif %}
 
       <div class="footer__bottom">
         <p>&copy; {{ 'now' | date: "%Y" }} Asset Signal. All rights reserved.</p>

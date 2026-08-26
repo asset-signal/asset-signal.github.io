@@ -92,12 +92,6 @@
 
 .footer__group a:hover { color: var(--signal-lit); }
 
-/* With no footer__top above it the bottom rule inherits a top margin meant to
-   separate it from content that is not there — 80px of empty Deep Forest on
-   every legal, About and Writing page. */
-.footer--minimal .footer__bottom { margin-top: 0; }
-.footer--minimal { padding-block: clamp(32px, 4vw, 48px) clamp(28px, 3vw, 40px); }
-
 .footer__bottom {
   display: flex;
   flex-wrap: wrap;
