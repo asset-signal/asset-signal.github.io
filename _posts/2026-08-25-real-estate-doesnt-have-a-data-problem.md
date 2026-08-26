@@ -1,6 +1,7 @@
 ---
 title: "Real Estate Doesn't Have a Data Problem. It Has a Decision Problem."
 standfirst: "Real estate firms have more data than ever. What they are still missing is a fast, consistent path from that data to a decision."
+description: "Real estate firms already have more data than ever. Asset Signal founder Sara Sun argues the real gap is turning that data into a fast, consistent decision."
 author: "Sara Sun"
 ---
 

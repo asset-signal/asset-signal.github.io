@@ -11,7 +11,14 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>{{ page.title }}</title>
-  <meta name="description" content="{{ page.description }}" />
+  {%- comment -%}
+    Falls back to standfirst so a post that only sets standfirst (not a
+    separate description) still ships a real meta description — LinkedIn's
+    Post Inspector flags a missing/short (<100 char) description, and an
+    empty page.description was exactly that failure on the one post that
+    existed when this was written.
+  {%- endcomment -%}
+  <meta name="description" content="{{ page.description | default: page.standfirst }}" />
   <meta name="theme-color" content="#F7F3EC" />
   {%- if page.robots %}
   <meta name="robots" content="{{ page.robots }}" />
@@ -32,7 +39,21 @@
   {%- if page.og %}
   <meta property="og:type" content="{{ page.og_type | default: 'website' }}" />
   <meta property="og:title" content="{{ page.title }}" />
-  <meta property="og:description" content="{{ page.description }}" />
+  <meta property="og:description" content="{{ page.description | default: page.standfirst }}" />
+  {%- if page.og_type == 'article' %}
+  {%- comment -%}
+    LinkedIn's Post Inspector specifically checks the OG article namespace,
+    not just the BlogPosting JSON-LD in _layouts/post.html — a post can be
+    "authored" per schema.org and still read as missing an author to
+    LinkedIn's crawler without these two tags. No public author profile URL
+    exists yet, so article:author points at the bio's own anchor on /about/
+    rather than an external (nonexistent) LinkedIn profile.
+  {%- endcomment -%}
+  {%- if page.author %}
+  <meta property="article:author" content="{{ '/about/' | absolute_url }}#{{ page.author | slugify }}" />
+  {%- endif %}
+  <meta property="article:published_time" content="{{ page.date | date_to_xmlschema }}" />
+  {%- endif %}
   {%- comment -%}
     absolute_url, not relative. Social scrapers fetch og:image out of any page
     context, so a site-relative path is a broken image in the card.
@@ -49,7 +70,7 @@
   <meta property="og:url" content="{{ page.url | absolute_url }}" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="{{ page.title }}" />
-  <meta name="twitter:description" content="{{ page.description }}" />
+  <meta name="twitter:description" content="{{ page.description | default: page.standfirst }}" />
   <meta name="twitter:image" content="{{ page.image | default: '/img/social-card.png' | absolute_url }}" />
   {%- endif %}
 
