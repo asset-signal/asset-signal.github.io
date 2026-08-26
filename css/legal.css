@@ -13,6 +13,13 @@
 
 .legal__wrap { max-width: min(72ch, var(--page-max)); }
 
+/* The 404 is the one legal-family page that isn't a document to read start
+   to finish — it's a single dead-end message, so it gets the centered
+   treatment a document page doesn't. */
+.legal--404 .legal__wrap { margin-inline: auto; text-align: center; }
+.legal--404 .legal__lede { margin-inline: auto; }
+.legal--404 .legal__back { justify-content: center; }
+
 .legal__title {
   margin: 0;
   font-family: var(--font-display);
@@ -21,6 +28,90 @@
   line-height: 1.04;
   letter-spacing: -0.015em;
   color: var(--ink);
+}
+
+.legal__title em { font-style: italic; color: var(--signal); }
+
+/* ── 404 ──────────────────────────────────────────────────
+   A number this size only ever appears once on the site, so it
+   borrows nothing — display-scale serif, set loose, over the real
+   heading rather than replacing it.
+
+   The glitch is an easter egg, not a feature: js/lost-signal.js
+   adds .is-glitching for a short burst every few seconds and
+   removes it — the number reads calmly the rest of the time. Two
+   duplicate layers (::before/::after, driven by the same
+   data-text the digits already carry) slice and re-offset in the
+   brand's own ink/signal colors rather than an RGB channel-split,
+   so it still looks like this site's static, not a stock effect.
+   Skipped entirely under prefers-reduced-motion — js/lost-signal.js
+   never adds the class, so this code simply never runs. */
+.legal p.error404__code {
+  position: relative;
+  margin: 0 0 var(--space-3);
+  padding: 0.05em 0.15em;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(64px, 11vw, 148px);
+  line-height: 0.9;
+  letter-spacing: -0.02em;
+  color: var(--signal-soft);
+}
+
+.error404__code.is-glitching {
+  animation: glitch-jitter 0.3s steps(2) infinite, glitch-fringe 0.3s steps(2) infinite;
+}
+
+.error404__code::before,
+.error404__code::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  padding: inherit;
+  opacity: 0;
+}
+
+.error404__code.is-glitching::before {
+  opacity: 0.85;
+  color: var(--signal);
+  clip-path: polygon(0 12%, 100% 8%, 100% 22%, 0 28%, 0 41%, 100% 37%, 100% 44%, 0 48%);
+  animation: glitch-shift-a 0.34s steps(3) infinite;
+}
+
+.error404__code.is-glitching::after {
+  opacity: 0.8;
+  color: var(--signal-deep);
+  clip-path: polygon(0 54%, 100% 58%, 100% 67%, 0 63%, 0 76%, 100% 80%, 100% 90%, 0 86%);
+  animation: glitch-shift-b 0.24s steps(3) infinite reverse;
+}
+
+@keyframes glitch-jitter {
+  0%, 100% { transform: translate(0, 0) skewX(0deg); }
+  20%      { transform: translate(-4px, 2px) skewX(-2deg); }
+  40%      { transform: translate(5px, -2px) skewX(1deg); }
+  60%      { transform: translate(-3px, -3px) skewX(3deg); }
+  80%      { transform: translate(4px, 1px) skewX(-1deg); }
+}
+
+/* A cheap RGB-split cue layered under the clip-path bands above — most of
+   the "chromatic aberration" read comes from this, the bands add the tear. */
+@keyframes glitch-fringe {
+  0%, 100% { text-shadow: 0 0 transparent; }
+  25%      { text-shadow: 6px 0 var(--signal), -6px 0 var(--ink); }
+  50%      { text-shadow: -5px 1px var(--signal-deep), 5px -1px var(--ink); }
+  75%      { text-shadow: 4px -2px var(--signal), -4px 2px var(--signal-deep); }
+}
+
+@keyframes glitch-shift-a {
+  0%   { transform: translate(-10px, 0); }
+  50%  { transform: translate(9px, -3px); }
+  100% { transform: translate(-7px, 3px); }
+}
+
+@keyframes glitch-shift-b {
+  0%   { transform: translate(8px, 0); }
+  50%  { transform: translate(-10px, 3px); }
+  100% { transform: translate(7px, -3px); }
 }
 
 .legal__meta {

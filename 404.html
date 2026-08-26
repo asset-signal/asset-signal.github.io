@@ -1,0 +1,25 @@
+---
+layout: default
+title: "Page not found — Asset Signal"
+description: "This page doesn't exist, or has moved."
+robots: "noindex, follow"
+styles: [sections, footer, legal]
+lost_signal: true
+---
+    <main id="main" class="legal legal--404">
+      <div class="wrap legal__wrap">
+        <p class="error404__code" data-text="404" data-lost-signal>404</p>
+        <h1 class="legal__title">We've lost <em>signal.</em></h1>
+        <p class="legal__lede">
+          This page went quiet — it never existed, or it moved when we last
+          cleaned up the site's URLs. Either way, there's nothing to pick up
+          here.
+        </p>
+
+        <p class="legal__back">
+          <a href="{{ '/' | relative_url }}">Back to Asset Signal</a>
+          <a href="{{ '/blog/' | relative_url }}">The Signal</a>
+          <a href="{{ '/about/' | relative_url }}">About</a>
+        </p>
+      </div>
+    </main>

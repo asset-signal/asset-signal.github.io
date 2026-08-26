@@ -21,6 +21,9 @@
   <script src="{{ '/js/signal-background.js' | relative_url }}" defer></script>
   <script src="{{ '/js/problem-field.js' | relative_url }}" defer></script>
 {%- endif %}
+{%- if page.lost_signal %}
+  <script src="{{ '/js/lost-signal.js' | relative_url }}" defer></script>
+{%- endif %}
   <script src="{{ '/js/main.js' | relative_url }}" defer></script>
 </body>
 </html>
