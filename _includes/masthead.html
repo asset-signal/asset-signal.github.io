@@ -43,7 +43,7 @@
           on same-page anchors, so the two cannot collide.
         {%- endcomment -%}
         <nav class="nav__links" aria-label="Primary">
-          <a href="{{ '/about.html' | relative_url }}"{% if page.url == '/about.html' %} aria-current="page"{% endif %}>About</a>
+          <a href="{{ '/about/' | relative_url }}"{% if page.url == '/about/' %} aria-current="page"{% endif %}>About</a>
           <a href="{{ '/blog/' | relative_url }}"{% if page.url contains '/blog/' %} aria-current="page"{% endif %}>Blog</a>
         </nav>
 

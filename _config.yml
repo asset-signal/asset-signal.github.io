@@ -5,16 +5,18 @@
 # allowed-plugin list, so nothing here may depend on a gem Pages
 # does not already ship. There are no plugins for that reason.
 #
-# Filenames are kept as they are (privacy.html, thanks.html) so
-# every published URL survives the conversion unchanged. Do not
-# switch these to pretty permalinks without adding redirects —
-# the privacy URL is referenced from the demo form's consent
-# line and from the footer.
+# Pages (about, privacy, terms, thanks) carry their own
+# `permalink:` to the extension-less form (/about/, /privacy/, …),
+# matching the blog's URL style. Each also sets `redirect_from:`
+# to its old .html path, so jekyll-redirect-from generates a static
+# stub at that old path — anything that still links to
+# /privacy.html (an old bookmark, a search result) lands on a page
+# that redirects rather than a 404.
 # ─────────────────────────────────────────────────────────────
 
 title:       Asset Signal
 description: The decision layer for real estate asset management.
-url:         https://asset-signal.github.io
+url:         https://assetsignal.ai
 baseurl:     ""
 email:       service@assetsignal.ai
 lang:        en
@@ -32,6 +34,7 @@ posthog_host: https://us.i.posthog.com
 plugins:
   - jekyll-feed
   - jekyll-sitemap
+  - jekyll-redirect-from
 
 feed:
   path: feed.xml
