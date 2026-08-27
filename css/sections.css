@@ -64,13 +64,23 @@
   align-items: end;
 }
 
-/* End-aligned reads fine when the title and lede run a similar number of
-   lines — the shared baseline is what "end" is for. "Review is a cycle, not
-   an event." is two lines against a four-line lede, so end-alignment left
-   the title hanging well below the lede's own top with a lopsided gap above
-   it; start-aligning the two so they share a top reads balanced regardless
-   of how many lines either one wraps to. */
-#how .section-head { align-items: start; }
+/* Stacked and centered rather than the shared two-column grid, matching
+   #demonstration below: the ring diagram underneath is itself centered on
+   the section, so a left-aligned two-column heading sitting above it read
+   as two different layouts stacked on each other. One centered column over
+   a centered diagram reads as one composition. (This also replaces the
+   align-items:start override this used to carry — the two-column
+   end-alignment mismatch it fixed no longer applies once the columns
+   themselves are gone.) */
+#how .section-head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-3);
+}
+
+#how .section-lede { margin-inline: auto; max-width: 46em; text-wrap: pretty; }
 
 /* Stacked and centered rather than the shared two-column grid: the
    screenshot underneath is itself centered on the section (see
@@ -261,7 +271,11 @@
    nodes, direction chevrons — no text) is cheap to show at any
    size and is the one thing that actually SHOWS "this is a cycle"
    rather than asserting it in a heading, so a small static copy of
-   it sits above the stacked list on mobile too. */
+   it sits above the stacked list from 939px down to 601px. Below
+   that — true single-column phone width — the spine below replaces
+   it instead: a ring sitting over an unrelated vertical list read as
+   two disconnected things, where the spine runs through the list
+   itself. */
 .cycle__ring {
   display: block;
   width: min(200px, 52vw);
@@ -312,6 +326,117 @@
   .loop__body { display: none; }
   .loop__name { margin-bottom: 0; }
   .loop__stage { padding-bottom: var(--space-4); }
+}
+
+/* ── Zigzag stepper (single-column phone width only) ─────────
+   Below 940px the list falls back to a 3x2 or 2x1 grid before it goes to
+   one column at 600px — a stepper reads as a single sequence, so this only
+   replaces the small ring from exactly that width down, not the whole
+   sub-940 range.
+
+   Earlier passes tried a hairline "spine" down the left edge, then a
+   left-aligned badge-and-line stepper — both put every stage's text in
+   the same column, which is legible but reads as a plain list with
+   decoration bolted on. This centres the line and badges instead and
+   alternates each stage's text left/right of it, the classic infographic
+   timeline — plus a short, phone-specific line of copy per stage, since
+   the full sentence doesn't fit a half-width column. */
+@media (max-width: 600px) {
+  .cycle__ring { display: none; }
+
+  .loop { padding-left: 0; }
+
+  .loop__stage {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 30px 1fr;
+    column-gap: 14px;
+    align-items: center;
+    border-top: none;
+    padding-block: var(--space-4);
+  }
+
+  /* The connecting line: one segment per stage stacking into a continuous
+     line down the centre column, the same way the left-aligned version
+     stacked its segments — see the badge-and-line stepper this replaced.
+     Absolutely positioned rather than a grid item, so it isn't affected by
+     which side .loop__content is on. */
+  .loop__stage::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 1.5px;
+    /* Resets the shared rule's fixed 7px height (sized for the small dot
+       used at wider breakpoints) — left in place, it wins over `bottom: 0`
+       and the line never stretches past 7px. */
+    height: auto;
+    border-radius: 0;
+    box-shadow: none;
+    transform: translateX(-50%);
+    background: var(--rule-strong);
+    z-index: 0;
+  }
+  .loop__stage:first-child::before { top: 50%; }
+  .loop__stage:last-child::before { bottom: 50%; }
+
+  /* The badge. counter-increment moved here from .loop__name::before
+     (suppressed below) since this is now the pseudo-element guaranteed to
+     render at this breakpoint. */
+  .loop__stage::after {
+    counter-increment: stage;
+    content: counter(stage, decimal-leading-zero);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--signal);
+    color: var(--paper);
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  /* Alternating sides: odd stages sit left of the line (text hugging it,
+     right-aligned), even stages sit right (left-aligned, the natural
+     direction) — the zigzag that makes this read as a timeline rather
+     than a centred list. */
+  .loop__content { grid-column: 1; text-align: right; }
+  .loop__stage:nth-child(even) .loop__content { grid-column: 3; text-align: left; }
+
+  /* The badge now carries the number; the inline "01 " prefix would
+     duplicate it right next to the circle that already shows it.
+     content:none suppresses this pseudo-element entirely, which is also
+     why its own counter-increment (in the shared rule above) safely does
+     nothing here — see .loop__stage::after taking over that job. */
+  .loop__name::before { content: none; }
+
+  .loop__body { display: none; }
+  .loop__body--short {
+    display: block;
+    margin: 4px 0 0;
+    font-size: var(--t-sm);
+    line-height: 1.5;
+    color: var(--ink-soft);
+  }
+
+  /* Matches the rest of the section at this width — the heading, the
+     stepper and now the closing line all share the same centred axis. */
+  .cycle__hub {
+    margin-inline: auto;
+    text-align: center;
+  }
+}
+
+@media (min-width: 601px) {
+  .loop__body--short { display: none; }
 }
 
 @media (min-width: 940px) {

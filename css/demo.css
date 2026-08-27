@@ -59,7 +59,15 @@
   border: 1px solid var(--rule);
   border-radius: 4px;
   overflow: hidden;
+  /* pan-y, not none: leaves vertical page scroll to the browser and hands
+     main.js's pointer handlers only the horizontal swipe gesture, so
+     dragging across the image never fights scrolling past it. */
+  touch-action: pan-y;
+  user-select: none;
+  cursor: grab;
 }
+
+.demo-carousel__viewport:active { cursor: grabbing; }
 
 .demo-carousel__track {
   margin: 0;
@@ -88,6 +96,10 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  /* Otherwise a swipe/drag on desktop starts the browser's own native
+     "drag this image out of the page" gesture instead of reaching main.js's
+     pointer handlers. */
+  -webkit-user-drag: none;
 }
 
 @media (prefers-reduced-motion: reduce) {

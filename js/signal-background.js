@@ -294,6 +294,24 @@
       vec2  uv     = gl_FragCoord.xy / uRes;
       float aspect = uRes.y / uRes.x;
 
+      // The veils below (visBG, and the hero strand's own vis) were tuned for
+      // a landscape fold where the copy sits in a left column and the field
+      // has the right ~half of the page to live in — 0.16-0.70 of the width
+      // stayed paper regardless of where the copy actually was. On a phone
+      // portrait viewport (aspect, height/width, north of ~1) the copy is
+      // centred and narrower, and that same fixed fraction blanked out most
+      // of a screen that has no "left column" to protect, which is why the
+      // field went nearly invisible on mobile. veilK blends the start/end of
+      // that gate toward "mostly uncovered" as aspect climbs into portrait
+      // territory; the real copy-shaped clearing (the 'clear' term below)
+      // still protects the text itself either way, so this only gives back the
+      // field everywhere ELSE. Desktop (aspect well under 0.85) is
+      // unaffected — veilK is 0 there and veil0/veil1 fall back to the
+      // original 0.16/0.70.
+      float veilK  = smoothstep(0.85, 1.55, aspect);
+      float veil0  = mix(0.16, 0.0, veilK);
+      float veil1  = mix(0.70, 0.34, veilK);
+
       vec3 col = PAPER;
 
       // Warm paper gradient + a very soft green field on the right.
@@ -321,7 +339,7 @@
       // ramp, so the waves arrive out of the paper rather than starting at an
       // edge — and it doubles as cover for the seam where the perspective
       // divide is clamped, back near the vanishing point.
-      float visBG    = clear * smoothstep(0.16, 0.70, uv.x);
+      float visBG    = clear * smoothstep(veil0, veil1, uv.x);
       float invH     = 1.0 / uRes.y;
 
       // Chromatic aberration displacement for this pixel, in normalized
@@ -463,8 +481,10 @@
 
         // The signal resolves out of the haze earlier than the field around
         // it, and clears the left-hand defocus sooner — it is the thing that
-        // comes into focus first.
-        float vis  = clear * smoothstep(0.16, 0.46, x);
+        // comes into focus first. Same portrait relaxation as visBG's
+        // veil0/veil1 above, just keeping this line's original (tighter)
+        // proportion of the two endpoints.
+        float vis  = clear * smoothstep(veil0, mix(0.46, 0.30, veilK), x);
 
         // Its own depth: 0 back where it converges, 1 at the front. Every
         // treatment below reads off this, so they all say the same thing.

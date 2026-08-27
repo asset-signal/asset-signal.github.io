@@ -57,6 +57,18 @@ styles: [hero, sections, problem, demo, form, footer]
                 See the signal
                 <span class="link-quiet__dot" aria-hidden="true"></span>
               </a>
+
+              <!-- Mobile only (see hero.css's max-width:560px block): the same
+                   pill used in the masthead, replacing the disc CTA and "See
+                   the signal" link there. Two actions side by side on a narrow
+                   column already read as competing asks; one pill states the
+                   fold's single job plainly. -->
+              <a class="btn btn--pill hero__cta-pill" href="#demo">
+                Request a demo
+                <span class="btn__icon" aria-hidden="true">
+                  <svg viewBox="0 0 16 16" fill="none"><path d="M2 8h11M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </span>
+              </a>
             </div>
 
           </div>
@@ -184,28 +196,46 @@ styles: [hero, sections, problem, demo, form, footer]
 
               <ol class="loop">
                 <li class="loop__stage">
-                  <h3 class="loop__name">Signal</h3>
-                  <p class="loop__body">Financial, operating, leasing and market data is read as it is produced.</p>
+                  <div class="loop__content">
+                    <h3 class="loop__name">Signal</h3>
+                    <p class="loop__body">Financial, operating, leasing and market data is read as it is produced.</p>
+                    <p class="loop__body--short">Data is read as it happens.</p>
+                  </div>
                 </li>
                 <li class="loop__stage">
-                  <h3 class="loop__name">Diagnosis</h3>
-                  <p class="loop__body">What changed, why it changed, and whether the change is material.</p>
+                  <div class="loop__content">
+                    <h3 class="loop__name">Diagnosis</h3>
+                    <p class="loop__body">What changed, why it changed, and whether the change is material.</p>
+                    <p class="loop__body--short">What changed, and why it matters.</p>
+                  </div>
                 </li>
                 <li class="loop__stage">
-                  <h3 class="loop__name">Recommendation</h3>
-                  <p class="loop__body">The intervention worth considering, with its evidence and estimated impact.</p>
+                  <div class="loop__content">
+                    <h3 class="loop__name">Recommendation</h3>
+                    <p class="loop__body">The intervention worth considering, with its evidence and estimated impact.</p>
+                    <p class="loop__body--short">The action worth considering next.</p>
+                  </div>
                 </li>
                 <li class="loop__stage">
-                  <h3 class="loop__name">Decision</h3>
-                  <p class="loop__body">A person decides. Ownership, approval and reasoning are recorded.</p>
+                  <div class="loop__content">
+                    <h3 class="loop__name">Decision</h3>
+                    <p class="loop__body">A person decides. Ownership, approval and reasoning are recorded.</p>
+                    <p class="loop__body--short">A person decides, and it's recorded.</p>
+                  </div>
                 </li>
                 <li class="loop__stage">
-                  <h3 class="loop__name">Action</h3>
-                  <p class="loop__body">The decision becomes work, with an owner and a date attached to it.</p>
+                  <div class="loop__content">
+                    <h3 class="loop__name">Action</h3>
+                    <p class="loop__body">The decision becomes work, with an owner and a date attached to it.</p>
+                    <p class="loop__body--short">Becomes work, with an owner and date.</p>
+                  </div>
                 </li>
                 <li class="loop__stage">
-                  <h3 class="loop__name">Outcome</h3>
-                  <p class="loop__body">What actually happened is captured, and feeds the next signal.</p>
+                  <div class="loop__content">
+                    <h3 class="loop__name">Outcome</h3>
+                    <p class="loop__body">What actually happened is captured, and feeds the next signal.</p>
+                    <p class="loop__body--short">What happened feeds the next signal.</p>
+                  </div>
                 </li>
               </ol>
 

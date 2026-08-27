@@ -11,7 +11,7 @@
 {%- assign home = '/' | relative_url -%}
 {%- if page.url == '/' -%}{%- assign anchor = '' -%}{%- else -%}{%- assign anchor = home -%}{%- endif -%}
     <div class="masthead" data-masthead>
-      <header class="nav wrap" data-nav>
+      <header class="nav wrap{% if page.url == '/' %} nav--home{% endif %}" data-nav>
         <!-- Two marks, one link. The horizontal lockup is 172px at the nav's
              logo height, and below ~520px the bar cannot seat it alongside the
              demo pill and the toggle — max-width:100% then squashed it rather

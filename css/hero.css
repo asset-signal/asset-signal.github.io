@@ -199,6 +199,9 @@
   margin-top: clamp(30px, 4.4vh, 56px);
 }
 
+/* Hidden outside the mobile block below — see .hero__cta-pill there. */
+.hero__cta-pill { display: none; }
+
 /* ── Responsive ───────────────────────────────────────────────
    No size override here. The headline's clamp is continuous from
    320px to 2560px, which is what removed the cliff at this
@@ -206,11 +209,30 @@
    and needs no restatement.                                     */
 
 @media (max-width: 560px) {
+  /* Centered rather than left-edge-aligned: at this width the copy column
+     runs the full viewport (less the gutters), so a left-aligned block has
+     no visible column to align against — it just reads as text sitting at
+     the screen's edge. Centering gives it a deliberate axis instead. */
+  .hero__copy {
+    align-items: center;
+    text-align: center;
+  }
+
   .hero__actions {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
     gap: 22px;
   }
+
+  /* The disc CTA and the quiet "See the signal" link both did a job a
+     single pill now does on its own — see the markup note by
+     .hero__cta-pill in index.html. */
+  .cta,
+  .hero__actions > .link-quiet {
+    display: none;
+  }
+
+  .hero__cta-pill { display: inline-flex; }
 }
 
 /* ── Scroll cue ───────────────────────────────────────────────

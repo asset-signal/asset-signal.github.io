@@ -602,6 +602,57 @@
       if (document.hidden) stopAutoplay(); else startAutoplay();
     });
 
+    // Swipe, via pointer events rather than touch-only handlers — the same
+    // code path picks up a mouse drag for free. touch-action: pan-y in
+    // demo.css leaves vertical page scroll to the browser and hands this
+    // only the horizontal gesture, so a swipe here never fights a scroll.
+    const viewport = carousel.querySelector(".demo-carousel__viewport");
+
+    if (viewport && typeof PointerEvent !== "undefined") {
+      const SWIPE_THRESHOLD = 40;
+      let dragId = null;
+      let startX = 0;
+      let startY = 0;
+      let horizontal = false;
+
+      viewport.addEventListener("pointerdown", (e) => {
+        if (e.pointerType === "mouse" && e.button !== 0) return;
+        dragId = e.pointerId;
+        startX = e.clientX;
+        startY = e.clientY;
+        horizontal = false;
+        stopAutoplay();
+      });
+
+      viewport.addEventListener("pointermove", (e) => {
+        if (e.pointerId !== dragId) return;
+        const dx = e.clientX - startX;
+        const dy = e.clientY - startY;
+        // Commits to "this is a swipe, not a scroll" once the gesture is
+        // clearly more horizontal than vertical, and only then claims the
+        // pointer — claiming it immediately on pointerdown would also
+        // swallow a vertical scroll that starts on top of the carousel.
+        if (!horizontal && Math.abs(dx) > 8 && Math.abs(dx) > Math.abs(dy)) {
+          horizontal = true;
+          viewport.setPointerCapture(dragId);
+        }
+        if (horizontal) e.preventDefault();
+      });
+
+      const endDrag = (e) => {
+        if (e.pointerId !== dragId) return;
+        const dx = e.clientX - startX;
+        dragId = null;
+        if (horizontal && Math.abs(dx) > SWIPE_THRESHOLD) {
+          show(dx < 0 ? index + 1 : index - 1);
+        }
+        startAutoplay();
+      };
+
+      viewport.addEventListener("pointerup", endDrag);
+      viewport.addEventListener("pointercancel", endDrag);
+    }
+
     startAutoplay();
   }
 

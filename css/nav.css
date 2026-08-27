@@ -234,6 +234,30 @@
     .nav__actions .btn--pill { padding: 11px 14px 11px 18px; }
   }
 
+  /* The comment above ("the demo pill stays in the bar") no longer applies
+     to the HOMEPAGE at this width: the hero's own actions row now puts an
+     identical pill directly in the fold's body below (see hero.css's
+     max-width:560px block), so the bar's copy stopped being the only route
+     to conversion there and started being a redundant second one sitting
+     right above it. Scoped to .nav--home (set in masthead.html) rather
+     than every page — About, the blog, etc. have no such replacement in
+     their own fold, so the bar's pill is still their only mobile route to
+     the demo form. */
+  @media (max-width: 560px) {
+    .nav--home .nav__actions { display: none; }
+    .nav--home { grid-template-columns: auto 1fr auto; }
+    .nav--home .nav__toggle { grid-column: 3; }
+
+    /* The 520px rule above swaps the wordmark for the bare symbol because
+       the full lockup, the pill and the toggle stop fitting together below
+       that width. With the pill gone on the homepage (immediately above),
+       that pressure is gone too — the lockup fits the same bar comfortably
+       down to 320px, so the home page keeps its full name in the nav where
+       every other page still falls back to the mark alone. */
+    .nav--home .nav__logo__lockup { display: block; }
+    .nav--home .nav__logo__mark { display: none; }
+  }
+
   /* An open panel always needs its own surface — it is over page content by
      definition, whether or not the masthead has stuck yet. */
   .masthead.is-open {
