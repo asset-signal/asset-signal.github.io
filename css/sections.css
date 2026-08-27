@@ -72,10 +72,26 @@
    of how many lines either one wraps to. */
 #how .section-head { align-items: start; }
 
-/* Same mismatch, same fix, for the demonstration section: its title is two
-   lines against a three-line lede at this scoped-down size, so end-
-   alignment leaves the same lopsided gap over the title that #how had. */
-#demonstration .section-head { align-items: start; }
+/* Stacked and centered rather than the shared two-column grid: the
+   screenshot underneath is itself centered on the section (see
+   demo.css/main.js's syncDemoHeight), and a left-aligned two-column
+   heading sitting above a centered image read as two different layouts
+   stacked on each other. One centered column over a centered image reads
+   as one composition. */
+#demonstration .section-head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-3);
+}
+
+/* Wider than the shared 34em: at that measure the lede wraps to three
+   lines, which (stacked under the title rather than beside it, see above)
+   adds a full line's worth of height to the section's fixed overhead and
+   leaves that much less room for the screenshot below — see main.js's
+   syncDemoHeight. 46em holds it to two lines at the sizes this renders at. */
+#demonstration .section-lede { margin-inline: auto; max-width: 46em; }
 
 /* Smaller than the shared .section-title/.section-lede sizes, scoped to
    this section only: the ring diagram right below has to share the
@@ -90,7 +106,16 @@
    syncDemoHeight) rather than a full-bleed panel, and the full-size
    .section-title/.section-lede pair reads oversized next to it. */
 #demonstration .section-title { font-size: clamp(28px, 3.4vw, 46px); }
-#demonstration .section-lede { font-size: var(--t-body); line-height: 1.6; }
+/* text-wrap: pretty avoids single-word orphan lines — this lede was
+   ending with "own." alone on its own line. Centered text makes an orphan
+   more visible than left-aligned copy does (there's no ragged edge to
+   camouflage it against), which is why this gets it and the shared
+   .section-lede doesn't. */
+#demonstration .section-lede {
+  font-size: var(--t-body);
+  line-height: 1.6;
+  text-wrap: pretty;
+}
 
 .section-title {
   margin: 0;
