@@ -110,6 +110,20 @@
   align-items: start;
 }
 
+.person__id {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.person__photo {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
 .person__name {
   margin: 0;
   font-family: var(--font-display);

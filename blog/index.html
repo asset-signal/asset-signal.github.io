@@ -12,7 +12,7 @@ kicker: "Asset Signal — Journal"
 lede: "Notes on real estate asset management, and on building the decision layer above the systems that already run it."
 ---
     <main id="main" class="signal-index">
-      <div class="wrap">
+      <div class="wrap signal-index__wrap">
 
         <header class="signal-index__head">
           <p class="signal-index__kicker">{{ page.kicker }}</p>
@@ -21,37 +21,15 @@ lede: "Notes on real estate asset management, and on building the decision layer
         </header>
 
         {%- if site.posts.size > 0 %}
-        {%- assign featured = site.posts.first %}
-        <a class="signal-feature" href="{{ featured.url | relative_url }}" aria-label="{{ featured.title }}">
-          <div class="signal-feature__meta">
-            <span class="signal-feature__tag">Latest</span>
-            <span class="signal-feature__date">
-              <time datetime="{{ featured.date | date_to_xmlschema }}">{{ featured.date | date: "%-d %B %Y" }}</time>
-              {%- if featured.author %} · {{ featured.author }}{% endif %}
-            </span>
-          </div>
-          <h2 class="signal-feature__title">{{ featured.title }}</h2>
-          {%- if featured.standfirst %}
-          <p class="signal-feature__standfirst">{{ featured.standfirst }}</p>
-          {%- endif %}
-          <span class="signal-feature__read" aria-hidden="true">
-            Read the piece
-            <svg viewBox="0 0 16 16" fill="none"><path d="M2 8h11M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </span>
-        </a>
-
-        {%- assign rest_count = site.posts.size | minus: 1 %}
-        {%- if rest_count > 0 %}
-        <h2 class="signal-index__subhead">More from The Signal</h2>
         <ul class="signal-grid">
-          {%- for post in site.posts offset: 1 %}
+          {%- for post in site.posts %}
           <li class="signal-grid__item">
             <a class="signal-grid__link" href="{{ post.url | relative_url }}" aria-label="{{ post.title }}">
               <span class="signal-grid__date" aria-hidden="true">
                 <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%-d %B %Y" }}</time>
                 {%- if post.author %} · {{ post.author }}{% endif %}
               </span>
-              <h3 class="signal-grid__title">{{ post.title }}</h3>
+              <h2 class="signal-grid__title">{{ post.title }}</h2>
               {%- if post.standfirst %}
               <p class="signal-grid__standfirst">{{ post.standfirst }}</p>
               {%- endif %}
@@ -60,7 +38,6 @@ lede: "Notes on real estate asset management, and on building the decision layer
           </li>
           {%- endfor %}
         </ul>
-        {%- endif %}
 
         {%- else %}
         <div class="signal-empty">

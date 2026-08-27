@@ -1,40 +1,28 @@
 /* ─────────────────────────────────────────────────────────────
    blog.css — The Signal
 
-   The rest of the site reads at 74ch because it is mostly one
-   voice making one argument. A journal is a different object: an
-   index is a contents page, not an essay, so it takes the full
-   --page-max measure the marketing bands use, and gets its own
-   masthead rather than borrowing the plain "Blog" heading treatment
-   the placeholder page used.
+   Read mode, not Persuade. The marketing bands argue; these pages
+   are read, so they take the reading measure the rest of the site
+   uses — the same min(74ch, --page-max) as about.css — rather than
+   the full page-max width of a magazine layout.
 
-   Still no cards. The homepage's grammar — a hairline rule, an
-   eyebrow, an asymmetric 7/5 split — carries over instead of a
-   boxed grid, so the journal reads as the same publication as the
-   page that links to it.
+   Still no cards. A single hairline-ruled list makes a company
+   with a handful of posts look like a company with a handful of
+   posts, instead of padding the page with a boxed grid.
    ───────────────────────────────────────────────────────────── */
 
 .signal-index,
 .signal-post {
-  padding-block: clamp(28px, 4vh, 52px) var(--section-y);
+  padding-block: clamp(56px, 9vh, 104px) var(--section-y);
 }
+
+.signal-index__wrap,
+.signal-post__wrap { max-width: min(74ch, var(--page-max)); }
 
 /* ── Masthead ─────────────────────────────────────────────────
-   Kicker, wordmark, lede — the title takes the wide column and the
-   lede sits against its baseline in the narrow one, same split as
-   .section-head on the homepage. */
-.signal-index__head {
-  display: grid;
-  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
-  grid-template-areas:
-    "kicker kicker"
-    "title  lede";
-  column-gap: clamp(32px, 5vw, 90px);
-  align-items: end;
-}
-
+   Kicker, title, lede — stacked in one column, same rhythm as
+   about.css's page header. */
 .signal-index__kicker {
-  grid-area: kicker;
   margin: 0 0 var(--space-4);
   font-size: var(--t-meta);
   font-weight: 600;
@@ -44,13 +32,12 @@
 }
 
 .signal-index__title {
-  grid-area: title;
   margin: 0;
   font-family: var(--font-display);
   font-weight: 400;
-  font-size: clamp(48px, 7vw, 96px);
-  line-height: 0.98;
-  letter-spacing: -0.02em;
+  font-size: clamp(34px, 4vw, 54px);
+  line-height: 1.04;
+  letter-spacing: -0.015em;
   color: var(--ink);
 }
 
@@ -60,151 +47,25 @@
 }
 
 .signal-index__lede {
-  grid-area: lede;
-  margin: 0;
-  padding-bottom: 0.2em;
-  max-width: 34em;
+  margin: var(--space-5) 0 0;
+  max-width: 36em;
   font-family: var(--font-display);
-  font-weight: 500;
-  font-size: clamp(21px, 1.9vw, 27px);
-  line-height: 1.4;
-  color: var(--ink-soft);
-}
-
-@media (max-width: 760px) {
-  .signal-index__head {
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-areas: "kicker" "title" "lede";
-  }
-  .signal-index__lede { margin-top: var(--space-4); }
-}
-
-/* ── Featured post ────────────────────────────────────────────
-   The lead story, set the way the homepage sets a statement: a
-   display headline in the wide column, its standfirst in the
-   narrow one, sharing a baseline rather than stacking. */
-.signal-feature {
-  display: grid;
-  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
-  column-gap: clamp(32px, 5vw, 90px);
-  row-gap: var(--space-4);
-  align-items: start;
-  margin-top: var(--space-6);
-  padding-top: var(--space-5);
-  border-top: 1px solid var(--rule-strong);
-  color: inherit;
-  text-decoration: none;
-}
-
-.signal-feature__meta {
-  grid-column: 1 / -1;
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-}
-
-.signal-feature__tag {
-  font-size: var(--t-meta);
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--signal-ink);
-}
-
-.signal-feature__date {
-  font-size: var(--t-meta);
-  letter-spacing: 0.04em;
-  color: var(--ink-muted);
-}
-
-.signal-feature__title {
-  margin: 0;
-  font-family: var(--font-display);
-  font-weight: 400;
-  font-size: clamp(30px, 3.6vw, 48px);
-  line-height: 1.08;
-  letter-spacing: -0.014em;
-  color: var(--ink);
-  text-wrap: balance;
-  transition: color var(--dur-fast) var(--ease);
-}
-
-.signal-feature:hover .signal-feature__title { color: var(--signal-ink); }
-
-.signal-feature__standfirst {
-  margin: 0;
-  max-width: 32em;
   font-size: var(--t-lede);
   line-height: 1.55;
   color: var(--ink-soft);
 }
 
-.signal-feature__read {
-  grid-column: 2 / 3;
-  justify-self: start;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-size: var(--t-sm);
-  font-weight: 600;
-  color: var(--signal-ink);
-}
-
-.signal-feature__read svg {
-  width: 15px;
-  height: 15px;
-  transition: transform var(--dur-fast) var(--ease);
-}
-
-.signal-feature:hover .signal-feature__read svg { transform: translateX(3px); }
-
-@media (max-width: 760px) {
-  .signal-feature { grid-template-columns: minmax(0, 1fr); }
-  .signal-feature__read { grid-column: 1; }
-}
-
-/* ── The grid ─────────────────────────────────────────────────
-   Three columns of hairline-ruled entries — the same border-top +
-   dot grammar the homepage's loop diagram uses for its six stages,
-   so the journal's own list still reads as this site's furniture
-   rather than a blog theme's card grid. */
-.signal-index__subhead {
-  margin: var(--space-7) 0 0;
-  padding-bottom: var(--space-4);
-  font-family: var(--font-sans);
-  font-size: var(--t-meta);
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--ink-muted);
-  border-bottom: 1px solid var(--rule);
-}
-
+/* ── The list ─────────────────────────────────────────────────
+   Hairline-ruled entries, one column, full post list. */
 .signal-grid {
-  margin: 0;
+  margin: var(--space-4) 0 0;
   padding: 0;
   list-style: none;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  column-gap: clamp(24px, 3vw, 56px);
 }
 
 .signal-grid__item {
-  position: relative;
   border-top: 1px solid var(--rule);
-  padding: var(--space-5) 0 var(--space-6);
-}
-
-.signal-grid__item::before {
-  content: "";
-  position: absolute;
-  top: -3.5px;
-  left: 0;
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--paper);
-  box-shadow: inset 0 0 0 1.5px var(--signal-soft);
+  padding-block: var(--space-5);
 }
 
 .signal-grid__link {
@@ -224,9 +85,9 @@
   margin: 10px 0 0;
   font-family: var(--font-display);
   font-weight: 400;
-  font-size: clamp(19px, 1.6vw, 22px);
-  line-height: 1.2;
-  letter-spacing: -0.008em;
+  font-size: clamp(23px, 2.2vw, 31px);
+  line-height: 1.18;
+  letter-spacing: -0.012em;
   color: var(--ink);
   text-wrap: balance;
   transition: color var(--dur-fast) var(--ease);
@@ -235,9 +96,10 @@
 .signal-grid__link:hover .signal-grid__title { color: var(--signal-ink); }
 
 .signal-grid__standfirst {
-  margin: var(--space-2) 0 0;
-  font-size: var(--t-sm);
-  line-height: 1.55;
+  margin: var(--space-3) 0 0;
+  max-width: 40em;
+  font-size: var(--t-body);
+  line-height: 1.62;
   color: var(--ink-soft);
 }
 
@@ -248,14 +110,6 @@
   font-weight: 600;
   letter-spacing: 0.03em;
   color: var(--signal-ink);
-}
-
-@media (max-width: 1040px) {
-  .signal-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-}
-
-@media (max-width: 640px) {
-  .signal-grid { grid-template-columns: minmax(0, 1fr); }
 }
 
 /* ── Empty state ──────────────────────────────────────────────
