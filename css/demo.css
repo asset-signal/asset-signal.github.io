@@ -1,9 +1,9 @@
 /* ─────────────────────────────────────────────────────────────
-   demo.css — the illustrative product surface
+   demo.css — the product screenshot carousel
 
-   One panel, not a stack of cards: the rows are separated by
-   hairlines and space, and only the open signal has any interior
-   structure. Everything on it is an example — see the caption.
+   Three real screens from the product, crossfaded rather than a
+   stack of cards or a filmstrip you scrub — see the caption for
+   what the data is and isn't.
    ───────────────────────────────────────────────────────────── */
 
 /* The product proof sat at exactly the prose measure, at 13.1% ink coverage —
@@ -21,249 +21,135 @@
   .demo { margin-inline: 0; }
 }
 
-.demo__panel {
-  background: var(--paper);
+/* No layout or paint of its own now — the framed look lives on the image
+   itself (.demo-carousel__viewport) below, not on this outer box. With the
+   image sized to its own height rather than the full breakout width, a
+   border on THIS element outlined a wide empty box with the (narrower,
+   centred) image floating inside it instead of reading as the image's own
+   frame.
+
+   Deliberately NOT display:flex — a flex container has to resolve a
+   definite cross size for its items before aspect-ratio can compute the
+   other dimension, which .demo-carousel__viewport (all its children are
+   position:absolute, so it contributes no intrinsic content size) never
+   has on mobile where JS sets no explicit height. Plain block layout lets
+   its own `margin-inline: auto` centre it instead, which works with or
+   without a JS-set height. */
+
+/* ── Screenshots ──────────────────────────────────────────────
+   width stays auto rather than 100%: with an explicit `height` and
+   `aspect-ratio` set, a block box with auto width resolves that width
+   FROM the height and the ratio — which is what lets JS (main.js's
+   syncDemoHeight) shrink the whole image by setting `height` alone, the
+   same way --ring alone drives the cycle diagram's box in sections.css.
+   Unset (mobile, and desktop before JS runs), height stays auto and the
+   box fills the container at the fixed aspect ratio instead.
+
+   The border/radius/overflow that used to sit on .demo__panel live here
+   instead, so the frame hugs the image exactly regardless of how narrow
+   JS makes it. */
+.demo-carousel__viewport {
+  position: relative;
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  margin-inline: auto;
+  aspect-ratio: 2880 / 2080;
+  background: var(--surface);
   border: 1px solid var(--rule);
   border-radius: 4px;
   overflow: hidden;
 }
 
-/* ── Panel bar ────────────────────────────────────────────── */
-.demo__bar {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 8px clamp(12px, 1.6vw, 22px);
-  padding: clamp(16px, 1.8vw, 22px) clamp(18px, 2.2vw, 30px);
-  border-bottom: 1px solid var(--rule);
-}
-
-.demo__title {
-  font-size: var(--t-meta);
-  font-weight: 600;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: var(--ink);
-}
-
-.demo__meta {
-  font-size: var(--t-meta);
-  color: var(--ink-muted);
-}
-
-.demo__count {
-  margin-left: auto;
-  font-size: var(--t-meta);
-  color: var(--ink-soft);
-}
-
-.demo__count b {
-  font-weight: 600;
-  color: var(--signal);
-  font-variant-numeric: tabular-nums;
-}
-
-/* ── Rows ─────────────────────────────────────────────────── */
-.demo__list {
+.demo-carousel__track {
   margin: 0;
   padding: 0;
   list-style: none;
+  position: relative;
+  width: 100%;
+  height: 100%;
 }
 
-.demo__row {
-  padding: clamp(14px, 1.6vw, 20px) clamp(18px, 2.2vw, 30px);
+.demo-carousel__slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--dur-slow) var(--ease);
 }
 
-.demo__row + .demo__row { border-top: 1px solid var(--rule); }
-
-/* The open signal is the one the composition is about. The surface tint
-   carries that on its own — a 3px green edge on a list row is the coloured
-   side-tab, and the priority dot already says which row this is. */
-.demo__row--open {
-  background: #F1F1E9;                     /* fallback for no color-mix */
-  background: color-mix(in srgb, var(--surface) 60%, var(--paper));
+.demo-carousel__slide.is-active {
+  opacity: 1;
+  visibility: visible;
 }
 
-.demo__head {
-  display: grid;
-  grid-template-columns: 92px minmax(0, 1fr) auto;
-  align-items: baseline;
-  gap: 6px clamp(14px, 1.8vw, 26px);
+.demo-carousel__slide img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
-/* Priority reads from the word first and the colour second — colour alone
-   never carries the meaning. The label itself always stays at full reading
-   contrast; the priority hue lives on the dot, where nothing has to be
-   read from it. */
-.demo__flag {
+@media (prefers-reduced-motion: reduce) {
+  .demo-carousel__slide { transition: none; }
+}
+
+/* ── Controls ─────────────────────────────────────────────────
+   Below the image rather than floating over it, where they'd compete with
+   real product UI in the screenshot underneath them. No connecting border
+   to the frame above — a full-width rule here would span wider than the
+   (narrower, centred) image itself and read as it belonging to the section
+   rather than to the framed screenshot; plain spacing keeps the
+   association without redrawing that mismatch one row down. */
+.demo-carousel__controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(16px, 2vw, 28px);
+  margin-top: clamp(14px, 1.6vw, 20px);
+}
+
+.demo-carousel__arrow {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  font-size: var(--t-label);
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  justify-content: center;
+  flex: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--rule-strong);
+  background: none;
+  padding: 0;
   color: var(--ink-soft);
+  cursor: pointer;
+  transition: color var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease);
 }
 
-.demo__flag::before {
-  content: "";
-  width: 6px;
-  height: 6px;
+.demo-carousel__arrow:hover { color: var(--signal-ink); border-color: var(--signal-ink); }
+.demo-carousel__arrow svg { width: 14px; height: 14px; }
+
+.demo-carousel__dots {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.demo-carousel__dot {
+  width: 7px;
+  height: 7px;
+  padding: 0;
+  border: none;
   border-radius: 50%;
   background: var(--rule-strong);
-  flex: none;
+  cursor: pointer;
+  transition: background var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease);
 }
 
-.demo__flag--high { color: var(--signal); }
-.demo__flag--high::before   { background: var(--signal); }
-.demo__flag--medium::before { background: var(--signal-soft); }
+.demo-carousel__dot:hover { background: var(--signal-ink); }
 
-.demo__asset {
-  font-size: var(--t-body);
-  font-weight: 600;
-  color: var(--ink);
-}
-
-.demo__asset span {
-  font-weight: 400;
-  color: var(--ink-muted);
-}
-
-.demo__impact {
-  font-size: var(--t-sm);
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-  color: var(--ink);
-  white-space: nowrap;
-}
-
-.demo__what {
-  grid-column: 2 / -1;
-  margin: 6px 0 0;
-  font-size: var(--t-sm);
-  line-height: 1.5;
-  color: var(--ink-soft);
-}
-
-/* ── The open signal's interior ───────────────────────────── */
-.demo__detail {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--space-4) clamp(24px, 3vw, 52px);
-  margin: var(--space-5) 0 0;
-  padding-left: calc(92px + clamp(14px, 1.8vw, 26px));
-}
-
-.demo__detail > div { min-width: 0; }
-
-.demo__detail dt {
-  margin-bottom: 7px;
-  font-size: var(--t-label);
-  font-weight: 600;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: var(--ink-muted);
-}
-
-.demo__detail dd {
-  margin: 0;
-  font-size: var(--t-sm);
-  line-height: 1.55;
-  color: var(--ink-soft);
-}
-
-.demo__detail dd b {
-  display: block;
-  margin-bottom: 2px;
-  font-family: var(--font-display);
-  font-size: clamp(22px, 2vw, 28px);
-  font-weight: 400;
-  line-height: 1.1;
-  font-variant-numeric: tabular-nums;
-  color: var(--ink);
-}
-
-/* Sources listed as evidence, one per line, so they read as citations
-   rather than prose. */
-.demo__sources {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  display: grid;
-  gap: 5px;
-  font-size: var(--t-sm);
-  line-height: 1.45;
-  color: var(--ink-soft);
-}
-
-.demo__sources li {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  gap: 9px;
-}
-
-.demo__sources li::before {
-  content: "";
-  width: 4px;
-  height: 4px;
-  margin-top: 8px;
-  border-radius: 50%;
-  background: var(--signal-soft);
-}
-
-/* ── Recommendation ───────────────────────────────────────── */
-.demo__rec {
-  margin: var(--space-5) 0 0;
-  padding: var(--space-4) 0 0;
-  margin-left: calc(92px + clamp(14px, 1.8vw, 26px));
-  border-top: 1px solid var(--rule);
-}
-
-.demo__rec dt {
-  margin-bottom: 7px;
-  font-size: var(--t-label);
-  font-weight: 600;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: var(--signal);
-}
-
-.demo__rec dd {
-  margin: 0;
-  max-width: 46em;
-  font-size: var(--t-body);
-  line-height: 1.55;
-  color: var(--ink);
-}
-
-/* Not controls, and no longer shaped like them. The three words are the
-   decisions this recommendation is waiting on; the label carries the state.
-   Kept on one line with the owner/date readout beneath, so the panel reads as
-   a record rather than as an interface with dead buttons in it. */
-.demo__await {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 6px 10px;
-  margin: var(--space-4) 0 0;
-  font-size: var(--t-sm);
-  line-height: 1.5;
-  color: var(--ink-soft);
-}
-
-.demo__await__label {
-  font-size: var(--t-label);
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--ink-muted);
-}
-
-.demo__state {
-  margin: var(--space-4) 0 0;
-  font-size: var(--t-meta);
-  color: var(--ink-muted);
+.demo-carousel__dot.is-active {
+  background: var(--signal);
+  transform: scale(1.3);
 }
 
 /* ── Caption ──────────────────────────────────────────────── */
@@ -279,15 +165,4 @@
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--ink-soft);
-}
-
-/* ── Responsive ───────────────────────────────────────────── */
-@media (max-width: 860px) {
-  .demo__head { grid-template-columns: minmax(0, 1fr) auto; }
-  .demo__flag { grid-column: 1 / -1; margin-bottom: 4px; }
-  .demo__what { grid-column: 1 / -1; }
-
-  .demo__detail,
-  .demo__rec { padding-left: 0; margin-left: 0; }
-  .demo__detail { grid-template-columns: minmax(0, 1fr); }
 }

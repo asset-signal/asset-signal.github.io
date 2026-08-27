@@ -64,6 +64,34 @@
   align-items: end;
 }
 
+/* End-aligned reads fine when the title and lede run a similar number of
+   lines — the shared baseline is what "end" is for. "Review is a cycle, not
+   an event." is two lines against a four-line lede, so end-alignment left
+   the title hanging well below the lede's own top with a lopsided gap above
+   it; start-aligning the two so they share a top reads balanced regardless
+   of how many lines either one wraps to. */
+#how .section-head { align-items: start; }
+
+/* Same mismatch, same fix, for the demonstration section: its title is two
+   lines against a three-line lede at this scoped-down size, so end-
+   alignment leaves the same lopsided gap over the title that #how had. */
+#demonstration .section-head { align-items: start; }
+
+/* Smaller than the shared .section-title/.section-lede sizes, scoped to
+   this section only: the ring diagram right below has to share the
+   viewport with this heading (see main.js's syncCycleRing), and a smaller
+   heading frees real height that gets spent as top padding instead — see
+   PAD_TOP_MIN there. */
+#how .section-title { font-size: clamp(28px, 3.4vw, 46px); }
+#how .section-lede { font-size: var(--t-body); line-height: 1.6; }
+
+/* Same move, same reason, for the demonstration section: the screenshot
+   below is now a modest, framed image (see demo.css/main.js's
+   syncDemoHeight) rather than a full-bleed panel, and the full-size
+   .section-title/.section-lede pair reads oversized next to it. */
+#demonstration .section-title { font-size: clamp(28px, 3.4vw, 46px); }
+#demonstration .section-lede { font-size: var(--t-body); line-height: 1.6; }
+
 .section-title {
   margin: 0;
   font-family: var(--font-display);
@@ -201,11 +229,42 @@
    way the cycle turns, which is why they sit at every arc
    midpoint rather than once or twice for decoration.
 
-   Progressive enhancement, and the fallback is the default: the
-   ring only assembles at 940px and up, where there is room for
-   six labels around the circle without them colliding. Below
-   that the existing grid is untouched and the SVG never renders. */
-.cycle__ring { display: none; }
+   The full label-on-ring diagram only assembles at 940px and up,
+   where there is room for six names around the circle without
+   colliding — below that the stage list falls back to the plain
+   stacked grid it always had. But the ring graphic itself (track,
+   nodes, direction chevrons — no text) is cheap to show at any
+   size and is the one thing that actually SHOWS "this is a cycle"
+   rather than asserting it in a heading, so a small static copy of
+   it sits above the stacked list on mobile too. */
+.cycle__ring {
+  display: block;
+  width: min(200px, 52vw);
+  height: min(200px, 52vw);
+  margin: 0 auto var(--space-5);
+  overflow: visible;
+}
+
+/* Colour lives here, shared by the small mobile ring and the large
+   positioned one the 940px block below resizes and repositions —
+   duplicating it per breakpoint would drift the two out of sync. */
+.cycle__track {
+  stroke: var(--signal);
+  stroke-width: 1.5;
+}
+
+.cycle__flow path {
+  stroke: var(--signal);
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.cycle__node {
+  fill: var(--signal);
+  stroke: var(--signal);
+  stroke-width: 1.8;
+}
 
 /* The stacked fallback still needs the sentence, and it belongs where
    the original footnote had it. */
@@ -218,6 +277,17 @@
   color: var(--ink);
 }
 .cycle__hub em { font-style: italic; color: var(--signal-ink); }
+
+/* Mobile keeps the stage names so the list still reads as six named
+   steps, but drops each one's explanatory sentence — the ring above
+   plus the closing "each cycle..." line already carry what the loop
+   is and why it repeats, and six paragraphs of supporting copy is the
+   part of this diagram that most crowds a phone screen. */
+@media (max-width: 939px) {
+  .loop__body { display: none; }
+  .loop__name { margin-bottom: 0; }
+  .loop__stage { padding-bottom: var(--space-4); }
+}
 
 @media (min-width: 940px) {
   .cycle {
@@ -305,36 +375,9 @@
     overflow: visible;
   }
 
-  /* Eucalyptus, at full opacity. The ring is not a divider; it is the shape of
-     the argument, so it owes the 3:1 that 1.4.11 asks of meaningful graphics —
-     and it owes it against the GLOW, not just the bare band. --signal-line was
-     chosen when there was no glow: it read 3.01:1 on Pale Sage but only 2.41:1
-     once the wash sat behind it, and the 0.75 opacity took it lower still.
-     Eucalyptus holds 4.54:1 on the band and 3.74:1 on the glow at full
-     strength. */
-  .cycle__track {
-    stroke: var(--signal);
-    stroke-width: 1.5;
-  }
-
-  /* Direction, stated six times around the ring rather than once. */
-  .cycle__flow path {
-    stroke: var(--signal);
-    stroke-width: 1.7;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-  }
-
-  /* Filled, and all six the same. Hollow rings read as slots waiting to be
-     filled, which implied a state the static diagram does not have; solid
-     dots read as six stages that simply exist. Eucalyptus holds 3.74:1
-     against the glow at full strength, which is what 1.4.11 asks of a
-     meaningful graphic. */
-  .cycle__node {
-    fill: var(--signal);
-    stroke: var(--signal);
-    stroke-width: 1.8;
-  }
+  /* Colour (stroke/fill for track, flow chevrons and nodes) is shared with
+     the small mobile ring and lives above, outside this block — 3:1 against
+     the glow per 1.4.11, verified once rather than twice. */
 
   /* The diagram is static. Nothing is lost by that: the six chevrons carry
      the direction on their own, and a still figure is legible from the first
@@ -350,7 +393,14 @@
     margin: 0;
     transform: translate(-50%, -50%);
     text-align: center;
-    font-size: clamp(18px, 1.55vw, 24px);
+    /* Off --ring, not vw: when JS shrinks --ring to fit a short viewport
+       (see main.js's syncCycleRing), the ring's own type has to shrink with
+       it or a small circle ends up carrying oversized text. Also lower than
+       the old vw-derived sizes at their own top end (24px, now 21px) — a
+       smaller hub sentence needs a smaller --ring to sit comfortably inside
+       it, which is what buys the extra top/bottom breathing room around the
+       whole diagram (see FIXED_REACH in main.js). */
+    font-size: clamp(15px, calc(var(--ring) * 0.07), 21px);
     line-height: 1.38;
     letter-spacing: -0.005em;
     text-wrap: balance;
@@ -410,31 +460,22 @@
   .cycle .loop__stage:nth-child(5) .loop__name,
   .cycle .loop__stage:nth-child(6) .loop__name { justify-content: flex-end; }
 
-  /* Larger than the shared --t-sm these inherited. That token is sized for
-     dense supporting copy in a column you read top to bottom; here the same
-     14px sits alone in space beside a 600px circle, at the far edge of a
-     1320px band, and reads as a caption on a diagram rather than as the
-     diagram's content. The stage names go up with it so the pair keeps its
-     step. */
-  /* The name has to outweigh its own body copy. At 14px against a 17.3px body
-     the hierarchy was inverted — the stage's NAME was the smallest thing in
-     its block, which is why it read as tiny no matter how much space it had.
-
-     Tracking comes down as the size goes up, which is the normal relationship
-     and also what keeps "03 RECOMMENDATION" — seventeen characters, the
-     longest label here — inside a 230px column at 1440. The upper bound is
-     set by that fit, not by taste. */
-  /* On the ring the name has to outweigh its own body copy. At the label size
-     it inherited it was the smallest thing in its own block, which is why it
-     read as tiny however much space it had. The ceiling is set by "03
-     Recommendation" — the longest label — holding one line in a 230px column
-     at 1440, not by taste. */
+  /* Off --ring rather than vw, for the same reason as .cycle__hub above:
+     when JS shrinks --ring to fit a short viewport, or grows it back on a
+     tall one, the label text has to move with it — a small ring paired
+     with vw-sized (viewport-only) text either overruns a small ring or
+     reads as a tiny caption beside a large one. The name still has to
+     outweigh its own body copy (0.072 vs 0.052 — the same ratio the old
+     18-24px/15.5-18px pair held), and the whole pair is a shade smaller
+     than that old pair so the label's own footprint takes less of the
+     ring's vertical reach, which is what funds the extra breathing room
+     FIXED_REACH gives the diagram in main.js. */
   .cycle .loop__name {
-    font-size: clamp(18px, 1.7vw, 24px);
+    font-size: clamp(16px, calc(var(--ring) * 0.072), 22px);
   }
 
   .cycle .loop__body {
-    font-size: clamp(15.5px, 1.2vw, 18px);
+    font-size: clamp(14px, calc(var(--ring) * 0.052), 16.5px);
     line-height: 1.55;
     text-wrap: pretty;
   }

@@ -224,10 +224,12 @@ styles: [hero, sections, problem, demo, form, footer]
         </section>
 
         <!-- 03 — Demonstration
-             ILLUSTRATIVE ONLY. Every figure, property name and date below is
-             invented for the purpose of showing the shape of the output. The
-             caption says so on the page; keep it there, and replace the whole
-             panel with a real screenshot when one exists. -->
+             Real product screenshots (img/PortfolioAnalytics.png,
+             img/AnalyticsCharts.png, img/PortfolioMultifamilyMetricsDetail.png),
+             shown with sample portfolio data rather than a live customer
+             account — see the caption. Rotates on an interval; see
+             js/main.js's carousel block for the autoplay/pause/reduced-motion
+             behavior. -->
         <section class="band" id="demonstration" aria-labelledby="demonstration-title">
           <div class="wrap">
             <div class="section-head">
@@ -242,103 +244,35 @@ styles: [hero, sections, problem, demo, form, footer]
             </div>
 
             <figure class="demo">
-              <div class="demo__panel">
-                <div class="demo__bar">
-                  <span class="demo__title">Portfolio signals</span>
-                  <span class="demo__meta">September review · 34 assets</span>
-                  <span class="demo__count"><b>4</b> need attention</span>
+              <div class="demo__panel demo-carousel" data-carousel>
+                <div class="demo-carousel__viewport">
+                  <ul class="demo-carousel__track">
+                    <li class="demo-carousel__slide is-active">
+                      <img src="{{ '/img/PortfolioAnalytics.png' | relative_url }}" alt="Analytics screen showing total revenue, operating expenses, NOI and NOI margin across a portfolio, with a per-property metrics table below." width="2880" height="2080" loading="eager" decoding="async" />
+                    </li>
+                    <li class="demo-carousel__slide">
+                      <img src="{{ '/img/AnalyticsCharts.png' | relative_url }}" alt="Analytics trends screen showing portfolio NOI actual vs. budget, NOI margin by property, and operating expenses by category for one property." width="2880" height="2080" loading="lazy" decoding="async" />
+                    </li>
+                    <li class="demo-carousel__slide">
+                      <img src="{{ '/img/PortfolioMultifamilyMetricsDetail.png' | relative_url }}" alt="Portfolio metrics screen for a multifamily portfolio showing aggregate health statistics, best and worst performing assets, and portfolio concentration." width="2880" height="2080" loading="lazy" decoding="async" />
+                    </li>
+                  </ul>
                 </div>
 
-                <ol class="demo__list">
-                  <li class="demo__row demo__row--open">
-                    <div class="demo__head">
-                      <span class="demo__flag demo__flag--high">High</span>
-                      <span class="demo__asset">Ridgeline Commons <span>· 312 units</span></span>
-                      <span class="demo__impact">$214K</span>
-                      <p class="demo__what">Preleasing is 640&nbsp;bps behind prior year with six weeks of season left.</p>
-                    </div>
-
-                    <dl class="demo__detail">
-                      <div>
-                        <dt>Observation</dt>
-                        <dd>Signed leases stand at 61% for the coming term against 67% at the same week last year. Traffic is flat; conversion has fallen.</dd>
-                      </div>
-                      <div>
-                        <dt>Evidence</dt>
-                        <dd>
-                          <ul class="demo__sources">
-                            <li>Weekly leasing report — through 12 Sep</li>
-                            <li>Prior-year lease-up curve, same asset</li>
-                            <li>Concession changes at 2 of 4 tracked comparables</li>
-                          </ul>
-                        </dd>
-                      </div>
-                      <div>
-                        <dt>Materiality</dt>
-                        <dd><b>$214,000</b> estimated NOI at risk this term if the gap holds.</dd>
-                      </div>
-                      <div>
-                        <dt>Confidence</dt>
-                        <dd><b>84%</b> Leasing data is current through 12 Sep. Comparable concession data is six days old.</dd>
-                      </div>
-                    </dl>
-
-                    <dl class="demo__rec">
-                      <dt>Recommended action</dt>
-                      <dd>Match the two-week concession running at the two comparables through 30 September, then reassess conversion before extending it further.</dd>
-                      <dd>
-                        <!-- A readout, not three controls. These were pills —
-                             999px radius, one filled Deep Forest exactly like
-                             the page's primary CTA — sitting under a figure at
-                             the panel's peak moment. The markup was already
-                             non-interactive spans; the RENDERING was the
-                             control, and tapping it taught the visitor the
-                             product was a mockup. Stated as what the decision
-                             is waiting on, it carries the same information and
-                             promises nothing. -->
-                        <p class="demo__await">
-                          <span class="demo__await__label">Awaiting</span>
-                          Approve · Assign · Dismiss
-                        </p>
-                        <p class="demo__state">Owner — unassigned · Raised 14 Sep</p>
-                      </dd>
-                    </dl>
-                  </li>
-
-                  <li class="demo__row">
-                    <div class="demo__head">
-                      <span class="demo__flag demo__flag--medium">Medium</span>
-                      <span class="demo__asset">Fulton Yards <span>· 188 units</span></span>
-                      <span class="demo__impact">$63K</span>
-                      <p class="demo__what">Turnover cost per unit is running 18% above budget for a third month.</p>
-                    </div>
-                  </li>
-
-                  <li class="demo__row">
-                    <div class="demo__head">
-                      <span class="demo__flag demo__flag--medium">Medium</span>
-                      <span class="demo__asset">Ashcroft Park <span>· 240 units</span></span>
-                      <span class="demo__impact">$41K</span>
-                      <p class="demo__what">Two comparable properties have moved to concessions; renewals are due in 30 days.</p>
-                    </div>
-                  </li>
-
-                  <li class="demo__row">
-                    <div class="demo__head">
-                      <span class="demo__flag">Low</span>
-                      <span class="demo__asset">Beacon &amp; Vine <span>· 96 units</span></span>
-                      <span class="demo__impact">$22K</span>
-                      <p class="demo__what">Utility recovery has sat below underwriting since the billing change in June.</p>
-                    </div>
-                  </li>
-                </ol>
+                <div class="demo-carousel__controls">
+                  <button type="button" class="demo-carousel__arrow" aria-label="Previous screenshot" data-carousel-prev>
+                    <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M10 3L5 8l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </button>
+                  <div class="demo-carousel__dots" role="tablist" aria-label="Screenshots">
+                    <button type="button" class="demo-carousel__dot is-active" role="tab" aria-selected="true" aria-label="Show screenshot 1 of 3" data-carousel-dot></button>
+                    <button type="button" class="demo-carousel__dot" role="tab" aria-selected="false" aria-label="Show screenshot 2 of 3" data-carousel-dot></button>
+                    <button type="button" class="demo-carousel__dot" role="tab" aria-selected="false" aria-label="Show screenshot 3 of 3" data-carousel-dot></button>
+                  </div>
+                  <button type="button" class="demo-carousel__arrow" aria-label="Next screenshot" data-carousel-next>
+                    <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M6 3l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </button>
+                </div>
               </div>
-
-              <figcaption class="demo__caption">
-                <b>Illustrative</b> — the properties, figures and dates above are examples
-                chosen to show the structure of the output. They are not live data and not
-                a screenshot of a customer portfolio.
-              </figcaption>
             </figure>
           </div>
         </section>

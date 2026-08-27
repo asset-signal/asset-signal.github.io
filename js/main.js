@@ -429,6 +429,288 @@
     }
   }
 
+  // ── Cycle: heading + ring inside one viewport ──────────────
+  // The section makes one claim — "review is a cycle" — in two parts: the
+  // heading states it, the ring shows it. Split across a scroll they read
+  // as two separate moments; the point is that they're the same one, which
+  // only holds if both are on screen together. --ring in sections.css
+  // sizes the diagram from viewport WIDTH alone (21vw), with no regard for
+  // HEIGHT, so on a viewport that's short for its width (a laptop at
+  // 800-900px tall, a tablet in landscape, an unmaximized window) the
+  // heading-plus-ring column runs taller than the viewport and the two
+  // can't both be on screen at once.
+  //
+  // The ring stays a large, confidently-drawn circle rather than the part
+  // that gives way first: room is reclaimed from the band's own top/bottom
+  // padding and the heading-to-ring gap down to a floor before the ring
+  // itself is allowed to shrink past ITS floor (MIN_RING). Below 940px the
+  // ring doesn't render at all (sections.css falls back to the stacked
+  // list), so there's nothing to fit.
+  const howSection = document.getElementById("how");
+  const cycleEl = howSection && howSection.querySelector(".cycle");
+  const cycleHead = howSection && howSection.querySelector(".section-head");
+
+  if (howSection && cycleEl && cycleHead) {
+    const desktopCycle = matchMedia("(min-width: 940px)");
+
+    // Matches sections.css: .cycle's own height is `--ring * 2 + 320px` —
+    // 320 is the top/bottom stage label's own reach beyond the ring's edge.
+    const FIXED_REACH = 320;
+    const MARGIN = 24; // breathing room so nothing sits edge-to-edge
+    // MIN/MAX bound how far --ring can move. 190 gives up some of the
+    // width-based clamp's own 210px floor so the heading and the full ring
+    // can still share a typical laptop viewport (see the note above
+    // syncCycleRing) — below ~190 the circle itself starts reading as an
+    // afterthought rather than the diagram.
+    const MIN_RING = 190;
+    const MAX_RING = 300;
+    // Floors for the three things given up before the ring is, in the
+    // order they're taken: the heading-to-ring gap, the band's OWN bottom
+    // padding, then its top padding. Top has the highest floor of the
+    // three and is taken last — the space right under the sticky masthead
+    // reads as cramped fastest, so it's the one held onto longest.
+    const GAP_MIN = 28;
+    const PAD_BOTTOM_MIN = 28;
+    const PAD_TOP_MIN = 64;
+
+    const syncCycleRing = () => {
+      // Clear first so every measurement below reads the CSS-defined
+      // responsive default for the CURRENT viewport, never a value this
+      // function shrank on a previous run at a different size — without
+      // this a resize sequence ratchets padding down and never recovers it.
+      howSection.style.removeProperty("padding-top");
+      howSection.style.removeProperty("padding-bottom");
+      cycleEl.style.removeProperty("margin-top");
+      cycleEl.style.removeProperty("--ring");
+
+      if (!desktopCycle.matches) return;
+
+      // The sticky masthead overlays the top of every scroll position, so
+      // its height comes off the room available regardless of where the
+      // section lands once scrolled to. alignToAxis (above) keeps --nav-h
+      // current for exactly this kind of read.
+      const navH = parseFloat(
+        getComputedStyle(document.documentElement).getPropertyValue("--nav-h")
+      ) || 0;
+      const bandStyle = getComputedStyle(howSection);
+      const padTop0 = parseFloat(bandStyle.paddingTop) || 0;
+      const padBottom0 = parseFloat(bandStyle.paddingBottom) || 0;
+      // Read off .cycle's own resolved margin-top, not the --gap-block
+      // custom property — getPropertyValue on a custom property returns
+      // its literal specified text ("clamp(44px, 5.4vw, 72px)"), not the
+      // resolved px the cascade computed for THIS element, so parseFloat
+      // on it silently becomes 0 (and every reclaim calculation with it).
+      const gap0 = parseFloat(getComputedStyle(cycleEl).marginTop) || 0;
+      const headH = cycleHead.getBoundingClientRect().height;
+
+      const fixedAbove = navH + padTop0 + headH + gap0 + padBottom0 + MARGIN;
+      let ring = (window.innerHeight - fixedAbove - FIXED_REACH) / 2;
+
+      if (ring < MIN_RING) {
+        // Reclaim room from the gap first (it reads as the least load-
+        // bearing of the three), then the bottom padding, then the top.
+        const neededPx = (MIN_RING - ring) * 2;
+        const reclaimableGap = Math.max(0, gap0 - GAP_MIN);
+        const reclaimablePadBottom = Math.max(0, padBottom0 - PAD_BOTTOM_MIN);
+        const reclaimablePadTop = Math.max(0, padTop0 - PAD_TOP_MIN);
+
+        let remaining = neededPx;
+        const takeGap = Math.min(remaining, reclaimableGap);
+        remaining -= takeGap;
+        const takePadBottom = Math.min(remaining, reclaimablePadBottom);
+        remaining -= takePadBottom;
+        const takePadTop = Math.min(remaining, reclaimablePadTop);
+        remaining -= takePadTop;
+
+        const reclaimed = neededPx - remaining;
+        if (reclaimed > 0) {
+          cycleEl.style.marginTop = `${Math.round(gap0 - takeGap)}px`;
+          howSection.style.paddingBottom = `${Math.round(padBottom0 - takePadBottom)}px`;
+          howSection.style.paddingTop = `${Math.round(padTop0 - takePadTop)}px`;
+          ring += reclaimed / 2;
+        }
+      }
+
+      ring = Math.round(Math.max(MIN_RING, Math.min(MAX_RING, ring)));
+      cycleEl.style.setProperty("--ring", `${ring}px`);
+    };
+
+    syncCycleRing();
+    addEventListener("resize", syncCycleRing, { passive: true });
+    addEventListener("orientationchange", syncCycleRing, { passive: true });
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(syncCycleRing);
+    if (typeof ResizeObserver === "function") {
+      new ResizeObserver(syncCycleRing).observe(cycleHead);
+    }
+    if (typeof desktopCycle.addEventListener === "function") {
+      desktopCycle.addEventListener("change", syncCycleRing);
+    } else if (typeof desktopCycle.addListener === "function") {
+      // Safari < 14.
+      desktopCycle.addListener(syncCycleRing);
+    }
+  }
+
+  // ── Screenshot carousel ─────────────────────────────────────
+  // Three real product screens, crossfaded on an interval. Autoplay pauses
+  // on hover/focus (a reader examining a screenshot shouldn't have it swap
+  // out from under them) and on prefers-reduced-motion it never starts at
+  // all — the dots and arrows still work, so the carousel is just a
+  // manually-paged set of three images at that point.
+  const carousel = document.querySelector("[data-carousel]");
+
+  if (carousel) {
+    const slides = Array.from(carousel.querySelectorAll(".demo-carousel__slide"));
+    const dots = Array.from(carousel.querySelectorAll("[data-carousel-dot]"));
+    const prevBtn = carousel.querySelector("[data-carousel-prev]");
+    const nextBtn = carousel.querySelector("[data-carousel-next]");
+    const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
+
+    let index = Math.max(0, slides.findIndex((s) => s.classList.contains("is-active")));
+    let timer = 0;
+
+    const show = (i) => {
+      index = (i + slides.length) % slides.length;
+      slides.forEach((s, n) => s.classList.toggle("is-active", n === index));
+      dots.forEach((d, n) => {
+        d.classList.toggle("is-active", n === index);
+        d.setAttribute("aria-selected", String(n === index));
+      });
+    };
+
+    const stopAutoplay = () => {
+      clearInterval(timer);
+      timer = 0;
+    };
+
+    const startAutoplay = () => {
+      stopAutoplay();
+      if (reducedMotion.matches || document.hidden) return;
+      timer = setInterval(() => show(index + 1), 6000);
+    };
+
+    dots.forEach((d, n) => d.addEventListener("click", () => { show(n); startAutoplay(); }));
+    if (prevBtn) prevBtn.addEventListener("click", () => { show(index - 1); startAutoplay(); });
+    if (nextBtn) nextBtn.addEventListener("click", () => { show(index + 1); startAutoplay(); });
+
+    carousel.addEventListener("mouseenter", stopAutoplay);
+    carousel.addEventListener("mouseleave", startAutoplay);
+    carousel.addEventListener("focusin", stopAutoplay);
+    carousel.addEventListener("focusout", (e) => {
+      if (!carousel.contains(e.relatedTarget)) startAutoplay();
+    });
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) stopAutoplay(); else startAutoplay();
+    });
+
+    startAutoplay();
+  }
+
+  // ── Demonstration: heading + screenshot inside one viewport ─
+  // Same reasoning and the same technique as the cycle block above: the
+  // heading states the claim ("what a review looks like prioritized") and
+  // the screenshot shows it, so the two only read as one thing when both
+  // are on screen together. The image's aspect ratio is fixed (all three
+  // screenshots share it), so fitting it to the viewport just means
+  // setting one height — see demo.css's .demo-carousel__viewport for why
+  // that alone is enough to resize the whole box.
+  // demoSection is already declared above (the scroll-reveal observer).
+  const demoFigure = demoSection && demoSection.querySelector(".demo");
+  const demoHead = demoSection && demoSection.querySelector(".section-head");
+  const demoViewport = demoSection && demoSection.querySelector(".demo-carousel__viewport");
+  const demoControls = demoSection && demoSection.querySelector(".demo-carousel__controls");
+  // Optional: the figure has no caption right now, but the height math
+  // still accounts for one (as 0px) so a caption added back later doesn't
+  // require touching this function.
+  const demoCaption = demoSection && demoSection.querySelector(".demo__caption");
+  const demoPanel = demoSection && demoSection.querySelector(".demo__panel");
+
+  if (demoSection && demoFigure && demoHead && demoViewport && demoControls && demoPanel) {
+    const desktopDemo = matchMedia("(min-width: 940px)");
+
+    const MIN_H = 220; // floor below which the screenshot stops being legible
+    const MAX_H = 480; // ceiling — a smaller, framed screenshot rather than
+                        // one blown up to fill the available height
+    const MARGIN = 24;
+    // Same priority order and floors as the cycle block, for the same
+    // reason: gap, then bottom padding, then top padding, with top given
+    // the highest floor of the three and taken last.
+    const GAP_MIN = 28;
+    const PAD_BOTTOM_MIN = 28;
+    const PAD_TOP_MIN = 64;
+
+    const syncDemoHeight = () => {
+      demoSection.style.removeProperty("padding-top");
+      demoSection.style.removeProperty("padding-bottom");
+      demoFigure.style.removeProperty("margin-top");
+      demoViewport.style.removeProperty("height");
+
+      if (!desktopDemo.matches) return;
+
+      const navH = parseFloat(
+        getComputedStyle(document.documentElement).getPropertyValue("--nav-h")
+      ) || 0;
+      const bandStyle = getComputedStyle(demoSection);
+      const padTop0 = parseFloat(bandStyle.paddingTop) || 0;
+      const padBottom0 = parseFloat(bandStyle.paddingBottom) || 0;
+      const gap0 = parseFloat(getComputedStyle(demoFigure).marginTop) || 0;
+      const headH = demoHead.getBoundingClientRect().height;
+      const controlsMarginTop = parseFloat(getComputedStyle(demoControls).marginTop) || 0;
+      const controlsH = demoControls.getBoundingClientRect().height + controlsMarginTop;
+      const captionMarginTop = demoCaption
+        ? parseFloat(getComputedStyle(demoCaption).marginTop) || 0
+        : 0;
+      const captionH = demoCaption ? demoCaption.getBoundingClientRect().height : 0;
+      // The panel's own border, read back rather than hardcoded — robust to
+      // demo.css changing border-width without this drifting out of sync.
+      const panelBorders = demoPanel.offsetHeight - demoPanel.clientHeight;
+
+      const fixedAbove = navH + padTop0 + headH + gap0 + padBottom0 + MARGIN;
+      const fixedBelowImage = controlsH + panelBorders + captionMarginTop + captionH;
+
+      let h = window.innerHeight - fixedAbove - fixedBelowImage;
+
+      if (h < MIN_H) {
+        const neededPx = MIN_H - h;
+        const reclaimableGap = Math.max(0, gap0 - GAP_MIN);
+        const reclaimablePadBottom = Math.max(0, padBottom0 - PAD_BOTTOM_MIN);
+        const reclaimablePadTop = Math.max(0, padTop0 - PAD_TOP_MIN);
+
+        let remaining = neededPx;
+        const takeGap = Math.min(remaining, reclaimableGap);
+        remaining -= takeGap;
+        const takePadBottom = Math.min(remaining, reclaimablePadBottom);
+        remaining -= takePadBottom;
+        const takePadTop = Math.min(remaining, reclaimablePadTop);
+        remaining -= takePadTop;
+
+        const reclaimed = neededPx - remaining;
+        if (reclaimed > 0) {
+          demoFigure.style.marginTop = `${Math.round(gap0 - takeGap)}px`;
+          demoSection.style.paddingBottom = `${Math.round(padBottom0 - takePadBottom)}px`;
+          demoSection.style.paddingTop = `${Math.round(padTop0 - takePadTop)}px`;
+          h += reclaimed;
+        }
+      }
+
+      h = Math.round(Math.max(MIN_H, Math.min(MAX_H, h)));
+      demoViewport.style.height = `${h}px`;
+    };
+
+    syncDemoHeight();
+    addEventListener("resize", syncDemoHeight, { passive: true });
+    addEventListener("orientationchange", syncDemoHeight, { passive: true });
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(syncDemoHeight);
+    if (typeof ResizeObserver === "function") {
+      new ResizeObserver(syncDemoHeight).observe(demoHead);
+    }
+    if (typeof desktopDemo.addEventListener === "function") {
+      desktopDemo.addEventListener("change", syncDemoHeight);
+    } else if (typeof desktopDemo.addListener === "function") {
+      // Safari < 14.
+      desktopDemo.addListener(syncDemoHeight);
+    }
+  }
+
   // ── The field is only worth drawing while it is visible ───
   // Everything below the fold sits on an opaque sheet, so once the hero has
   // scrolled away the canvas is painting into a covered layer. Stop it.
