@@ -1,0 +1,85 @@
+---
+layout: default
+title: "FAQ — Asset Signal"
+description: "Answers to common questions about how Asset Signal works, what data it needs, and how it fits into an existing asset-management workflow."
+permalink: /faq/
+canonical: "https://assetsignal.ai/faq/"
+robots: "index, follow"
+og: true
+styles: [sections, footer, faq]
+faqs:
+  - q: "How is Asset Signal different from a traditional dashboard or business intelligence tool?"
+    a: "Traditional dashboards organize and display metrics but generally leave users to determine what matters and what to do next. Asset Signal analyzes related financial, operational, and market signals, prioritizes material issues, explains their potential impact, and recommends specific areas for investigation or action."
+  - q: "What data does a team need to get started?"
+    a: "Teams can begin with data they already use, such as property-level profit and loss statements, budgets, rent and occupancy reports, leasing data, operating-expense details, and market information. Asset Signal is designed to work with existing spreadsheets and reporting packages, so a major data-transformation project is not required to begin evaluating the platform."
+  - q: "Does Asset Signal require a direct system integration?"
+    a: "Not necessarily. Teams can initially use existing spreadsheets, financial reports, and operating data to evaluate Asset Signal. Direct integrations can be added as the workflow expands, but teams do not need to wait for a full system integration before testing priority use cases or reviewing representative portfolio data."
+  - q: "Can Asset Signal work with inconsistent property data and charts of accounts?"
+    a: "Asset Signal is designed to normalize data across properties, reporting formats, and charts of accounts. This allows teams to compare performance even when assets use different general-ledger structures or reporting conventions. Any material mapping assumptions should remain visible so users can review and validate how the information has been categorized."
+  - q: "What types of decisions can Asset Signal support?"
+    a: "Asset Signal can support decisions involving revenue performance, budget variances, leasing strategy, occupancy, operating expenses, market positioning, and portfolio prioritization. It helps teams determine which assets or issues require attention, understand the factors driving the change, and identify appropriate follow-up actions."
+  - q: "How does Asset Signal determine what requires attention?"
+    a: "Asset Signal evaluates changes against relevant reference points, including budgets, prior periods, historical trends, portfolio benchmarks, and market conditions. It considers both the size and potential significance of a variance so that teams can focus on developments that may materially affect asset performance or investment returns."
+  - q: "Can users verify the reasoning behind a recommendation?"
+    a: "Yes. Asset Signal is designed to present recommendations with the supporting evidence attached, including the relevant metrics, variances, trends, and source information. Users can review the underlying reasoning, validate the data, and apply their own operating and investment judgment before deciding whether to act."
+  - q: "Does Asset Signal make decisions automatically?"
+    a: "No. Asset Signal supports professional decision-making rather than replacing it. The platform identifies patterns, explains material changes, and recommends possible actions, while the asset or portfolio team retains responsibility for validating the information and determining the appropriate response."
+  - q: "How frequently is portfolio information updated?"
+    a: "Update frequency depends on the source data and the team's reporting workflow. Monthly financial information can be evaluated alongside more frequently updated operating, leasing, and market data. This helps teams monitor meaningful developments between formal monthly or quarterly portfolio reviews."
+  - q: "Can Asset Signal analyze both individual assets and an entire portfolio?"
+    a: "Yes. Asset Signal is designed to support both property-level investigation and portfolio-level prioritization. Teams can review the performance drivers of an individual asset while also comparing issues, opportunities, and relative exposure across multiple properties and markets."
+  - q: "How is Asset Signal intended to fit into an existing asset-management workflow?"
+    a: "Asset Signal is intended to sit between raw reporting and human decision-making. It helps prepare teams for portfolio reviews, directs attention toward material issues, supports follow-up analysis, and creates a clearer record of the evidence behind recommended actions without requiring teams to abandon their existing systems or processes."
+---
+{%- comment -%}
+  FAQPage schema, generated from the same faqs list the accordion below
+  renders — one source of truth, so the structured data can't drift from
+  what a visitor actually reads.
+{%- endcomment -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {%- for item in page.faqs %}
+    {
+      "@type": "Question",
+      "name": {{ item.q | jsonify }},
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": {{ item.a | jsonify }}
+      }
+    }{% unless forloop.last %},{% endunless %}
+    {%- endfor %}
+  ]
+}
+</script>
+
+    <main id="main" class="faq">
+      <div class="wrap faq__wrap">
+
+        <h1 class="faq__title">Frequently Asked Questions</h1>
+
+        <div class="faq__list">
+          {%- for item in page.faqs %}
+          <details class="faq__item">
+            <summary class="faq__question">
+              <span>{{ item.q }}</span>
+              <span class="faq__icon" aria-hidden="true">
+                <svg viewBox="0 0 16 16" fill="none"><path d="M2 6l6 6 6-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
+            </summary>
+            <div class="faq__answer">
+              <p>{{ item.a }}</p>
+            </div>
+          </details>
+          {%- endfor %}
+        </div>
+
+        <p class="faq__close">
+          <a href="{{ '/#demo' | relative_url }}">Request a demo</a>
+          <a href="mailto:{{ site.email }}">{{ site.email }}</a>
+        </p>
+
+      </div>
+    </main>
