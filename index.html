@@ -274,9 +274,33 @@ styles: [hero, sections, problem, demo, form, footer]
             </div>
 
             <figure class="demo">
-              <div class="demo__panel">
-                <div class="demo__viewport">
-                  <img src="{{ '/img/PortfolioMultifamilyMetricsDetail.png' | relative_url }}" alt="Portfolio metrics screen for a multifamily portfolio showing aggregate health statistics, best and worst performing assets, and portfolio concentration." width="2880" height="2080" loading="eager" decoding="async" />
+              <div class="demo__panel demo-carousel" data-carousel>
+                <div class="demo-carousel__viewport">
+                  <ul class="demo-carousel__track">
+                    <li class="demo-carousel__slide is-active">
+                      <img src="{{ '/img/PortfolioAnalytics.png' | relative_url }}" alt="Analytics screen showing total revenue, operating expenses, NOI and NOI margin across a portfolio, with a per-property metrics table below." width="2880" height="2080" loading="eager" decoding="async" />
+                    </li>
+                    <li class="demo-carousel__slide">
+                      <img src="{{ '/img/AnalyticsCharts.png' | relative_url }}" alt="Analytics trends screen showing portfolio NOI actual vs. budget, NOI margin by property, and operating expenses by category for one property." width="2880" height="2080" loading="lazy" decoding="async" />
+                    </li>
+                    <li class="demo-carousel__slide">
+                      <img src="{{ '/img/PortfolioMultifamilyMetricsDetail.png' | relative_url }}" alt="Portfolio metrics screen for a multifamily portfolio showing aggregate health statistics, best and worst performing assets, and portfolio concentration." width="2880" height="2080" loading="lazy" decoding="async" />
+                    </li>
+                  </ul>
+                </div>
+
+                <div class="demo-carousel__controls">
+                  <button type="button" class="demo-carousel__arrow" aria-label="Previous screenshot" data-carousel-prev>
+                    <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M10 3L5 8l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </button>
+                  <div class="demo-carousel__dots" role="tablist" aria-label="Screenshots">
+                    <button type="button" class="demo-carousel__dot is-active" role="tab" aria-selected="true" aria-label="Show screenshot 1 of 3" data-carousel-dot></button>
+                    <button type="button" class="demo-carousel__dot" role="tab" aria-selected="false" aria-label="Show screenshot 2 of 3" data-carousel-dot></button>
+                    <button type="button" class="demo-carousel__dot" role="tab" aria-selected="false" aria-label="Show screenshot 3 of 3" data-carousel-dot></button>
+                  </div>
+                  <button type="button" class="demo-carousel__arrow" aria-label="Next screenshot" data-carousel-next>
+                    <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M6 3l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </button>
                 </div>
               </div>
             </figure>

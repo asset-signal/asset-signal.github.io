@@ -1,8 +1,9 @@
 /* ─────────────────────────────────────────────────────────────
-   demo.css — the product screenshot
+   demo.css — the product screenshot carousel
 
-   One real screen from the product — see the caption for what the
-   data is and isn't.
+   Three real screens from the product, crossfaded rather than a
+   stack of cards or a filmstrip you scrub — see the caption for
+   what the data is and isn't.
    ───────────────────────────────────────────────────────────── */
 
 /* The product proof sat at exactly the prose measure, at 13.1% ink coverage —
@@ -21,7 +22,7 @@
 }
 
 /* No layout or paint of its own now — the framed look lives on the image
-   itself (.demo__viewport) below, not on this outer box. With the
+   itself (.demo-carousel__viewport) below, not on this outer box. With the
    image sized to its own height rather than the full breakout width, a
    border on THIS element outlined a wide empty box with the (narrower,
    centred) image floating inside it instead of reading as the image's own
@@ -29,12 +30,13 @@
 
    Deliberately NOT display:flex — a flex container has to resolve a
    definite cross size for its items before aspect-ratio can compute the
-   other dimension, which .demo__viewport (its child img is the only
-   content) never has on mobile where JS sets no explicit height. Plain
-   block layout lets its own `margin-inline: auto` centre it instead,
-   which works with or without a JS-set height. */
+   other dimension, which .demo-carousel__viewport (all its children are
+   position:absolute, so it contributes no intrinsic content size) never
+   has on mobile where JS sets no explicit height. Plain block layout lets
+   its own `margin-inline: auto` centre it instead, which works with or
+   without a JS-set height. */
 
-/* ── Screenshot ───────────────────────────────────────────────
+/* ── Screenshots ──────────────────────────────────────────────
    width stays auto rather than 100%: with an explicit `height` and
    `aspect-ratio` set, a block box with auto width resolves that width
    FROM the height and the ratio — which is what lets JS (main.js's
@@ -46,7 +48,7 @@
    The border/radius/overflow that used to sit on .demo__panel live here
    instead, so the frame hugs the image exactly regardless of how narrow
    JS makes it. */
-.demo__viewport {
+.demo-carousel__viewport {
   position: relative;
   width: auto;
   max-width: 100%;
@@ -57,13 +59,109 @@
   border: 1px solid var(--rule);
   border-radius: 4px;
   overflow: hidden;
+  /* pan-y, not none: leaves vertical page scroll to the browser and hands
+     main.js's pointer handlers only the horizontal swipe gesture, so
+     dragging across the image never fights scrolling past it. */
+  touch-action: pan-y;
+  user-select: none;
+  cursor: grab;
 }
 
-.demo__viewport img {
+.demo-carousel__viewport:active { cursor: grabbing; }
+
+.demo-carousel__track {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.demo-carousel__slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--dur-slow) var(--ease);
+}
+
+.demo-carousel__slide.is-active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.demo-carousel__slide img {
   display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
+  /* Otherwise a swipe/drag on desktop starts the browser's own native
+     "drag this image out of the page" gesture instead of reaching main.js's
+     pointer handlers. */
+  -webkit-user-drag: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .demo-carousel__slide { transition: none; }
+}
+
+/* ── Controls ─────────────────────────────────────────────────
+   Below the image rather than floating over it, where they'd compete with
+   real product UI in the screenshot underneath them. No connecting border
+   to the frame above — a full-width rule here would span wider than the
+   (narrower, centred) image itself and read as it belonging to the section
+   rather than to the framed screenshot; plain spacing keeps the
+   association without redrawing that mismatch one row down. */
+.demo-carousel__controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(16px, 2vw, 28px);
+  margin-top: clamp(14px, 1.6vw, 20px);
+}
+
+.demo-carousel__arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--rule-strong);
+  background: none;
+  padding: 0;
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition: color var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease);
+}
+
+.demo-carousel__arrow:hover { color: var(--signal-ink); border-color: var(--signal-ink); }
+.demo-carousel__arrow svg { width: 14px; height: 14px; }
+
+.demo-carousel__dots {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.demo-carousel__dot {
+  width: 7px;
+  height: 7px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: var(--rule-strong);
+  cursor: pointer;
+  transition: background var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease);
+}
+
+.demo-carousel__dot:hover { background: var(--signal-ink); }
+
+.demo-carousel__dot.is-active {
+  background: var(--signal);
+  transform: scale(1.3);
 }
 
 /* ── Caption ──────────────────────────────────────────────── */
