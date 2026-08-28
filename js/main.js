@@ -550,132 +550,24 @@
     }
   }
 
-  // ── Screenshot carousel ─────────────────────────────────────
-  // Three real product screens, crossfaded on an interval. Autoplay pauses
-  // on hover/focus (a reader examining a screenshot shouldn't have it swap
-  // out from under them) and on prefers-reduced-motion it never starts at
-  // all — the dots and arrows still work, so the carousel is just a
-  // manually-paged set of three images at that point.
-  const carousel = document.querySelector("[data-carousel]");
-
-  if (carousel) {
-    const slides = Array.from(carousel.querySelectorAll(".demo-carousel__slide"));
-    const dots = Array.from(carousel.querySelectorAll("[data-carousel-dot]"));
-    const prevBtn = carousel.querySelector("[data-carousel-prev]");
-    const nextBtn = carousel.querySelector("[data-carousel-next]");
-    const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
-
-    let index = Math.max(0, slides.findIndex((s) => s.classList.contains("is-active")));
-    let timer = 0;
-
-    const show = (i) => {
-      index = (i + slides.length) % slides.length;
-      slides.forEach((s, n) => s.classList.toggle("is-active", n === index));
-      dots.forEach((d, n) => {
-        d.classList.toggle("is-active", n === index);
-        d.setAttribute("aria-selected", String(n === index));
-      });
-    };
-
-    const stopAutoplay = () => {
-      clearInterval(timer);
-      timer = 0;
-    };
-
-    const startAutoplay = () => {
-      stopAutoplay();
-      if (reducedMotion.matches || document.hidden) return;
-      timer = setInterval(() => show(index + 1), 6000);
-    };
-
-    dots.forEach((d, n) => d.addEventListener("click", () => { show(n); startAutoplay(); }));
-    if (prevBtn) prevBtn.addEventListener("click", () => { show(index - 1); startAutoplay(); });
-    if (nextBtn) nextBtn.addEventListener("click", () => { show(index + 1); startAutoplay(); });
-
-    carousel.addEventListener("mouseenter", stopAutoplay);
-    carousel.addEventListener("mouseleave", startAutoplay);
-    carousel.addEventListener("focusin", stopAutoplay);
-    carousel.addEventListener("focusout", (e) => {
-      if (!carousel.contains(e.relatedTarget)) startAutoplay();
-    });
-    document.addEventListener("visibilitychange", () => {
-      if (document.hidden) stopAutoplay(); else startAutoplay();
-    });
-
-    // Swipe, via pointer events rather than touch-only handlers — the same
-    // code path picks up a mouse drag for free. touch-action: pan-y in
-    // demo.css leaves vertical page scroll to the browser and hands this
-    // only the horizontal gesture, so a swipe here never fights a scroll.
-    const viewport = carousel.querySelector(".demo-carousel__viewport");
-
-    if (viewport && typeof PointerEvent !== "undefined") {
-      const SWIPE_THRESHOLD = 40;
-      let dragId = null;
-      let startX = 0;
-      let startY = 0;
-      let horizontal = false;
-
-      viewport.addEventListener("pointerdown", (e) => {
-        if (e.pointerType === "mouse" && e.button !== 0) return;
-        dragId = e.pointerId;
-        startX = e.clientX;
-        startY = e.clientY;
-        horizontal = false;
-        stopAutoplay();
-      });
-
-      viewport.addEventListener("pointermove", (e) => {
-        if (e.pointerId !== dragId) return;
-        const dx = e.clientX - startX;
-        const dy = e.clientY - startY;
-        // Commits to "this is a swipe, not a scroll" once the gesture is
-        // clearly more horizontal than vertical, and only then claims the
-        // pointer — claiming it immediately on pointerdown would also
-        // swallow a vertical scroll that starts on top of the carousel.
-        if (!horizontal && Math.abs(dx) > 8 && Math.abs(dx) > Math.abs(dy)) {
-          horizontal = true;
-          viewport.setPointerCapture(dragId);
-        }
-        if (horizontal) e.preventDefault();
-      });
-
-      const endDrag = (e) => {
-        if (e.pointerId !== dragId) return;
-        const dx = e.clientX - startX;
-        dragId = null;
-        if (horizontal && Math.abs(dx) > SWIPE_THRESHOLD) {
-          show(dx < 0 ? index + 1 : index - 1);
-        }
-        startAutoplay();
-      };
-
-      viewport.addEventListener("pointerup", endDrag);
-      viewport.addEventListener("pointercancel", endDrag);
-    }
-
-    startAutoplay();
-  }
-
   // ── Demonstration: heading + screenshot inside one viewport ─
   // Same reasoning and the same technique as the cycle block above: the
   // heading states the claim ("what a review looks like prioritized") and
   // the screenshot shows it, so the two only read as one thing when both
-  // are on screen together. The image's aspect ratio is fixed (all three
-  // screenshots share it), so fitting it to the viewport just means
-  // setting one height — see demo.css's .demo-carousel__viewport for why
-  // that alone is enough to resize the whole box.
+  // are on screen together. The image's aspect ratio is fixed, so fitting
+  // it to the viewport just means setting one height — see demo.css's
+  // .demo__viewport for why that alone is enough to resize the whole box.
   // demoSection is already declared above (the scroll-reveal observer).
   const demoFigure = demoSection && demoSection.querySelector(".demo");
   const demoHead = demoSection && demoSection.querySelector(".section-head");
-  const demoViewport = demoSection && demoSection.querySelector(".demo-carousel__viewport");
-  const demoControls = demoSection && demoSection.querySelector(".demo-carousel__controls");
+  const demoViewport = demoSection && demoSection.querySelector(".demo__viewport");
   // Optional: the figure has no caption right now, but the height math
   // still accounts for one (as 0px) so a caption added back later doesn't
   // require touching this function.
   const demoCaption = demoSection && demoSection.querySelector(".demo__caption");
   const demoPanel = demoSection && demoSection.querySelector(".demo__panel");
 
-  if (demoSection && demoFigure && demoHead && demoViewport && demoControls && demoPanel) {
+  if (demoSection && demoFigure && demoHead && demoViewport && demoPanel) {
     const desktopDemo = matchMedia("(min-width: 940px)");
 
     const MIN_H = 620; // floor below which the screenshot stops being legible
@@ -705,8 +597,6 @@
       const padBottom0 = parseFloat(bandStyle.paddingBottom) || 0;
       const gap0 = parseFloat(getComputedStyle(demoFigure).marginTop) || 0;
       const headH = demoHead.getBoundingClientRect().height;
-      const controlsMarginTop = parseFloat(getComputedStyle(demoControls).marginTop) || 0;
-      const controlsH = demoControls.getBoundingClientRect().height + controlsMarginTop;
       const captionMarginTop = demoCaption
         ? parseFloat(getComputedStyle(demoCaption).marginTop) || 0
         : 0;
@@ -716,7 +606,7 @@
       const panelBorders = demoPanel.offsetHeight - demoPanel.clientHeight;
 
       const fixedAbove = navH + padTop0 + headH + gap0 + padBottom0 + MARGIN;
-      const fixedBelowImage = controlsH + panelBorders + captionMarginTop + captionH;
+      const fixedBelowImage = panelBorders + captionMarginTop + captionH;
 
       let h = window.innerHeight - fixedAbove - fixedBelowImage;
 
