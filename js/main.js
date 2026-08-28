@@ -678,8 +678,8 @@
   if (demoSection && demoFigure && demoHead && demoViewport && demoControls && demoPanel) {
     const desktopDemo = matchMedia("(min-width: 940px)");
 
-    const MIN_H = 270; // floor below which the screenshot stops being legible
-    const MAX_H = 640; // ceiling — a larger, still-framed screenshot rather
+    const MIN_H = 520; // floor below which the screenshot stops being legible
+    const MAX_H = 860; // ceiling — a larger, still-framed screenshot rather
                         // than one blown up to fill the available height
     const MARGIN = 16;
     // Same priority order and floors as the cycle block, for the same
