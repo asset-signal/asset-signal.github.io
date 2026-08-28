@@ -91,10 +91,11 @@
 .about__section a:hover { color: var(--signal-deep); }
 
 /* ── People ───────────────────────────────────────────────────
-   A list, not a card grid with circular photographs. One or two
-   founders in six-inch portraits reads as a team page padded to
-   look like a company; a name, a role and what they did before
-   is the information a buyer is actually checking.             */
+   A list, not a card grid — still just a name, a role, and what
+   they did before. The photo runs larger than a typical avatar:
+   this is the first thing on the page, and a founder's face at a
+   size a reader can actually look at does more for credibility
+   than a thumbnail would.                                       */
 .people {
   margin: var(--space-5) 0 0;
   padding: 0;
@@ -117,9 +118,9 @@
 }
 
 .person__photo {
-  width: 96px;
-  height: 96px;
-  border-radius: 50%;
+  width: clamp(140px, 16vw, 220px);
+  height: clamp(140px, 16vw, 220px);
+  border-radius: 8px;
   object-fit: cover;
   flex-shrink: 0;
 }
